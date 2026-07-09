@@ -157,9 +157,12 @@
     .foot-right a:hover { color: var(--green); }
 
     @media (max-width: 640px) {
-      .nav-links { gap: 16px; }
-      .nav-links a:nth-child(n+3) { display: none; }
+      .nav-inner { padding: 14px 16px; }
+      /* section anchors are redundant on mobile (hero CTAs + scroll do the job);
+         keep only Contact — the conversion action */
+      .nav-links a:not(:last-child) { display: none; }
       .hero { padding: 72px 0 60px; }
+      .hero-ctas .btn { width: 100%; text-align: center; }
     }
   </style>
 </head>
