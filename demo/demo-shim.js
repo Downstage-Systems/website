@@ -258,7 +258,9 @@
   function ribbon() {
     const d = document.createElement('div');
     d.id = 'demo-ribbon';
-    d.innerHTML = 'DEMO — simulated unit&nbsp;&nbsp;<a href="#" onclick="location.reload();return false" style="color:#0B0D10;text-decoration:underline">reset</a>';
+    d.innerHTML = 'DEMO — simulated unit&nbsp;&nbsp;'
+      + '<a href="#" onclick="location.reload();return false" style="color:#0B0D10;text-decoration:underline">reset</a>'
+      + '&nbsp;&nbsp;<a href="/" style="color:#0B0D10;text-decoration:underline">exit demo</a>';
     d.style.cssText = 'position:fixed;top:0;right:0;z-index:9999;background:#2FD97B;color:#0B0D10;font:600 12px system-ui;padding:6px 14px;border-radius:0 0 0 10px;letter-spacing:0.05em';
     document.body.appendChild(d);
   }
