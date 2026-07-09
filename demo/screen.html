@@ -1,0 +1,213 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+*{margin:0;padding:0}body{background:#000;overflow:hidden;cursor:default;font-family:system-ui,sans-serif}
+canvas{display:block}
+.full{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2.5vh}
+.big{font-family:'Segoe UI',system-ui,sans-serif;font-weight:600;font-size:24vh;line-height:1}
+.idbox{position:absolute;inset:0;background:#12A95C;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff}
+.idbox .n{font-size:40vh;font-weight:700;line-height:1}
+</style></head><body>
+<div id="stage"></div>
+<script>
+const q = new URLSearchParams(location.search);
+const src = q.get('src') || 'cleantimer';
+const stage = document.getElementById('stage');
+
+function el(html) { stage.innerHTML = html; }
+
+function markSvg(op) {
+  return `<svg viewBox="0 0 96 96" style="width:15vh;height:15vh;opacity:${op}">
+    <rect x="6" y="10" width="84" height="66" rx="10" fill="none" stroke="#e8ecef" stroke-width="7"/>
+    <rect x="20" y="54" width="40" height="9" rx="4.5" fill="#2fd97b"/>
+    <rect x="20" y="83" width="56" height="7" rx="3.5" fill="#2fd97b"/></svg>`;
+}
+
+// ── timer views ──────────────────────────────────────────────────────────────
+let t0 = Date.now();
+const DUR = 10 * 60 * 1000;
+function timerLoop(render) {
+  function tick() {
+    const elapsed = (Date.now() - t0) % (DUR + 60000);
+    const rem = DUR - elapsed;
+    render(rem);
+    requestAnimationFrame(tick);
+  }
+  tick();
+}
+function fmt(ms) {
+  const neg = ms < 0; ms = Math.abs(ms);
+  const m = Math.floor(ms / 60000), s = Math.floor(ms % 60000 / 1000);
+  return (neg ? '-' : '') + m + ':' + String(s).padStart(2, '0');
+}
+
+if (src === 'cleantimer') {
+  const key = '#' + (q.get('key') || '000000'), tc = '#' + (q.get('tc') || 'ffffff');
+  const freeze = q.get('freeze') !== 'false';
+  const hp = q.get('hp') !== 'false', hc = q.get('hc') !== 'false';
+  document.body.style.background = key;
+  el(`<div class="full">
+        ${hc ? '' : `<div id="clock" style="font-size:5vh;color:${tc};opacity:0.65"></div>`}
+        <div class="big" id="t" style="color:${tc}"></div>
+        ${hp ? '' : `<div style="width:70vw;height:1.8vh;border:2px solid ${tc};border-radius:1vh"><div id="p" style="height:100%;background:${tc};width:50%"></div></div>`}
+      </div>`);
+  timerLoop(rem => {
+    const shown = freeze ? Math.max(rem, 0) : rem;
+    const tEl = document.getElementById('t');
+    tEl.textContent = fmt(shown);
+    if (!freeze && rem < 0) tEl.style.color = '#ef4444';
+    const p = document.getElementById('p');
+    if (p) p.style.width = Math.max(rem / DUR * 100, 0) + '%';
+    const c = document.getElementById('clock');
+    if (c) c.textContent = new Date().toLocaleTimeString();
+  });
+}
+else if (['/timer','/countdown','/backstage','/studio','/timeline','/info','/op','/cuesheet','/editor','/timercontrol','/messagecontrol','/rundown'].includes(src)) {
+  const names = {'/timer':'Stage Timer','/countdown':'Countdown','/backstage':'Backstage / Crew','/studio':'Studio Clock','/timeline':'Timeline','/info':'Public Info','/op':'Operator','/cuesheet':'Cue Sheet','/editor':'Editor','/timercontrol':'Timer Control','/messagecontrol':'Message Control','/rundown':'Rundown'};
+  const isView = ['/timer','/countdown','/backstage','/studio','/timeline','/info'].includes(src);
+  if (src === '/studio') {
+    el(`<div class="full"><div class="big" id="t" style="color:#fff;font-size:18vh"></div>
+        <div style="color:#5a6470;font-size:3vh;letter-spacing:0.2em">STUDIO CLOCK</div></div>`);
+    setInterval(() => { document.getElementById('t').textContent = new Date().toLocaleTimeString(); }, 250);
+  } else if (isView) {
+    el(`<div class="full">
+        <div style="color:#9aa3ad;font-size:3.4vh">Sound check</div>
+        <div class="big" id="t" style="color:#fff;font-size:20vh"></div>
+        <div style="width:70vw;height:1.6vh;background:#1c2127;border-radius:1vh"><div id="p" style="height:100%;background:#2FD97B;border-radius:1vh"></div></div>
+        <div style="color:#5a6470;font-size:2.6vh;letter-spacing:0.15em">${names[src].toUpperCase()} · ONTIME</div></div>`);
+    timerLoop(rem => {
+      document.getElementById('t').textContent = fmt(Math.max(rem, 0));
+      document.getElementById('p').style.width = Math.max(rem / DUR * 100, 0) + '%';
+    });
+  } else {
+    el(`<div class="full" style="background:#101418">
+        <div style="color:#e8ecef;font-size:5vh;font-weight:600">${names[src]}</div>
+        <div style="color:#5a6470;font-size:2.8vh;max-width:70vw">OnTime's ${names[src]} interface — an operator control surface, shown here as a placeholder in the demo</div></div>`);
+  }
+}
+else if (src === 'welcome' || src === 'config') {
+  el(`<div class="full" style="background:#0B0D10">${markSvg(1)}
+      <div style="color:#e8ecef;font-size:4.4vh;font-weight:700;letter-spacing:0.35em">DOWNSTAGE <span style="color:#2fd97b">ONE</span></div>
+      <div style="color:#2fd97b;font-family:monospace;font-size:4vh">downstage-0001.local:8080</div>
+      <div style="color:#565e66;font-size:2.4vh">set up from any browser on the same network</div>
+      <div style="color:#3d444c;font-size:2vh">DS1-A-2607-0001</div></div>`);
+}
+else if (src === 'holding') {
+  el(`<div class="full">${markSvg(0.5)}
+      <div style="color:#3d444c;font-size:2.6vh;letter-spacing:0.45em;font-weight:600">DOWNSTAGE</div>
+      <div style="color:#565e66;font-size:3.4vh">OnTime server is off</div>
+      <div style="color:#2a2f35;font-size:2.2vh">This display reconnects automatically</div></div>`);
+}
+else if (src === 'external') {
+  el(`<div class="full" style="background:#fff">
+      <div style="font-size:12vh">🌐</div>
+      <div style="color:#333;font-size:3.6vh;font-family:monospace">${(q.get('url') || 'https://example.com').slice(0, 60)}</div>
+      <div style="color:#999;font-size:2.4vh">External Viewer — the unit shows this page full-screen</div></div>`);
+}
+else if (src === 'off' || src === 'blackout') {
+  el('');
+}
+else if (src.startsWith('pattern-')) {
+  const name = src.replace('pattern-', '');
+  stage.innerHTML = '<canvas id="c"></canvas>';
+  const cv = document.getElementById('c'), x = cv.getContext('2d');
+  function draw() {
+    const W = cv.width = innerWidth, H = cv.height = innerHeight;
+    x.fillStyle = '#000'; x.fillRect(0, 0, W, H);
+    const mono = px => px + "px 'Courier New', monospace";
+    function grid(color) {
+      x.strokeStyle = color; x.lineWidth = 1;
+      const step = W / 16;
+      for (let i = 0; i <= 16; i++) { x.beginPath(); x.moveTo(i*step, 0); x.lineTo(i*step, H); x.stroke(); }
+      for (let j = 0; j <= Math.ceil(H/step); j++) { x.beginPath(); x.moveTo(0, j*step); x.lineTo(W, j*step); x.stroke(); }
+    }
+    function circles() {
+      x.strokeStyle = '#E8ECEF'; x.lineWidth = 2;
+      const r = H * 0.12;
+      [[r, r], [W-r, r], [r, H-r], [W-r, H-r]].forEach(([cx, cy]) => {
+        x.beginPath(); x.arc(cx, cy, r-1, 0, 7); x.stroke();
+        x.fillStyle = '#fff'; x.beginPath(); x.arc(cx, cy, r*0.3, 0, 7); x.fill();
+      });
+      x.beginPath(); x.arc(W/2, H/2, H/2 - 1, 0, 7); x.stroke();
+    }
+    function label(txt, y) {
+      x.font = 'bold ' + mono(H*0.022);
+      x.textAlign = 'center'; x.textBaseline = 'middle';
+      const tw = x.measureText(txt).width, bw = tw + H*0.06, bh = H*0.055;
+      x.fillStyle = '#000'; x.fillRect(W/2 - bw/2, y - bh/2, bw, bh);
+      x.strokeStyle = '#E8ECEF'; x.lineWidth = 2; x.strokeRect(W/2 - bw/2, y - bh/2, bw, bh);
+      x.fillStyle = '#E8ECEF'; x.fillText(txt, W/2, y);
+      x.textBaseline = 'alphabetic';
+    }
+    function aspect() {
+      const r = W / H;
+      const known = [[16/9, '16:9'], [16/10, '16:10'], [4/3, '4:3'], [21/9, '21:9'], [1, '1:1'], [9/16, '9:16']];
+      for (const [v, n] of known) if (Math.abs(r - v) < 0.02) return n;
+      return r.toFixed(2) + ':1';
+    }
+    if (name === 'bars') {
+      const cols = ['#c0c0c0','#c0c000','#00c0c0','#00c000','#c000c0','#c00000','#0000c0'];
+      const bw = W / 7, h1 = H * 0.67;
+      cols.forEach((c, i) => { x.fillStyle = c; x.fillRect(i*bw, 0, bw+1, h1); });
+      const rev = ['#0000c0','#131313','#c000c0','#131313','#00c0c0','#131313','#c0c0c0'];
+      rev.forEach((c, i) => { x.fillStyle = c; x.fillRect(i*bw, h1, bw+1, H*0.08); });
+      const y2 = h1 + H*0.08;
+      const plu = [['#00214c', W*0.25], ['#fff', W*0.125], ['#32006a', W*0.125], ['#131313', W*0.5]];
+      let px0 = 0;
+      plu.forEach(([c, w]) => { x.fillStyle = c; x.fillRect(px0, y2, w+1, H - y2); px0 += w; });
+    }
+    else if (name === 'grid') {
+      grid('#E8ECEF'); circles();
+      x.strokeStyle = '#2FD97B'; x.lineWidth = 3;
+      x.strokeRect(1, 1, W-2, H-2);
+      x.beginPath(); x.moveTo(W/2, H*0.42); x.lineTo(W/2, H*0.58); x.stroke();
+      x.beginPath(); x.moveTo(W*0.46, H/2); x.lineTo(W*0.54, H/2); x.stroke();
+      label(W + ' x ' + H, H*0.9);
+    }
+    else if (name === 'ramp') {
+      const g = x.createLinearGradient(0, 0, W, 0);
+      g.addColorStop(0, '#000'); g.addColorStop(1, '#fff');
+      x.fillStyle = g; x.fillRect(0, 0, W, H*0.45);
+      for (let i = 0; i < 12; i++) {
+        const v = Math.round(255 * (i / 11));
+        x.fillStyle = 'rgb(' + v + ',' + v + ',' + v + ')';
+        x.fillRect(i * W/12, H*0.5, W/12+1, H*0.25);
+        x.fillStyle = v > 128 ? '#000' : '#fff'; x.font = mono(H*0.02); x.textAlign = 'center';
+        x.fillText(Math.round(i/11*100) + '%', i*W/12 + W/24, H*0.63);
+      }
+    }
+    else {
+      grid('#3a3a3a'); circles();
+      x.strokeStyle = '#fff'; x.lineWidth = 4;
+      x.strokeRect(2, 2, W-4, H-4);
+      const bx = W*0.125, bw2 = W*0.75;
+      const hues = ['#f00','#f80','#ff0','#8f0','#0f0','#0f8','#0ff','#08f','#00f','#80f','#f0f','#f08'];
+      hues.forEach((c, i) => { x.fillStyle = c; x.fillRect(bx + i*bw2/12, H*0.2, bw2/12 - 4, H*0.11); });
+      ['#f00', '#0f0', '#00f'].forEach((c, k) => {
+        const g = x.createLinearGradient(bx, 0, bx + bw2, 0);
+        g.addColorStop(0, '#000'); g.addColorStop(0.75, c); g.addColorStop(1, '#fff');
+        x.fillStyle = g; x.fillRect(bx, H*(0.34 + k*0.075), bw2, H*0.07);
+      });
+      for (let i = 0; i < 12; i++) {
+        const v = Math.round(255 * (i / 11));
+        x.fillStyle = 'rgb(' + v + ',' + v + ',' + v + ')';
+        x.fillRect(bx + i*bw2/12, H*0.6, bw2/12 - 4, H*0.1);
+        x.fillStyle = v > 128 ? '#000' : '#fff'; x.font = mono(H*0.016); x.textAlign = 'center';
+        x.fillText(Math.round(i/11*100) + '%', bx + i*bw2/12 + bw2/24, H*0.66);
+      }
+      label('DOWNSTAGE  ·  ' + W + ' x ' + H + '  ·  ' + aspect(), H*0.83);
+    }
+  }
+  draw(); addEventListener('resize', draw);
+}
+else {
+  el(`<div class="full"><div style="color:#565e66;font-size:3vh">${src}</div></div>`);
+}
+
+// identify overlay
+if (q.get('identify')) {
+  const d = document.createElement('div');
+  d.className = 'idbox';
+  d.innerHTML = `<div class="n">${q.get('identify')}</div><div style="font-size:4vh">HDMI ${q.get('identify')}</div>`;
+  document.body.appendChild(d);
+  setTimeout(() => d.remove(), 4000);
+}
+</script></body></html>
