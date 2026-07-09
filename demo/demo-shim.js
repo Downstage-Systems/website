@@ -1,6 +1,11 @@
 // Downstage demo shim — replaces the unit's REST API with an in-browser
 // simulator so the real setup page runs with no hardware behind it.
 (function () {
+  // the previews are simulated iframes, never real MJPEG streams — kill the
+  // "No signal" overlay hard so a failed /stream request can never paint it
+  const _s = document.createElement('style');
+  _s.textContent = '.preview-offline{display:none!important}';
+  (document.head || document.documentElement).appendChild(_s);
   const S = {
     mode: 'local', ip: '',
     hdmi1_source: 'cleantimer', hdmi2_source: 'pattern-card',
@@ -177,7 +182,7 @@
       f.style.cssText = 'width:100%;height:100%;border:0;pointer-events:none;display:block;aspect-ratio:16/9;background:#000';
       img.replaceWith(f);
       const off = document.getElementById(`preview-off-${n}`);
-      if (off) off.style.display = 'none';
+      if (off) off.remove();
       frames[n] = f;
     }
     syncScreens(true);
