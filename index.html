@@ -164,6 +164,20 @@
       .hero { padding: 72px 0 60px; }
       .hero-ctas .btn { width: 100%; text-align: center; }
     }
+
+    /* ── Signup ── */
+    .signup-band { text-align: center; }
+    .signup-form { display: flex; gap: 10px; max-width: 480px; margin: 26px auto 0; flex-wrap: wrap; justify-content: center; }
+    .signup-form input[type=email] {
+      flex: 1 1 260px; min-width: 0; font-family: var(--body); font-size: 15px;
+      padding: 13px 16px; border-radius: 9px; background: var(--panel);
+      border: 1px solid var(--edge); color: var(--text); outline: none;
+    }
+    .signup-form input[type=email]::placeholder { color: var(--dim2); }
+    .signup-form input[type=email]:focus { border-color: var(--green); }
+    .signup-form button { border: none; cursor: pointer; }
+    .signup-note { color: var(--dim2); font-size: 13px; margin-top: 14px; }
+    .signup-ok { color: var(--green); font-size: 15px; margin-top: 20px; min-height: 20px; }
   </style>
 </head>
 <body>
@@ -387,6 +401,56 @@
     </p>
   </div>
 </section>
+
+<section id="signup">
+  <div class="wrap signup-band">
+    <div class="eyebrow">Stay connected</div>
+    <h2>Be first through the doors</h2>
+    <p class="section-lede" style="margin: 16px auto 0;">
+      Downstage is heading toward launch. Leave your email and we'll tell you when units are
+      available, when the founder's batch opens, and when the build videos drop. No spam — just
+      the launch, and the occasional useful thing.
+    </p>
+    <form class="signup-form" id="signup-form" onsubmit="return joinList(event)">
+      <input type="email" id="signup-email" placeholder="you@yourcompany.com" required autocomplete="email" aria-label="Email address">
+      <button type="submit" class="btn btn-solid">Notify me</button>
+    </form>
+    <div class="signup-ok" id="signup-ok"></div>
+    <p class="signup-note">We'll only email about Downstage. Unsubscribe anytime.</p>
+  </div>
+</section>
+
+<script>
+  // Set this to your email-service form endpoint (MailerLite / Buttondown / Kit /
+  // Formspree). Until then, the form falls back to opening a pre-filled email so
+  // it always does something and never looks broken.
+  const SIGNUP_ENDPOINT = '';  // e.g. 'https://assets.mailerlite.com/jsonp/XXXX/subscribe'
+  function joinList(e) {
+    e.preventDefault();
+    const email = document.getElementById('signup-email').value.trim();
+    const ok = document.getElementById('signup-ok');
+    if (!email) return false;
+    if (!SIGNUP_ENDPOINT) {
+      // no service wired yet — open a pre-filled email to the founder inbox
+      window.location.href = 'mailto:hello@downstage.systems'
+        + '?subject=' + encodeURIComponent('Add me to the Downstage list')
+        + '&body=' + encodeURIComponent('Please add ' + email + ' to the launch list.');
+      ok.textContent = 'Opening your email app — hit send and you\'re on the list.';
+      return false;
+    }
+    fetch(SIGNUP_ENDPOINT, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email })
+    }).then(() => {
+      document.getElementById('signup-form').reset();
+      ok.textContent = 'You\'re on the list. See you at doors.';
+    }).catch(() => {
+      ok.textContent = 'Something went wrong — email hello@downstage.systems and we\'ll add you.';
+    });
+    return false;
+  }
+</script>
 
 <section id="opensource">
   <div class="wrap">
