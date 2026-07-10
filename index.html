@@ -421,32 +421,28 @@
 </section>
 
 <script>
-  // Set this to your email-service form endpoint (MailerLite / Buttondown / Kit /
-  // Formspree). Until then, the form falls back to opening a pre-filled email so
-  // it always does something and never looks broken.
-  const SIGNUP_ENDPOINT = '';  // e.g. 'https://assets.mailerlite.com/jsonp/XXXX/subscribe'
+  // MailerLite embedded-form endpoint (account 2501298, form 192577505529431556).
+  // Posts the same fields MailerLite's own form does, so signups land in the list.
+  const SIGNUP_ENDPOINT = 'https://assets.mailerlite.com/jsonp/2501298/forms/192577505529431556/subscribe';
   function joinList(e) {
     e.preventDefault();
     const email = document.getElementById('signup-email').value.trim();
     const ok = document.getElementById('signup-ok');
     if (!email) return false;
-    if (!SIGNUP_ENDPOINT) {
-      // no service wired yet — open a pre-filled email to the founder inbox
-      window.location.href = 'mailto:hello@downstage.systems'
-        + '?subject=' + encodeURIComponent('Add me to the Downstage list')
-        + '&body=' + encodeURIComponent('Please add ' + email + ' to the launch list.');
-      ok.textContent = 'Opening your email app — hit send and you\'re on the list.';
-      return false;
-    }
+    const body = new URLSearchParams();
+    body.append('fields[email]', email);
+    body.append('ml-submit', '1');
+    body.append('anticsrf', 'true');
+    ok.textContent = 'Adding you\u2026';
     fetch(SIGNUP_ENDPOINT, {
       method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email })
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: body.toString()
     }).then(() => {
       document.getElementById('signup-form').reset();
       ok.textContent = 'You\'re on the list. See you at doors.';
     }).catch(() => {
-      ok.textContent = 'Something went wrong — email hello@downstage.systems and we\'ll add you.';
+      ok.textContent = 'Something went wrong \u2014 email hello@downstage.systems and we\'ll add you.';
     });
     return false;
   }
