@@ -110,6 +110,14 @@
       return { ok: true, output: n, testcard: S.testcard[n] };
     },
     '/displays/resync': () => { syncScreens(true); return { ok: true }; },
+    '/displays/swap': () => {
+      [S.hdmi1_source, S.hdmi2_source] = [S.hdmi2_source, S.hdmi1_source];
+      [S.hdmi1_external_url, S.hdmi2_external_url] = [S.hdmi2_external_url, S.hdmi1_external_url];
+      [S.ct[1], S.ct[2]] = [S.ct[2], S.ct[1]];
+      S.testcard[1] = S.testcard[2] = false;
+      syncScreens();
+      return { ok: true, hdmi1_source: S.hdmi1_source, hdmi2_source: S.hdmi2_source };
+    },
     '/refresh': () => { syncScreens(true); return { ok: true }; },
     '/displays/identify': () => { identify(); return { ok: true, displays: 2 }; },
     '/displays/power': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),

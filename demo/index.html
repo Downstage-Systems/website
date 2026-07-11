@@ -257,6 +257,11 @@
       pointer-events: none;
     }
 
+    .preview-hint {
+      font-size: 11px; color: var(--muted2);
+      margin: 6px 2px 2px; letter-spacing: 0.02em;
+    }
+
     .preview-offline {
       position: absolute; inset: 0;
       display: flex; align-items: center; justify-content: center;
@@ -859,6 +864,8 @@
             <div class="preview-badge">HDMI 2</div>
           </div>
         </div>
+
+        <div class="preview-hint">Right-click a preview (long-press on phones) for quick actions</div>
 
         <!-- Display controls — act on the outputs previewed above -->
         <div class="display-ctl-row">
@@ -2189,13 +2196,17 @@
     else    { outState.blackout = outState.blackout.filter(x => x !== n); }
     showToast(on ? `HDMI ${n} blacked out.` : `HDMI ${n} resumed.`, on ? 'info' : 'success');
   }
-  function ctxSwapSources() {
+  async function ctxSwapSources() {
     closeCtxMenu();
-    [hdmi1Source, hdmi2Source] = [hdmi2Source, hdmi1Source];
+    showToast('Swapping HDMI 1 and 2…', 'info');
+    const r = await fetch('/displays/swap', { method: 'POST' });
+    const d = await r.json();
+    if (!d.ok) { showToast('Swap failed.', 'error'); return; }
+    hdmi1Source = d.hdmi1_source; hdmi2Source = d.hdmi2_source;
     [hdmi1ExternalUrl, hdmi2ExternalUrl] = [hdmi2ExternalUrl, hdmi1ExternalUrl];
     [ctOpts[1], ctOpts[2]] = [ctOpts[2], ctOpts[1]];
-    refreshSourceGrid(); updateHdmiLabels(); markDirty();
-    showToast('Sources swapped — Save to apply.', 'info');
+    refreshSourceGrid(); updateHdmiLabels();
+    showToast('Sources swapped.', 'success');
   }
 
   // ── Show / Full view mode — persisted per browser ──
