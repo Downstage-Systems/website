@@ -880,14 +880,12 @@
         <!-- Live previews -->
         <div class="preview-row" id="preview-row">
           <div class="preview-box active" id="preview-box-1" onclick="selectHdmiTab(1)" oncontextmenu="openPreviewMenu(event, 1)">
-            <img id="preview-img-1" src="/stream/hdmi1"
-                 onerror="this.style.display='none';document.getElementById('preview-off-1').style.display='flex'">
+            <img id="preview-img-1" alt="">
             <div class="preview-offline" id="preview-off-1" style="display:none">No signal</div>
             <div class="preview-badge">HDMI 1</div>
           </div>
           <div class="preview-box" id="preview-box-2" onclick="selectHdmiTab(2)" oncontextmenu="openPreviewMenu(event, 2)">
-            <img id="preview-img-2" src="/stream/hdmi2"
-                 onerror="this.style.display='none';document.getElementById('preview-off-2').style.display='flex'">
+            <img id="preview-img-2" alt="">
             <div class="preview-offline" id="preview-off-2" style="display:none">No signal</div>
             <div class="preview-badge">HDMI 2</div>
           </div>
@@ -2199,10 +2197,7 @@
   }
   function ctxRefreshPreview(n) {
     closeCtxMenu();
-    const img = document.getElementById('preview-img-' + n);
-    const off = document.getElementById('preview-off-' + n);
-    if (off) off.style.display = 'none';
-    if (img) { img.style.display = ''; img.src = '/stream/hdmi' + n + '?t=' + Date.now(); }
+    armPreview(n);
   }
   function ctxIdentify() { closeCtxMenu(); identifyDisplays(); }
   function ctxBlackout() { closeCtxMenu(); blackout(); }
@@ -2263,18 +2258,28 @@
     showToast('Displays refreshed.', 'success');
   }
 
-  // Restart just the two MJPEG preview streams — cache-bust the img src so a
-  // fresh ffmpeg grab starts at current display geometry. Outputs untouched.
+  // Arm a preview with a cache-busted stream URL. If the stream fails (the
+  // server may still be reaping the last page-load's grab), retry with
+  // backoff instead of parking on "No signal" forever.
+  function armPreview(n, attempt = 0) {
+    const img = document.getElementById('preview-img-' + n);
+    const off = document.getElementById('preview-off-' + n);
+    if (!img) return;
+    img.onerror = () => {
+      img.style.display = 'none';
+      if (off) off.style.display = 'flex';
+      if (attempt < 4) setTimeout(() => armPreview(n, attempt + 1), 1500 * (attempt + 1));
+    };
+    if (off) off.style.display = 'none';
+    img.style.display = '';
+    img.src = '/stream/hdmi' + n + '?t=' + Date.now();
+  }
+  armPreview(1); armPreview(2);
+
+  // Restart just the two MJPEG preview streams — fresh ffmpeg grabs at
+  // current display geometry. Outputs untouched.
   function refreshPreviews() {
-    for (const n of [1, 2]) {
-      const img = document.getElementById('preview-img-' + n);
-      const off = document.getElementById('preview-off-' + n);
-      if (off) off.style.display = 'none';
-      if (img) {
-        img.style.display = '';
-        img.src = '/stream/hdmi' + n + '?t=' + Date.now();
-      }
-    }
+    armPreview(1); armPreview(2);
     showToast('Previews refreshed.', 'success');
   }
 
