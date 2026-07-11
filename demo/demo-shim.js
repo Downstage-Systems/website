@@ -300,17 +300,22 @@
     const st = document.createElement('style');
     st.textContent =
       '#demo-ribbon{position:fixed;top:0;right:0;z-index:9999;background:#2FD97B;color:#0B0D10;' +
-      'font:600 12px system-ui;padding:6px 14px;border-radius:0 0 0 10px;letter-spacing:0.05em}' +
+      'font:600 12px system-ui;padding:5px 14px;border-radius:0 0 0 10px;letter-spacing:0.05em;' +
+      'display:flex;align-items:center;gap:12px}' +
       '#demo-ribbon a{color:#0B0D10}' +
-      '@media(max-width:600px){#demo-ribbon{left:0;right:0;border-radius:0;text-align:center;padding:7px 8px}' +
-      'body{padding-top:36px}}';
+      '#demo-ribbon .seg{display:inline-flex;background:#0B0D10;border-radius:7px;padding:2px}' +
+      '#demo-ribbon .seg a,#demo-ribbon .seg b{padding:2px 11px;border-radius:5px;text-decoration:none;font-weight:700}' +
+      '#demo-ribbon .seg b{background:#fff;color:#0B0D10}' +
+      '#demo-ribbon .seg a{color:#e8ecef}' +
+      '@media(max-width:600px){#demo-ribbon{left:0;right:0;border-radius:0;justify-content:center;padding:5px 8px}' +
+      'body{padding-top:38px}}';
     document.head.appendChild(st);
     const d = document.createElement('div');
     d.id = 'demo-ribbon';
-    d.innerHTML = 'DEMO&nbsp;&nbsp;'
-      + '<b>One</b> · <a href="view/">View</a>&nbsp;&nbsp;'
+    d.innerHTML = 'DEMO'
+      + '<span class="seg"><b>One</b><a href="view/">View</a></span>'
       + '<a href="#" onclick="location.reload();return false" style="text-decoration:underline">reset</a>'
-      + '&nbsp;&nbsp;<a href="/" style="text-decoration:underline">exit demo</a>';
+      + '<a href="/" style="text-decoration:underline">exit demo</a>';
     document.body.appendChild(d);
   }
 
