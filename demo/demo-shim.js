@@ -294,14 +294,23 @@
     if (e.type === 'click') silly();
   }
 
-  // demo ribbon
+  // demo ribbon: product toggle + reset/exit, mobile-safe (full-width strip
+  // on phones so it never overlaps the logo)
   function ribbon() {
+    const st = document.createElement('style');
+    st.textContent =
+      '#demo-ribbon{position:fixed;top:0;right:0;z-index:9999;background:#2FD97B;color:#0B0D10;' +
+      'font:600 12px system-ui;padding:6px 14px;border-radius:0 0 0 10px;letter-spacing:0.05em}' +
+      '#demo-ribbon a{color:#0B0D10}' +
+      '@media(max-width:600px){#demo-ribbon{left:0;right:0;border-radius:0;text-align:center;padding:7px 8px}' +
+      'body{padding-top:36px}}';
+    document.head.appendChild(st);
     const d = document.createElement('div');
     d.id = 'demo-ribbon';
-    d.innerHTML = 'DEMO — simulated unit&nbsp;&nbsp;'
-      + '<a href="#" onclick="location.reload();return false" style="color:#0B0D10;text-decoration:underline">reset</a>'
-      + '&nbsp;&nbsp;<a href="/" style="color:#0B0D10;text-decoration:underline">exit demo</a>';
-    d.style.cssText = 'position:fixed;top:0;right:0;z-index:9999;background:#2FD97B;color:#0B0D10;font:600 12px system-ui;padding:6px 14px;border-radius:0 0 0 10px;letter-spacing:0.05em';
+    d.innerHTML = 'DEMO&nbsp;&nbsp;'
+      + '<b>One</b> · <a href="view/">View</a>&nbsp;&nbsp;'
+      + '<a href="#" onclick="location.reload();return false" style="text-decoration:underline">reset</a>'
+      + '&nbsp;&nbsp;<a href="/" style="text-decoration:underline">exit demo</a>';
     document.body.appendChild(d);
   }
 

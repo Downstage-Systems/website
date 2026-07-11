@@ -35,3 +35,26 @@ html = html.replace("<title>", "<title>Demo — ", 1) if "<title>" in html else 
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 open(OUT, "w").write(html)
 print("wrote", OUT, len(html), "bytes")
+
+# ── Downstage View demo ───────────────────────────────────────────────────────
+SRC_VIEW = os.path.expanduser("~/downstage-os/view/templates/index.html")
+OUT_VIEW = os.path.join(os.path.dirname(os.path.abspath(__file__)), "demo", "view", "index.html")
+
+view_config = {
+    "ip": "192.168.1.20", "source": "cleantimer", "external_url": "",
+    "cleantimer_freeze": True, "cleantimer_hideprogress": True,
+    "cleantimer_hideclock": True, "cleantimer_hidecards": True,
+    "cleantimer_keycolour": "000000", "cleantimer_timercolour": "ffffff",
+}
+
+class VCfg(dict):
+    __getattr__ = lambda self, k: self.get(k)
+
+tpl_v = env.from_string(open(SRC_VIEW).read())
+html_v = tpl_v.render(config=VCfg(view_config), local_ip="192.168.1.31",
+                      hostname="downstage-v001", ip_history=[])
+html_v = html_v.replace("<body>", '<body>\n<script src="demo-shim.js"></script>', 1)
+html_v = html_v.replace("<title>", "<title>Demo — ", 1) if "<title>" in html_v else html_v
+os.makedirs(os.path.dirname(OUT_VIEW), exist_ok=True)
+open(OUT_VIEW, "w").write(html_v)
+print("wrote", OUT_VIEW, len(html_v), "bytes")
