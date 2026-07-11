@@ -16,7 +16,8 @@
       1: { freeze: true, hideprogress: true, hideclock: true, hidecards: true, keycolour: '000000', timercolour: 'ffffff' },
       2: { freeze: true, hideprogress: true, hideclock: true, hidecards: true, keycolour: '000000', timercolour: 'ffffff' },
     },
-    watchdog: true, blackout: false, ontime_running: true,
+    watchdog: true, blackout: false, blackoutOut: { 1: false, 2: false },
+    testcard: { 1: false, 2: false }, ontime_running: true,
     hotspot: false, outputPower: { 1: true, 2: true },
     presets: [
       { name: 'Show', hdmi1_source: 'cleantimer', hdmi2_source: '/timer' },
@@ -44,7 +45,10 @@
       local_ip: '192.168.1.20', net_iface: 'eth0', displays: 2,
       ontime_installed: true, ontime_running: S.ontime_running,
       companion_installed: true, companion_running: true,
-      blackout: S.blackout, watchdog: S.watchdog,
+      blackout: S.blackout || S.blackoutOut[1] || S.blackoutOut[2],
+      blackout_outputs: [1, 2].filter(n => S.blackout || S.blackoutOut[n]),
+      testcard_outputs: [1, 2].filter(n => S.testcard[n]),
+      watchdog: S.watchdog,
       hotspot_active: S.hotspot, hotspot_ssid: 'Downstage-0001',
       cpu_temp: jig(51, 3) + '°C', cpu_percent: jig(7, 5),
       gpu_clock_mhz: 500, ram_used: Math.round(jig(1450, 60)), ram_total: 4045,
@@ -68,6 +72,8 @@
         if (v !== undefined) S.ct[n][k] = v;
       }
       S.blackout = false;
+      S.blackoutOut[1] = S.blackoutOut[2] = false;
+      S.testcard[1] = S.testcard[2] = false;
       syncScreens();
       return { ok: true };
     },
@@ -84,8 +90,26 @@
       return { ok: !!p, hdmi1_source: S.hdmi1_source, hdmi2_source: S.hdmi2_source };
     },
     '/presets/delete': (b) => { S.presets = S.presets.filter(p => p.name !== b.name); return { ok: true, presets: S.presets }; },
-    '/blackout': () => { S.blackout = true; syncScreens(); return { ok: true, blackout: true }; },
-    '/blackout/clear': () => { S.blackout = false; syncScreens(); return { ok: true, blackout: false }; },
+    '/blackout': (b) => {
+      if (b && (b.output === 1 || b.output === 2)) S.blackoutOut[b.output] = true;
+      else S.blackout = true;
+      syncScreens();
+      return { ok: true, blackout: true, outputs: [1, 2].filter(n => S.blackout || S.blackoutOut[n]) };
+    },
+    '/blackout/clear': (b) => {
+      if (b && (b.output === 1 || b.output === 2)) S.blackoutOut[b.output] = false;
+      else { S.blackout = false; S.blackoutOut[1] = S.blackoutOut[2] = false; }
+      syncScreens();
+      const outs = [1, 2].filter(n => S.blackout || S.blackoutOut[n]);
+      return { ok: true, blackout: outs.length > 0, outputs: outs };
+    },
+    '/displays/testcard': (b) => {
+      const n = (b && (b.output === 1 || b.output === 2)) ? b.output : 1;
+      S.testcard[n] = !(b && b.on === false);
+      syncScreens();
+      return { ok: true, output: n, testcard: S.testcard[n] };
+    },
+    '/displays/resync': () => { syncScreens(true); return { ok: true }; },
     '/refresh': () => { syncScreens(true); return { ok: true }; },
     '/displays/identify': () => { identify(); return { ok: true, displays: 2 }; },
     '/displays/power': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),
@@ -159,7 +183,8 @@
   // ── preview windows: swap MJPEG <img> for live simulated screens ──
   function screenUrl(n) {
     if (!S.outputPower[n]) return 'screen.html?src=off';
-    if (S.blackout) return 'screen.html?src=blackout';
+    if (S.blackout || S.blackoutOut[n]) return 'screen.html?src=blackout';
+    if (S.testcard[n]) return 'screen.html?src=pattern-card';
     let src = S[`hdmi${n}_source`];
     const unconfigured = S.mode === 'remote' && !S.ip;
     const ontimeSrc = !['config', 'off', 'external'].includes(src) && !src.startsWith('pattern-');
@@ -216,18 +241,21 @@
     'Disabled in demo mode. Unlike show bacon, which is always enabled.',
     'This button is off duty. Kind of like the one guy who forgot to hit record.',
   ];
-  let lastToast = 0;
+  let lastToast = 0, sillyTimers = [];
   function silly() {
     const now = Date.now();
     if (now - lastToast < 700) return;
     lastToast = now;
+    // cancel any pending re-assert from the previous quip — otherwise old
+    // jokes resurface on top of the new one, a few at a time
+    sillyTimers.forEach(clearTimeout);
+    sillyTimers = [];
     const msg = SILLY[Math.floor(Math.random() * SILLY.length)];
     if (typeof window.showToast === 'function') {
       // the page hides info toasts after 3.5s; its timer is private, so
-      // re-assert the same toast twice — jokes get ~10 seconds to land
+      // re-assert once — jokes get ~6.5 seconds to land
       window.showToast(msg, 'info');
-      setTimeout(() => window.showToast(msg, 'info'), 3200);
-      setTimeout(() => window.showToast(msg, 'info'), 6400);
+      sillyTimers.push(setTimeout(() => window.showToast(msg, 'info'), 3000));
     } else console.log(msg);
   }
   function markAllowed() {
@@ -236,6 +264,10 @@
       if (l && /display sources/i.test(l.textContent)) f.dataset.demoOk = '1';
     });
     document.querySelectorAll('.save-bar').forEach(b => { b.dataset.demoOk = '1'; });
+    // Show/Full tabs and the preview right-click menu are demo-safe
+    document.querySelectorAll('.view-toggle').forEach(b => { b.dataset.demoOk = '1'; });
+    const ctx = document.getElementById('ctx-menu');
+    if (ctx) ctx.dataset.demoOk = '1';
     document.querySelectorAll('button').forEach(b => {
       if (b.textContent.trim() === 'Save & Apply') {
         b.dataset.demoOk = '1';
