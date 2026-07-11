@@ -274,6 +274,8 @@
     document.querySelectorAll('.save-bar').forEach(b => { b.dataset.demoOk = '1'; });
     // Show/Full tabs and the preview right-click menu are demo-safe
     document.querySelectorAll('.view-toggle').forEach(b => { b.dataset.demoOk = '1'; });
+    // the blackout banner's Resume button must work in the demo too
+    document.querySelectorAll('.alert-bar').forEach(b => { b.dataset.demoOk = '1'; });
     const ctx = document.getElementById('ctx-menu');
     if (ctx) ctx.dataset.demoOk = '1';
     document.querySelectorAll('button').forEach(b => {

@@ -206,6 +206,8 @@ else {
 if (q.get('identify')) {
   const d = document.createElement('div');
   d.className = 'idbox';
+  // colour identity matches the real unit: HDMI 1 light blue, HDMI 2 green
+  if (q.get('identify') === '1') d.style.background = '#2E90D9';
   d.innerHTML = `<div class="n">${q.get('identify')}</div><div style="font-size:4vh">HDMI ${q.get('identify')}</div>`;
   document.body.appendChild(d);
   setTimeout(() => d.remove(), 4000);
