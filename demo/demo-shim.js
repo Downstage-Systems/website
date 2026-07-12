@@ -291,7 +291,6 @@
     const interactive = t.closest('button, select, input, textarea, a, .toggle, .channel-btn');
     if (!interactive) return;
     if (t.closest('[data-demo-ok]') || t.closest('#demo-ribbon')) return;
-    if (/downloadCompanionConfig/.test(interactive.getAttribute && (interactive.getAttribute('onclick') || ''))) return;
     e.preventDefault();
     e.stopImmediatePropagation ? e.stopImmediatePropagation() : e.stopPropagation();
     if (e.type === 'click') silly();
@@ -328,19 +327,6 @@
   }
 
   function arm() {
-    // demo download: a small text file instead of the unit's real tarball
-    window.downloadCompanionConfig = function () {
-      const txt = 'Downstage demo — simulated Companion config backup\n\n' +
-        'On a real unit this file is a tar.gz of the full Companion config tree:\n' +
-        'pages, connections, surfaces, and every version directory.\n\n' +
-        'Keep one before every Companion update.\n';
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain' }));
-      a.download = 'companion-config-demo-unit.txt';
-      a.click();
-      URL.revokeObjectURL(a.href);
-      if (typeof window.showToast === 'function') window.showToast('Demo backup downloaded — on a real unit this is the full config archive.', 'success');
-    };
     makeFrames(); ribbon(); markAllowed();
     document.addEventListener('pointerdown', guard, true);
     document.addEventListener('click', guard, true);
