@@ -304,7 +304,7 @@
       '#demo-ribbon{position:fixed;top:0;left:0;right:0;z-index:9999;background:#2FD97B;color:#0B0D10;' +
       'font:600 12px system-ui;padding:5px 14px;letter-spacing:0.05em;' +
       'display:flex;align-items:center;justify-content:center;gap:12px}' +
-      'body{padding-top:34px}' +
+      'body{padding-top:56px}' +
       '#demo-ribbon a{color:#0B0D10}' +
       '#demo-ribbon .seg{display:inline-flex;background:#0B0D10;border-radius:7px;padding:2px}' +
       '#demo-ribbon .seg a,#demo-ribbon .seg b{padding:2px 11px;border-radius:5px;text-decoration:none;font-weight:700}' +
@@ -314,7 +314,7 @@
       '@media(max-width:600px){#demo-ribbon{padding:4px 8px 6px;' +
       'flex-wrap:wrap;row-gap:3px;column-gap:10px}' +
       '#demo-ribbon .note{flex-basis:100%;text-align:center;font-size:11px;order:-1;opacity:0.95}' +
-      'body{padding-top:64px}}';
+      'body{padding-top:84px}}';
     document.head.appendChild(st);
     const d = document.createElement('div');
     d.id = 'demo-ribbon';
