@@ -135,12 +135,16 @@
       '#demo-ribbon .seg a,#demo-ribbon .seg b{padding:2px 11px;border-radius:5px;text-decoration:none;font-weight:700}' +
       '#demo-ribbon .seg b{background:#fff;color:#0B0D10}' +
       '#demo-ribbon .seg a{color:#e8ecef}' +
-      '@media(max-width:600px){#demo-ribbon{left:0;right:0;border-radius:0;justify-content:center;padding:5px 8px}' +
-      'body{padding-top:38px}}';
+      '#demo-ribbon .note{font-weight:600;opacity:0.85}' +
+      '@media(max-width:600px){#demo-ribbon{left:0;right:0;border-radius:0;justify-content:center;padding:4px 8px 6px;' +
+      'flex-wrap:wrap;row-gap:3px;column-gap:10px}' +
+      '#demo-ribbon .note{flex-basis:100%;text-align:center;font-size:11px;order:-1;opacity:0.95}' +
+      'body{padding-top:64px}}';
     document.head.appendChild(st);
     const d = document.createElement('div');
     d.id = 'demo-ribbon';
     d.innerHTML = 'DEMO'
+      + '<span class="note">This is a simulated unit — click around, nothing real can break.</span>'
       + '<span class="seg"><a href="../">One</a><b>View</b></span>'
       + '<a href="#" onclick="location.reload();return false" style="text-decoration:underline">reset</a>'
       + '<a href="/" style="text-decoration:underline">exit demo</a>';
