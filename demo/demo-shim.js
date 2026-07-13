@@ -41,7 +41,7 @@
       hdmi1_rotate: S.hdmi1_rotate, hdmi2_rotate: S.hdmi2_rotate,
       hdmi1_external_url: S.hdmi1_external_url, hdmi2_external_url: S.hdmi2_external_url,
       connected: S.ontime_running && (S.mode === 'local' || !!S.ip),
-      os_version: '1.2.0', serial: 'Serial #',
+      os_version: '1.4.0', serial: 'Serial #',
       local_ip: '192.168.1.20', net_iface: 'eth0', displays: 2,
       ontime_installed: true, ontime_running: S.ontime_running,
       companion_installed: true, companion_running: true,
@@ -129,7 +129,7 @@
     '/update-status': () => ({
       ontime:    { installed: '4.10.0', latest: '4.10.0', update_available: false, checked: true },
       companion: { installed: '4.3.4', latest: '4.3.4', update_available: false, checked: true, channel: 'stable' },
-      os:        { installed: '1.2.0', latest: '1.2.0', update_available: false, checked: true, last_result: null },
+      os:        { installed: '1.4.0', latest: '1.4.0', update_available: false, checked: true, last_result: null },
     }),
     '/updates/recheck': () => ({ ok: true }),
     '/companion/status': () => ({ installed: true, running: true, install_state: 'done' }),

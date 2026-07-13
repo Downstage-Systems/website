@@ -14,7 +14,7 @@
       connected: true, ip: S.ip, local_ip: '192.168.1.31',
       serial: 'Serial #', source: S.source, external_url: S.external_url,
       watchdog: S.watchdog, watchdog_override: false,
-      os_version: '1.2.1', os_latest: '1.2.1',
+      os_version: '1.4.0', os_latest: '1.4.0',
       os_update_available: false, os_checked: true, os_update_result: null,
     };
   }
