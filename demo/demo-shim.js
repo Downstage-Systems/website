@@ -312,7 +312,8 @@
       '#demo-ribbon{position:fixed;top:0;left:0;right:0;z-index:9999;background:#2FD97B;color:#0B0D10;' +
       'font:600 12px system-ui;padding:5px 14px;letter-spacing:0.05em;' +
       'display:flex;align-items:center;justify-content:center;gap:12px}' +
-      'body{padding-top:56px}' +
+      'body{padding-top:var(--demo-ribbon-h,56px)}' +
+      '.logo-row{top:var(--demo-ribbon-h,56px) !important}' +
       '#demo-ribbon a{color:#0B0D10}' +
       '#demo-ribbon .seg{display:inline-flex;background:#0B0D10;border-radius:7px;padding:2px}' +
       '#demo-ribbon .seg a,#demo-ribbon .seg b{padding:2px 11px;border-radius:5px;text-decoration:none;font-weight:700}' +
@@ -332,6 +333,11 @@
       + '<a href="#" onclick="location.reload();return false" style="text-decoration:underline">reset</a>'
       + '<a href="/" style="text-decoration:underline">exit demo</a>';
     document.body.appendChild(d);
+    // the ribbon wraps differently per width — measure it so the sticky
+    // header tucks exactly beneath, no gap, no overlap
+    const setH = () => document.documentElement.style.setProperty('--demo-ribbon-h', d.offsetHeight + 'px');
+    setH();
+    window.addEventListener('resize', setH);
   }
 
   function arm() {
