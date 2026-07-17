@@ -276,6 +276,12 @@
     document.querySelectorAll('.save-bar').forEach(b => { b.dataset.demoOk = '1'; });
     // Show/Full tabs and the preview right-click menu are demo-safe
     document.querySelectorAll('.view-toggle').forEach(b => { b.dataset.demoOk = '1'; });
+    // the setup tabs are pure navigation — the whole point is seeing each pane
+    const stabs = document.getElementById('setup-tabs');
+    if (stabs) stabs.dataset.demoOk = '1';
+    // Show Mode's blackout tile is fully simulated, let it play
+    const bq = document.getElementById('blackout-btn-quick');
+    if (bq) bq.dataset.demoOk = '1';
     // the blackout banner's Resume button must work in the demo too
     document.querySelectorAll('.alert-bar').forEach(b => { b.dataset.demoOk = '1'; });
     const ctx = document.getElementById('ctx-menu');
