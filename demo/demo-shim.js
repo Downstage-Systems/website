@@ -335,7 +335,7 @@
     document.body.appendChild(d);
     // the ribbon wraps differently per width — measure it so the sticky
     // header tucks exactly beneath, no gap, no overlap
-    const setH = () => document.documentElement.style.setProperty('--demo-ribbon-h', d.offsetHeight + 'px');
+    const setH = () => document.documentElement.style.setProperty('--demo-ribbon-h', (d.offsetHeight + 14) + 'px');
     setH();
     window.addEventListener('resize', setH);
   }
