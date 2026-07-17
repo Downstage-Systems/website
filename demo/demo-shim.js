@@ -128,9 +128,11 @@
     '/ontime/update': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),
     '/update-status': () => ({
       ontime:    { installed: '4.10.0', latest: '4.10.0', update_available: false, checked: true },
-      companion: { installed: '4.3.4', latest: '4.3.4', update_available: false, checked: true, channel: 'stable' },
-      os:        { installed: '1.4.0', latest: '1.4.0', update_available: false, checked: true, last_result: null },
+      companion: { installed: '5.0.1', latest: '5.0.1', update_available: false, checked: true, channel: 'stable' },
+      os:        { installed: '2.0.0', latest: '2.0.0', update_available: false, checked: true, last_result: null },
+      patches:   { tested_through: '2026-07-13', last_applied: '2026-07-13', available: false, checked: true },
     }),
+    '/jobs': () => ({ name: '', label: '', state: 'idle', started: 0, detail: '' }),
     '/updates/recheck': () => ({ ok: true }),
     '/companion/status': () => ({ installed: true, running: true, install_state: 'done' }),
     '/companion/restart': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),

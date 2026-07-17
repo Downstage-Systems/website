@@ -52,6 +52,9 @@
       --red:       #E5484D;   /* Over Red — overtime / errors only */
       --red-bg:    rgba(229,72,77,0.08);
       --red-bd:    rgba(229,72,77,0.2);
+      --violet:    #8E6FE6;   /* Cue Violet — control surfaces (Companion) */
+      --violet-bg: rgba(142,111,230,0.08);
+      --violet-bd: rgba(142,111,230,0.28);
       --blue:      #F5A524;   /* Standby Amber — checking / attention */
       --blue-bg:   rgba(245,165,36,0.08);
       --blue-bd:   rgba(245,165,36,0.2);
@@ -128,6 +131,21 @@
     .status-bar.checking     { background: var(--blue-bg);  border-color: var(--blue-bd);  color: var(--blue); }
     .status-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
     .status-bar.connected .status-dot { animation: pulse 2s infinite; }
+    #job-ribbon { position:fixed; top:0; left:0; right:0; z-index:900; display:none;
+      align-items:center; gap:12px; padding:10px 20px;
+      background:var(--surface); border-bottom:1px solid var(--amber);
+      font:600 13px/1 var(--font-body); color:var(--text); }
+    #job-ribbon.on { display:flex; }
+    #job-ribbon .jdot { width:9px; height:9px; border-radius:50%; background:var(--amber);
+      box-shadow:0 0 7px rgba(245,165,36,0.7); animation:pulse 1.6s infinite; flex-shrink:0; }
+    #job-ribbon.done .jdot { background:var(--green); box-shadow:0 0 7px rgba(47,217,123,0.7); animation:none; }
+    #job-ribbon.failed .jdot { background:var(--red); box-shadow:0 0 7px rgba(229,72,77,0.7); animation:none; }
+    #job-ribbon .jtime { font-family:var(--font-mono); font-size:12px; color:var(--amber); }
+    #job-ribbon.done .jtime { color:var(--green); } #job-ribbon.failed .jtime { color:var(--red); }
+    #job-ribbon .jx { margin-left:auto; background:none; border:1px solid var(--border2);
+      border-radius:6px; color:var(--muted); padding:4px 10px; cursor:pointer; font:inherit; display:none; }
+    #job-ribbon.done .jx, #job-ribbon.failed .jx { display:block; }
+    body.job-ribboned { padding-top:44px; }
     @keyframes pulse {
       0%   { box-shadow: 0 0 0 0 rgba(47,217,123,0.6); }
       70%  { box-shadow: 0 0 0 6px rgba(47,217,123,0); }
@@ -687,8 +705,9 @@
     #preview-box-2 .preview-badge { color: var(--hdmi2); }
     #tab-hdmi1.active svg { fill: var(--hdmi1); }
     #tab-hdmi2.active svg { fill: var(--hdmi2); }
-    #hdmi1-label { color: var(--hdmi1); }
-    #hdmi2-label { color: var(--hdmi2); }
+    /* the source pill wears its output's identity end to end — no blue-on-green */
+    #hdmi1-label { color: var(--hdmi1); background: var(--hdmi1-lo); border-color: rgba(88,182,255,0.3); }
+    #hdmi2-label { color: var(--hdmi2); background: var(--hdmi2-lo); border-color: rgba(47,217,123,0.25); }
     /* selected source chip takes the active output's colour */
     body[data-hdmi="1"] .source-chip.selected { background: var(--hdmi1-lo); border-color: var(--hdmi1); }
     body[data-hdmi="1"] .source-chip.selected .source-chip-icon { background: rgba(88,182,255,0.22); }
@@ -726,20 +745,45 @@
     #view-tab-show.active svg { fill: var(--accent); }
     body.show-mode .full-only { display: none !important; }
 
-    /* ── Show Mode quick bar: one-tap links to the tools used mid-show ── */
+    /* ── Show Mode quick bar: app-icon tiles — big targets for dark rooms ── */
     .show-quick { display: none; }
     body.show-mode .show-quick.qb-live {
-      display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+      gap: 10px; margin-bottom: 18px;
     }
-    .show-quick .btn-sm { flex: 1 1 auto; justify-content: center; }
-    .show-quick .btn-sm svg { fill: var(--accent); }
+    .show-quick .btn-sm {
+      flex-direction: column; justify-content: center; align-items: center;
+      aspect-ratio: 1 / 1; gap: 9px; padding: 8px 4px;
+      background: var(--surface2); border: 1px solid var(--border2); border-radius: 16px;
+      font-size: 11px; letter-spacing: 0.04em; text-align: center;
+      white-space: normal; line-height: 1.25;
+    }
+    .show-quick .btn-sm svg { width: 26px; height: 26px; fill: var(--accent); }
+    .show-quick .btn-sm.qb-ontime { border-color: var(--green-bd); }
+    .show-quick .btn-sm.qb-companion { border-color: var(--violet-bd); background: var(--violet-bg); }
+    .show-quick .btn-sm.qb-companion svg { fill: var(--violet); }
+    .show-quick .btn-sm.blackout { border-color: var(--red-bd); background: var(--red-bg); }
+    .show-quick .btn-sm.blackout svg { fill: var(--red); }
 
     /* ── Mobile (phones open this page constantly) ── */
     @media (max-width: 560px) {
       body { padding: 14px 8px; }
       .card-body { padding: 18px 13px; }
-      .logo-row { flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
-      .addr-chip { margin-left: 0; width: 100%; align-items: flex-start; text-align: left; }
+      .logo-row { flex-wrap: wrap; gap: 8px 10px; margin-bottom: 16px; }
+      /* address becomes one compact line under the wordmark, not a dangling stack */
+      .addr-chip { margin-left: 0; width: 100%; flex-direction: row; align-items: center;
+                   gap: 10px; text-align: left; }
+      .addr-chip .addr-main { font-size: 11px; }
+      /* five tabs share the width evenly — all visible, no hidden scrolling */
+      .setup-tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; padding: 3px; }
+      .stab { padding: 9px 1px; font-size: 9.5px; letter-spacing: 0;
+              text-align: center; min-width: 0; overflow: hidden; white-space: nowrap; }
+      .stab-upd { top: 3px; right: 2px; width: 6px; height: 6px; }
+      /* Show Mode tiles: all five across one row on a phone */
+      body.show-mode .show-quick.qb-live { grid-template-columns: repeat(5, 1fr); gap: 6px; }
+      .show-quick .btn-sm { border-radius: 12px; gap: 6px; padding: 6px 2px;
+                            font-size: 8.5px; letter-spacing: 0.02em; }
+      .show-quick .btn-sm svg { width: 20px; height: 20px; }
       .display-ctl-row { flex-wrap: wrap; }
       .display-ctl-row .btn-sm { flex: 1 1 auto; }
       .mode-btn, .hdmi-tab { font-size: 12px; padding: 9px 5px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -751,10 +795,36 @@
       .health-grid { grid-template-columns: repeat(2, 1fr); }
       .ctx-item { padding: 12px 12px; font-size: 14px; }
     }
+    /* ── Setup tabs — segmented control, same pattern as the view toggle ── */
+    .setup-tabs { display:flex; gap:4px; background:var(--surface2);
+                  border:1px solid var(--border2); border-radius:10px; padding:4px;
+                  margin:18px 0 20px; }
+    .stab { position:relative; flex:1; padding:10px 8px; background:transparent; border:none;
+            border-radius:7px; justify-content:center;
+            font-family:var(--font-display); font-weight:700; font-size:13.5px;
+            letter-spacing:0.05em; color:var(--muted); cursor:pointer; transition:all 0.15s; }
+    .stab:active { transform:none; }
+    .stab:hover { color:var(--text); }
+    .stab.on { background:var(--surface); color:var(--accent);
+               box-shadow:0 1px 6px rgba(0,0,0,0.4); }
+    .stab-upd { display:none; position:absolute; top:6px; right:6px; width:7px; height:7px;
+                border-radius:50%; background:var(--amber);
+                box-shadow:0 0 6px rgba(245,165,36,0.8); }
+    .stab-upd.on { display:block; }
+    .tpane { display:none; }
+    .tpane.on { display:block; }
+    /* Show Mode keeps its contract: displays content only, tabs hidden */
+    body.show-mode #tpane-displays { display:block !important; }
   </style>
 </head>
 <body>
 <script src="demo-shim.js"></script>
+<div id="job-ribbon">
+  <span class="jdot"></span>
+  <span id="job-label"></span>
+  <span class="jtime" id="job-time"></span>
+  <button class="jx" onclick="dismissJobRibbon()">Dismiss</button>
+</div>
 <div class="wrap">
 
   <div class="logo-row">
@@ -790,6 +860,9 @@
 
       <!-- Show Mode quick bar — one-tap tools for mid-show -->
       <div class="show-quick" id="show-quick" style="display:none">
+        <button class="btn-sm blackout" id="blackout-btn-quick" onclick="blackout()" title="Black out all displays — press again to resume">
+          <svg viewBox="0 0 24 24"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/></svg>
+          Blackout</button>
         <button class="btn-sm qb-ontime" onclick="quickOpen('/editor/')" title="Open the OnTime Editor in a new tab" style="display:none">
           <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
           OnTime Editor
@@ -798,12 +871,11 @@
           <svg viewBox="0 0 24 24"><path d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42A8.962 8.962 0 0012 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
           Timer Control
         </button>
-        <button class="btn-sm qb-ontime" onclick="quickOpen('/messagecontrol')" title="Open OnTime Message Control in a new tab — send messages to stage displays" style="display:none">
-          <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
-          Messages
-        </button>
-        <button class="btn-sm qb-companion" onclick="openCompanion()" title="Open the Companion admin UI in a new tab — Stream Deck buttons and pages" style="display:none">
-          <svg viewBox="0 0 24 24"><path d="M4 5h4v4H4V5zm6 0h4v4h-4V5zm6 0h4v4h-4V5zM4 11h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4zM4 17h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4z"/></svg>
+        <button class="btn-sm qb-companion" onclick="openCompanionButtons()" title="Open Companion's web button surface — your Stream Deck pages, tappable from this device" style="display:none">
+          <svg viewBox="0 0 24 24"><path d="M4 4h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zM4 10h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4zM4 16h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4z"/></svg>
+          Buttons</button>
+        <button class="btn-sm qb-companion" onclick="openCompanion()" title="Open the Companion admin UI in a new tab — edit Stream Deck buttons and pages" style="display:none">
+          <svg viewBox="0 0 24 24"><path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg>
           Companion
         </button>
       </div>
@@ -832,6 +904,16 @@
         <span id="status-text">Checking connection…</span>
       </div>
 
+      <!-- Setup tabs: task-based — Displays is home; a dot = an update waits inside -->
+      <div class="setup-tabs full-only" id="setup-tabs">
+        <button class="stab" id="stab-displays" onclick="showSetupTab('displays')">Displays</button>
+        <button class="stab" id="stab-timer" onclick="showSetupTab('timer')">Timer<span class="stab-upd" id="upd-timer"></span></button>
+        <button class="stab" id="stab-companion" onclick="showSetupTab('companion')">Companion<span class="stab-upd" id="upd-companion"></span></button>
+        <button class="stab" id="stab-network" onclick="showSetupTab('network')">Network</button>
+        <button class="stab" id="stab-system" onclick="showSetupTab('system')">System<span class="stab-upd" id="upd-system"></span></button>
+      </div>
+
+      <div class="tpane full-only" id="tpane-timer">
       <!-- Mode toggle -->
       <div class="section-label full-only">Server Mode</div>
       <div class="mode-toggle full-only">
@@ -884,6 +966,8 @@
         </div>
       </div>
 
+      </div><!-- /tpane-timer -->
+      <div class="tpane on" id="tpane-displays">
       <!-- HDMI source selector -->
       <div class="field">
         <div class="section-label">Display Sources</div>
@@ -1153,6 +1237,8 @@
         </div>
       </div>
 
+      </div><!-- /tpane-displays -->
+      <div class="tpane full-only" id="tpane-companion">
       <!-- Companion -->
       <div class="field full-only">
         <div class="section-label">Bitfocus Companion</div>
@@ -1181,6 +1267,8 @@
         </div>
       </div>
 
+      </div><!-- /tpane-companion -->
+      <div class="tpane full-only" id="tpane-network">
       <!-- Network (IP) -->
       <div class="field full-only">
         <div class="section-label">Network</div>
@@ -1258,6 +1346,8 @@
         </div>
       </div>
 
+      </div><!-- /tpane-network -->
+      <div class="tpane full-only" id="tpane-system">
       <!-- Timezone -->
       <div class="field full-only">
         <div class="section-label">Pi Timezone</div>
@@ -1337,6 +1427,7 @@
         </div>
       </div>
 
+      </div><!-- /tpane-system -->
       <!-- Save -->
       <div class="actions">
         <button class="btn-primary" id="save-btn" onclick="saveAndConnect()">
@@ -1726,9 +1817,8 @@
         .forEach(b => { b.style.display = d.companion_running ? '' : 'none'; });
       const qb = document.getElementById('show-quick');
       if (qb) {
-        const any = d.connected || d.companion_running;
         qb.style.display = '';
-        qb.classList.toggle('qb-live', !!any);
+        qb.classList.add('qb-live');   // blackout is always available mid-show
       }
 
       // Blackout / watchdog banners
@@ -1930,9 +2020,6 @@
           <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Start</button>
         <button class="btn-sm" onclick="openCompanion()">
           <svg viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>Open</button>
-        <button class="btn-sm" id="companion-update-btn" onclick="updateCompanion()">
-          <svg viewBox="0 0 24 24"><path d="M21 10.12h-6.78l2.74-2.82c-2.73-2.7-7.15-2.8-9.88-.1-2.73 2.71-2.73 7.08 0 9.79s7.15 2.71 9.88 0C18.32 15.65 19 14.08 19 12.1h2c0 1.98-.88 4.55-2.64 6.29-3.51 3.48-9.21 3.48-12.72 0-3.5-3.47-3.53-9.11-.02-12.58s9.14-3.47 12.65 0L21 3v7.12z"/></svg>
-          Update</button>
         <button class="btn-sm" id="companion-rescan-btn" onclick="rescanUSB()">
           <svg viewBox="0 0 24 24"><path d="M15 7h1a2 2 0 012 2v1h2V9a4 4 0 00-4-4h-1V3l-4 4 4 4V7zM9 17H8a2 2 0 01-2-2v-1H4v1a4 4 0 004 4h1v2l4-4-4-4v3z"/></svg>
           Rescan USB</button>`;
@@ -1944,9 +2031,6 @@
           <svg viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>Open</button>
         <button class="btn-sm" onclick="restartCompanion()">
           <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>Restart</button>
-        <button class="btn-sm" id="companion-update-btn" onclick="updateCompanion()">
-          <svg viewBox="0 0 24 24"><path d="M21 10.12h-6.78l2.74-2.82c-2.73-2.7-7.15-2.8-9.88-.1-2.73 2.71-2.73 7.08 0 9.79s7.15 2.71 9.88 0C18.32 15.65 19 14.08 19 12.1h2c0 1.98-.88 4.55-2.64 6.29-3.51 3.48-9.21 3.48-12.72 0-3.5-3.47-3.53-9.11-.02-12.58s9.14-3.47 12.65 0L21 3v7.12z"/></svg>
-          Update</button>
         <button class="btn-sm" onclick="downloadCompanionConfig()" title="Download a full backup of the Companion config — pages, connections and surfaces — to this computer">
           <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z"/></svg>
           Save Config</button>
@@ -2028,22 +2112,59 @@
     window.location.href = '/companion/config-download';
   }
 
+  // ── persistent job ribbon: any long updater shows progress across the page ──
+  let _jobDismissed = false, _lastJobKey = '';
+  function dismissJobRibbon() {
+    _jobDismissed = true;
+    document.getElementById('job-ribbon').className = '';
+    document.body.classList.remove('job-ribboned');
+  }
+  async function pollJobRibbon() {
+    let j;
+    try { j = await (await fetch('/jobs')).json(); } catch { return; }
+    const r = document.getElementById('job-ribbon');
+    if (!j || !j.name || j.state === 'idle') { r.className = ''; document.body.classList.remove('job-ribboned'); return; }
+    const key = j.name + j.started;
+    if (key !== _lastJobKey) { _jobDismissed = false; _lastJobKey = key; }
+    if (j.state !== 'running' && _jobDismissed) return;
+    const el = Math.max(0, Math.floor(Date.now() / 1000 - j.started));
+    const mm = Math.floor(el / 60), ss = String(el % 60).padStart(2, '0');
+    if (j.state === 'running') {
+      r.className = 'on';
+      document.getElementById('job-label').textContent = j.label + '…';
+      document.getElementById('job-time').textContent = `${mm}:${ss}`;
+    } else {
+      const wasShown = r.className.includes('on');
+      r.className = 'on ' + j.state;
+      document.getElementById('job-label').textContent =
+        j.label + (j.state === 'done' ? ' — finished' : ` — FAILED${j.detail ? ': ' + j.detail : ''}`);
+      document.getElementById('job-time').textContent = '';
+      if (wasShown && j.state === 'done') { loadUpdateStatus(); }
+    }
+    document.body.classList.add('job-ribboned');
+  }
+  setInterval(pollJobRibbon, 3000);
+  pollJobRibbon();
+
   async function updateCompanion() {
     const ch = companionChannel === 'beta' ? 'beta' : 'stable';
     if (confirm('Download a backup of the Companion config to this computer first?\n\nRecommended before any update — pages, connections and surfaces, restorable if a migration misbehaves.\n\nOK downloads the backup and continues; Cancel skips the backup.')) {
       downloadCompanionConfig();
     }
     if (!confirm(`Update Companion to the latest ${ch} version?\n\nThis takes 2–3 minutes and restarts the service — Stream Decks go dark during the update. The current version is recorded so you can revert afterwards.`)) return;
-    const btn = document.getElementById('companion-update-btn');
+    const btn = document.getElementById('companion-inline-update-btn');
     if (btn) { btn.disabled = true; btn.innerHTML = spinnerHTML('Updating…'); }
     showToast('Updating Companion — this may take a few minutes…', 'info');
     try {
       const r = await fetch('/companion/update', { method: 'POST' });
       const d = await r.json();
-      companionRunning = d.running ?? companionRunning;
-      updateCompanionPanel();
-      showToast(d.ok ? 'Companion updated successfully.' : `Update failed: ${d.message}`, d.ok ? 'success' : 'error');
+      if (d.ok) { showToast('Update started — progress in the status bar at the top.', 'info'); pollJobRibbon(); }
+      else showToast(d.message || 'Update could not start.', 'error');
     } catch { showToast('Network error during update.', 'error'); }
+    finally {
+      const b = document.getElementById('companion-inline-update-btn');
+      if (b) { b.disabled = false; b.textContent = 'Update'; }
+    }
   }
 
   async function restartCompanion() {
@@ -2080,6 +2201,13 @@
 
   function openCompanion() {
     window.open(`http://${window.location.hostname}:8000`, '_blank');
+  }
+  function openCompanionButtons() {
+    // Companion's web button surface — the Stream Deck, but on this device.
+    // Phones get a 3-column cap so buttons stay thumb-sized.
+    const mobile = window.matchMedia('(max-width: 560px)').matches;
+    const params = mobile ? '/?max_col=3&min_col=0' : '';
+    window.open(`http://${window.location.hostname}:8000/tablet${params}`, '_blank');
   }
 
   // ── OnTime Editor ─────────────────────────────────────────────────────────────
@@ -2307,6 +2435,15 @@
     try { localStorage.setItem('ds1-view-mode', m); } catch (e) {}
   }
   try { setViewMode(localStorage.getItem('ds1-view-mode') || 'full'); } catch (e) {}
+
+  function showSetupTab(t) {
+    for (const x of ['displays', 'timer', 'companion', 'network', 'system']) {
+      document.getElementById('tpane-' + x)?.classList.toggle('on', x === t);
+      document.getElementById('stab-' + x)?.classList.toggle('on', x === t);
+    }
+    try { localStorage.setItem('ds1-setup-tab', t); } catch (e) {}
+  }
+  try { showSetupTab(localStorage.getItem('ds1-setup-tab') || 'displays'); } catch (e) {}
   document.body.dataset.hdmi = activeHdmiTab;   // colour identity from first paint
 
   async function refreshDisplays() {
@@ -2738,17 +2875,21 @@
   let blackoutActive = false;
 
   function renderBlackoutBtn() {
-    const btn = document.getElementById('blackout-btn');
-    if (!btn) return;
-    btn.disabled = false;
-    btn.style.display = '';
-    btn.innerHTML = BLACKOUT_ICON + (blackoutActive ? 'Resume' : 'Blackout');
+    for (const id of ['blackout-btn', 'blackout-btn-quick']) {
+      const btn = document.getElementById(id);
+      if (!btn) continue;
+      btn.disabled = false;
+      btn.style.display = '';
+      btn.innerHTML = BLACKOUT_ICON + (blackoutActive ? 'Resume' : 'Blackout');
+    }
   }
 
   async function blackout() {
     // toggles: black out, or resume if already blacked out
-    const btn = document.getElementById('blackout-btn');
-    if (btn) { btn.disabled = true; btn.innerHTML = spinnerHTML(blackoutActive ? 'Resuming…' : 'Blacking out…'); }
+    for (const id of ['blackout-btn', 'blackout-btn-quick']) {
+      const btn = document.getElementById(id);
+      if (btn) { btn.disabled = true; btn.innerHTML = spinnerHTML(blackoutActive ? 'Resuming…' : 'Blacking out…'); }
+    }
     try {
       if (blackoutActive) {
         await fetch('/blackout/clear', { method: 'POST' });
@@ -2815,6 +2956,10 @@
       renderRevertBtn('ontime',    d.ontime?.prev,    'revertOntimeServer()');
       renderRevertBtn('companion', d.companion?.prev, 'revertCompanion()');
       renderPatchesRow(d.patches);
+      const _dot = (id, on) => document.getElementById(id)?.classList.toggle('on', !!on);
+      _dot('upd-timer', d.ontime?.update_available);
+      _dot('upd-companion', d.companion?.update_available);
+      _dot('upd-system', d.os?.update_available || d.patches?.available);
       // OS update button + last-result note
       const osBtn = document.getElementById('os-update-btn');
       if (osBtn) osBtn.style.display = d.os?.update_available ? '' : 'none';
@@ -2834,7 +2979,7 @@
         const ch  = d.companion.channel || 'stable';
         if (latest && latest !== cur) {
           chHint.innerHTML = `Newest on the <b>${ch}</b> channel: <b>v${latest}</b> — installed: v${cur}. ` +
-            `<a href="#" onclick="updateCompanion();return false" style="color:var(--accent)">Update to v${latest}</a>`;
+            `The Update button above installs it.`;
           chHint.style.display = '';
         } else if (latest) {
           chHint.textContent = `v${cur} is the newest ${ch} version.`;
@@ -2997,10 +3142,8 @@
     try {
       const r = await fetch('/companion/revert', { method: 'POST' });
       const d = await r.json();
-      companionRunning = d.running ?? companionRunning;
-      updateCompanionPanel();
-      showToast(d.ok ? `Companion reverted to v${d.message}` : d.message, d.ok ? 'success' : 'error');
-      setTimeout(loadUpdateStatus, 2000);
+      if (d.ok) { showToast(`Revert to v${d.message} started — progress in the status bar.`, 'info'); pollJobRibbon(); }
+      else showToast(d.message || 'Revert could not start.', 'error');
     } catch { showToast('Network error during revert.', 'error'); }
   }
 

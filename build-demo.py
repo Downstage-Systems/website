@@ -2,7 +2,7 @@
 """Render the real One setup page as a static demo with the API shim."""
 import os, jinja2
 
-SRC = os.path.expanduser("~/downstage-os/one/templates/index.html")
+SRC = os.path.expanduser("~/Documents/Downstage Systems/downstage-os/one/templates/index.html")
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "demo", "index.html")
 
 config = {
@@ -37,7 +37,7 @@ open(OUT, "w").write(html)
 print("wrote", OUT, len(html), "bytes")
 
 # ── Downstage View demo ───────────────────────────────────────────────────────
-SRC_VIEW = os.path.expanduser("~/downstage-os/view/templates/index.html")
+SRC_VIEW = os.path.expanduser("~/Documents/Downstage Systems/downstage-os/view/templates/index.html")
 OUT_VIEW = os.path.join(os.path.dirname(os.path.abspath(__file__)), "demo", "view", "index.html")
 
 view_config = {
