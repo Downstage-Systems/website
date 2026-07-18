@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Demo — Downstage One — Setup</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png"><link rel="icon" href="/favicon.ico" sizes="48x48 32x32 16x16">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-title" content="Downstage One">
   <style>
     /* ── Brand fonts (served locally — no internet required) ── */
     @font-face {
@@ -147,6 +149,18 @@
       border-radius:6px; color:var(--muted); padding:4px 10px; cursor:pointer; font:inherit; display:none; }
     #job-ribbon.done .jx, #job-ribbon.failed .jx { display:block; }
     body.job-ribboned { padding-top:44px; }
+    /* connection ribbon — unit unreachable / shutting down, with auto-reconnect */
+    #conn-ribbon { position:fixed; top:0; left:0; right:0; z-index:950; display:none;
+      align-items:center; gap:12px; padding:10px 20px;
+      background:var(--surface); border-bottom:1px solid var(--red);
+      font:600 13px/1 var(--font-body); color:var(--text); }
+    #conn-ribbon.on { display:flex; }
+    #conn-ribbon .cdot { width:9px; height:9px; border-radius:50%; background:var(--red);
+      box-shadow:0 0 7px rgba(229,72,77,0.7); animation:pulse 1.4s infinite; flex-shrink:0; }
+    #conn-ribbon.shutdown { border-bottom-color:var(--amber); }
+    #conn-ribbon.shutdown .cdot { background:var(--amber); box-shadow:0 0 7px rgba(245,165,36,0.7); }
+    #conn-ribbon .csub { color:var(--muted); font-weight:400; font-size:12px; }
+    body.conn-ribboned { padding-top:44px; }
     @keyframes pulse {
       0%   { box-shadow: 0 0 0 0 rgba(47,217,123,0.6); }
       70%  { box-shadow: 0 0 0 6px rgba(47,217,123,0); }
@@ -496,6 +510,19 @@
     .spin { animation: spin 1s linear infinite; }
 
     /* ── WiFi ── */
+    .iface-panel { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
+    .iface-row { display:flex; align-items:center; gap:10px; padding:11px 14px;
+                 background:var(--surface2); border:1px solid var(--border2); border-radius:9px; }
+    .iface-row .idot { width:8px; height:8px; border-radius:50%; background:var(--accent);
+                       box-shadow:0 0 7px rgba(47,217,123,0.6); flex-shrink:0; }
+    .iface-row .ikind { font-family:var(--font-display); font-weight:700; font-size:13px;
+                        letter-spacing:0.04em; width:88px; }
+    .iface-row .iip { font-family:var(--font-mono); font-size:14px; color:var(--accent); }
+    .iface-row .idev { font-family:var(--font-mono); font-size:11px; color:var(--muted2); margin-left:auto; }
+    .iface-none { padding:11px 14px; font-size:12.5px; color:var(--muted);
+                  background:var(--surface2); border:1px solid var(--border2); border-radius:9px; }
+    .wifi-saved-row { display:flex; align-items:center; gap:10px; padding:9px 4px; border-bottom:1px solid var(--border); }
+    .wifi-saved-row .wifi-name { flex:1; }
     .wifi-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; overflow: hidden; }
     .wifi-current { font-size: 13px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; overflow: hidden; }
     .wifi-current svg { flex-shrink: 0; }
@@ -576,6 +603,7 @@
       font-size: 12px; color: var(--muted); margin-bottom: 10px;
       display: flex; align-items: center; gap: 6px;
     }
+    .tz-note { font-size: 11.5px; color: var(--muted2); line-height: 1.5; margin-top: 11px; }
     .tz-current span { color: var(--text); font-weight: 500; }
 
     /* ── Blackout / watchdog banners ── */
@@ -836,6 +864,11 @@
   <span id="job-label"></span>
   <span class="jtime" id="job-time"></span>
   <button class="jx" onclick="dismissJobRibbon()">Dismiss</button>
+</div>
+<div id="conn-ribbon">
+  <span class="cdot"></span>
+  <span id="conn-label">Unit unreachable</span>
+  <span class="csub" id="conn-sub">powered off or off the network — reconnecting…</span>
 </div>
 <div class="wrap">
 
@@ -1286,6 +1319,7 @@
       <!-- Network (IP) -->
       <div class="field full-only">
         <div class="section-label">Network</div>
+        <div id="iface-panel" class="iface-panel"></div>
         <div class="local-panel">
           <div class="tz-current">
             <span id="net-current">Loading…</span>
@@ -1316,8 +1350,8 @@
                 <input id="net-gw" inputmode="decimal" placeholder="192.168.1.1" autocomplete="off" spellcheck="false">
               </div>
               <div class="display-setting-row">
-                <label>DNS (space-separated)</label>
-                <input id="net-dns" placeholder="1.1.1.1 8.8.8.8" autocomplete="off" spellcheck="false">
+                <label>DNS (space-separated — leave blank to auto-set)</label>
+                <input id="net-dns" placeholder="auto: gateway, then 1.1.1.1 / 8.8.8.8" autocomplete="off" spellcheck="false">
               </div>
             </div>
           </div>
@@ -1331,6 +1365,13 @@
       <!-- WiFi -->
       <div class="field full-only">
         <div class="section-label">WiFi</div>
+        <div id="portal-note" style="display:none; margin-bottom:12px; padding:10px 13px;
+             background:var(--amber-bg); border:1px solid var(--amber-bd); border-radius:9px;
+             font-size:12.5px; color:var(--amber); line-height:1.5">
+          Captive portal detected on this network — show functions are unaffected, but
+          internet features (updates, time sync) are paused until the portal is cleared.
+          Portals can't be completed from a headless unit: use the built-in hotspot for
+          control, or a travel router for full networking.</div>
         <div class="local-panel">
           <div class="wifi-header">
             <div class="wifi-current">
@@ -1345,6 +1386,7 @@
           <div class="wifi-network-list" id="wifi-network-list">
             <div class="wifi-empty">Press Scan to find networks</div>
           </div>
+          <div id="wifi-saved"></div>
 
           <!-- Hotspot -->
           <div class="hotspot-row">
@@ -1379,6 +1421,9 @@
               <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
               Sync Time</button>
           </div>
+          <div class="tz-note">Sets the whole unit's timezone. OnTime updates right away.
+            Companion follows the system timezone but needs a restart to pick up a change —
+            restart it from the Companion tab when convenient (briefly drops Stream Decks).</div>
         </div>
       </div>
 
@@ -1805,6 +1850,26 @@
   }
 
   // ── Status poll ───────────────────────────────────────────────────────────────
+  // ── connection ribbon: unit unreachable / shutting down + auto-reconnect ──
+  let _connFails = 0;         // consecutive failed polls
+  let _expectDown = false;    // WE triggered a restart/shutdown (don't cry wolf)
+  let _wasOffline = false;    // ribbon has shown this outage → reload on recovery
+  const _CONN_COPY = {
+    shutdown: ['Device shutting down', 'safe to unplug once the activity light stops'],
+    restart:  ['Device restarting',    'the page reloads automatically when it returns'],
+    offline:  ['Unit unreachable',     'powered off or off the network — reconnecting…'],
+  };
+  function showConnRibbon(mode) {
+    const r = document.getElementById('conn-ribbon');
+    _wasOffline = true;
+    // amber for a deliberate shutdown (final, safe); red for restart/outage
+    r.className = 'on' + (mode === 'shutdown' ? ' shutdown' : '');
+    const [label, sub] = _CONN_COPY[mode] || _CONN_COPY.offline;
+    document.getElementById('conn-label').textContent = label;
+    document.getElementById('conn-sub').textContent = sub;
+    document.body.classList.add('conn-ribboned');
+  }
+
   async function fetchStatus(quiet = false) {
     const bar = document.getElementById('status-bar');
     const txt = document.getElementById('status-text');
@@ -1813,8 +1878,13 @@
       txt.textContent = 'Checking…';
     }
     try {
-      const r = await fetch('/status');
+      const r = await fetch('/status', { cache: 'no-store' });
+      if (!r.ok) throw new Error('bad status');
       const d = await r.json();
+      // recovered: if we'd shown the offline/shutdown ribbon, the unit is
+      // back — reload so the whole page reflects fresh state
+      if (_wasOffline) { location.reload(); return; }
+      _connFails = 0;
       ontimeInstalled    = d.ontime_installed;
       ontimeRunning      = d.ontime_running;
       companionInstalled = d.companion_installed;
@@ -1862,6 +1932,9 @@
       }
       document.getElementById('watchdog-bar').style.display  = d.watchdog_override  ? 'flex' : 'none';
       if (d.blackout !== blackoutActive) { blackoutActive = d.blackout; renderBlackoutBtn(); }
+      const pn = document.getElementById('portal-note');
+      if (pn) pn.style.display = d.portal?.detected ? '' : 'none';
+      renderInterfaces(d.interfaces);
 
       // Watchdog toggle
       watchdogOn = d.watchdog ?? true;
@@ -1891,8 +1964,22 @@
     } catch {
       bar.className = 'status-bar disconnected';
       document.getElementById('status-text').textContent = 'Error checking status';
+      // a poll failed — if we triggered the shutdown, the ribbon's already up;
+      // otherwise wait for a couple of misses before crying wolf (a single
+      // dropped request during a service restart shouldn't alarm anyone)
+      _connFails++;
+      // if we triggered it, its ribbon is already up; otherwise wait for a
+      // couple of misses before alarming (a single dropped poll during a
+      // service restart shouldn't cry wolf)
+      if (!_expectDown && _connFails >= 2) {
+        showConnRibbon('offline');
+      }
+      // while offline, poll quickly so recovery reloads promptly
+      clearTimeout(_connRetry);
+      _connRetry = setTimeout(() => { if (!document.hidden) fetchStatus(true); }, 2500);
     }
   }
+  let _connRetry = null;
 
   // ── Test ─────────────────────────────────────────────────────────────────────
   async function testConnection() {
@@ -2294,13 +2381,15 @@
   // ── Pi system controls ────────────────────────────────────────────────────────
   async function restartPi() {
     if (!confirm('Restart the Pi? The kiosk will be offline for about 30 seconds.')) return;
-    showToast('Restarting Pi…', 'info');
+    _expectDown = true;
+    showConnRibbon('restart');
     await fetch('/system/restart', { method: 'POST' });
   }
 
   async function shutdownPi() {
     if (!confirm('Shut down the Pi? You will need to physically power it back on.')) return;
-    showToast('Shutting down…', 'warning');
+    _expectDown = true;
+    showConnRibbon('shutdown');
     await fetch('/system/shutdown', { method: 'POST' });
   }
 
@@ -2684,7 +2773,7 @@
     try {
       const r = await fetch('/wifi/status');
       const d = await r.json();
-      if (d.ok) renderWifiList(d.current, d.networks, d.hotspot);
+      if (d.ok) { renderWifiList(d.current, d.networks, d.hotspot); renderSavedWifi(d.saved, d.current); }
     } catch {}
   }
 
@@ -2724,6 +2813,47 @@
       </div>`).join('');
   }
 
+  function renderInterfaces(list) {
+    const box = document.getElementById('iface-panel');
+    if (!box) return;
+    if (!list || !list.length) { box.innerHTML = '<div class="iface-none">No network connection — check the cable or join WiFi below.</div>'; return; }
+    box.innerHTML = list.map(function(i){
+      return '<div class="iface-row"><span class="idot"></span>' +
+        '<span class="ikind">' + i.kind + '</span>' +
+        '<span class="iip">' + i.ip + '</span>' +
+        '<span class="idev">' + i.iface + '</span></div>';
+    }).join('');
+  }
+  function renderSavedWifi(saved, current) {
+    const box = document.getElementById('wifi-saved');
+    if (!box) return;
+    saved = (saved || []).filter(n => n);
+    if (!saved.length) { box.innerHTML = ''; return; }
+    box.innerHTML = '<div class="source-group-label" style="margin-top:14px">Saved networks</div>' +
+      saved.map(name => {
+        const esc = name.replace(/'/g, "\\'");
+        const isCurrent = name === current;
+        return '<div class="wifi-saved-row"><span class="wifi-name">' + name +
+          (isCurrent ? ' <span style="color:var(--accent);font-size:11px">· connected</span>' : '') + '</span>' +
+          (isCurrent ? '<button class="btn-sm" onclick="wifiDisconnect(\'' + esc + '\')">Disconnect</button>' : '') +
+          '<button class="btn-sm danger" onclick="wifiForget(\'' + esc + '\')">Forget</button></div>';
+      }).join('');
+  }
+  async function wifiForget(ssid) {
+    if (!confirm('Forget "' + ssid + '"? The saved password is deleted; you would re-enter it to reconnect.')) return;
+    try {
+      await fetch('/wifi/forget', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ ssid }) });
+      showToast('Forgot ' + ssid, 'success'); wifiScan();
+    } catch { showToast('Network error', 'error'); }
+  }
+  async function wifiDisconnect(ssid) {
+    if (!confirm('Disconnect from "' + ssid + '"? The network stays saved. If nothing else can reach the unit, its hotspot will come up.')) return;
+    try {
+      await fetch('/wifi/disconnect', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ ssid }) });
+      showToast('Disconnected from ' + ssid, 'info'); setTimeout(function(){ wifiScan(); loadHotspotStatus(); }, 2000);
+    } catch { showToast('Network error', 'error'); }
+  }
+
   async function wifiScan() {
     const btn = document.getElementById('wifi-scan-btn');
     btn.disabled = true;
@@ -2732,7 +2862,7 @@
     try {
       const r = await fetch('/wifi/scan', { method: 'POST' });
       const d = await r.json();
-      if (d.ok) renderWifiList(d.current, d.networks, d.hotspot);
+      if (d.ok) { renderWifiList(d.current, d.networks, d.hotspot); renderSavedWifi(d.saved, d.current); }
       else document.getElementById('wifi-network-list').innerHTML = `<div class="wifi-empty">Error: ${d.error || 'scan failed'}</div>`;
     } catch {
       document.getElementById('wifi-network-list').innerHTML = '<div class="wifi-empty">Network error</div>';
@@ -2766,7 +2896,7 @@
 
   async function wifiDoConnect(ssid, password) {
     if (hotspotActive) {
-      if (!confirm(`Joining "${ssid}" will stop the hotspot (one radio — it can't do both).\n\nIf you're connected through the hotspot right now, you'll lose this page and can rejoin the device on "${ssid}"'s network. If the join fails, the hotspot restarts automatically.`)) return;
+      if (!confirm(`Joining "${ssid}" will stop the hotspot (one radio — it can't do both).\n\nIf you're connected through the hotspot right now, you'll lose this page and can rejoin the device on "${ssid}"'s network.\n\nSafety net: if nothing reaches the setup page within 3 minutes — wrong password, captive portal, isolated network — the unit drops "${ssid}" and its hotspot comes back automatically.`)) return;
     }
     showToast(`Connecting to ${ssid}…${hotspotActive ? ' (stopping hotspot first)' : ''}`, 'info');
     try {

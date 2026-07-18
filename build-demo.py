@@ -33,6 +33,8 @@ html = html.replace("<body>", '<body>\n<script src="demo-shim.js"></script>', 1)
 html = html.replace("<title>", "<title>Demo — ", 1) if "<title>" in html else html
 # the unit's favicon lives on the unit — point the demo at the site's
 import re as _re
+html = _re.sub(r'<link rel="apple-touch-icon"[^>]*>',
+    '<link rel="apple-touch-icon" href="/apple-touch-icon.png">', html, count=1)
 html = _re.sub(r'<link rel="icon"[^>]*>',
     '<link rel="icon" type="image/svg+xml" href="/favicon.svg">'
     '<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">'
@@ -61,6 +63,8 @@ html_v = tpl_v.render(config=VCfg(view_config), local_ip="192.168.1.31",
                       hostname="downstage-v001", ip_history=[])
 html_v = html_v.replace("<body>", '<body>\n<script src="demo-shim.js"></script>', 1)
 html_v = html_v.replace("<title>", "<title>Demo — ", 1) if "<title>" in html_v else html_v
+html_v = _re.sub(r'<link rel="apple-touch-icon"[^>]*>',
+    '<link rel="apple-touch-icon" href="/apple-touch-icon.png">', html_v, count=1)
 html_v = _re.sub(r'<link rel="icon"[^>]*>',
     '<link rel="icon" type="image/svg+xml" href="/favicon.svg">'
     '<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">'
