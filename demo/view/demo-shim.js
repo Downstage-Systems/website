@@ -11,6 +11,7 @@
 
   function status() {
     return {
+      clock: { epoch: Date.now() / 1000, offset_min: -new Date().getTimezoneOffset() },
       connected: true, ip: S.ip, local_ip: '192.168.1.31',
       serial: 'Serial #', source: S.source, external_url: S.external_url,
       watchdog: S.watchdog, watchdog_override: false,

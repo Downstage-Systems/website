@@ -35,6 +35,7 @@
 
   function status() {
     return {
+      clock: { epoch: Date.now() / 1000, offset_min: -new Date().getTimezoneOffset() },
       ip: S.mode === 'local' ? '127.0.0.1' : S.ip, mode: S.mode,
       hdmi1_source: S.hdmi1_source, hdmi2_source: S.hdmi2_source,
       hdmi1_res: S.hdmi1_res, hdmi2_res: S.hdmi2_res,
