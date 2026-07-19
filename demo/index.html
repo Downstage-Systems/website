@@ -126,6 +126,13 @@
     .addr-box .addr-main { font-family: var(--font-mono); font-size: 14px; color: var(--accent);
       cursor: pointer; }
     .addr-box .addr-main:hover { text-decoration: underline; text-underline-offset: 3px; }
+    .addr-box { position: relative; }
+    #qr-pop { position: absolute; top: calc(100% + 8px); right: 0; z-index: 500;
+      background: #fff; border-radius: 10px; padding: 8px 8px 6px;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.55); text-align: center; }
+    #qr-pop img { width: 148px; height: 148px; display: block; image-rendering: pixelated; }
+    #qr-pop .qr-cap { font-size: 10.5px; color: #444; margin-top: 3px;
+      font-family: var(--font-body); }
     .addr-box .addr-sub { font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
 
 
@@ -146,6 +153,8 @@
     .status-bar.checking     { background: var(--blue-bg);  border-color: var(--blue-bd);  color: var(--blue); }
     .status-bar.warn         { background: var(--amber-bg); border-color: var(--amber-bd); color: var(--amber); }
     .pill-row { display: flex; gap: 7px; flex-wrap: wrap; justify-content: flex-end; }
+    .pill-row .status-bar { cursor: pointer; }
+    .pill-row .status-bar:hover { filter: brightness(1.25); }
     .status-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
     .status-bar.connected .status-dot { animation: pulse 2s infinite; }
     #job-ribbon { position:fixed; top:0; left:0; right:0; z-index:900; display:none;
@@ -567,6 +576,9 @@
     .iface-row .ikind { font-family:var(--font-display); font-weight:700; font-size:13px;
                         letter-spacing:0.04em; width:88px; }
     .iface-row .iip { font-family:var(--font-mono); font-size:14px; color:var(--accent); }
+    .iface-row .iprim { font-family:var(--font-mono); font-size:9px; letter-spacing:0.1em;
+      color:var(--accent); border:1px solid var(--green-bd); border-radius:4px;
+      padding:2px 6px; }
     .iface-row .idev { font-family:var(--font-mono); font-size:11px; color:var(--muted2); margin-left:auto; }
     .iface-none { padding:11px 14px; font-size:12.5px; color:var(--muted);
                   background:var(--surface2); border:1px solid var(--border2); border-radius:9px; }
@@ -1022,13 +1034,19 @@
     <div class="addr-chip">
       <div class="addr-box">
       <span class="addr-main" onclick="copyAddr()" title="Click to copy this unit's address">downstage-0001.local:8080</span>
+      <div id="qr-pop" style="display:none">
+        <img id="qr-img" alt="QR code for this unit's address">
+        <div class="qr-cap">Scan to open on a phone</div>
+      </div>
       </div>
       <div class="pill-row">
-        <div class="status-bar disconnected" id="status-bar">
+        <div class="status-bar disconnected" id="status-bar"
+             onclick="pillGo('timer')" title="Open the Timer tab">
           <div class="status-dot"></div>
           <span id="status-text">Checking…</span>
         </div>
-        <div class="status-bar" id="inet-pill" style="display:none">
+        <div class="status-bar" id="inet-pill" style="display:none"
+             onclick="pillGo('network')" title="Open the Network tab">
           <div class="status-dot"></div>
           <span id="inet-pill-text"></span>
         </div>
@@ -1863,9 +1881,26 @@
   });
 
   // ── Unsaved-changes bar ──────────────────────────────────────────────────────
+  function pillGo(tab) {
+    setViewMode('full');      // tabs live in Full Setup
+    showSetupTab(tab);
+  }
   function copyAddr() {
     const addr = 'http://' + window.location.host + '/';
     const done = () => showToast('Address copied — ' + addr, 'success');
+    // toggle the QR chip; hidden entirely if the unit lacks QR support
+    const pop = document.getElementById('qr-pop');
+    if (pop.style.display === 'none') {
+      const img = document.getElementById('qr-img');
+      img.onerror = () => { pop.style.display = 'none'; };
+      img.src = '/qr.png?' + Date.now();
+      pop.style.display = '';
+      setTimeout(() => document.addEventListener('click', function closeQr(e) {
+        if (!pop.contains(e.target)) { pop.style.display = 'none'; document.removeEventListener('click', closeQr); }
+      }), 0);
+    } else {
+      pop.style.display = 'none';
+    }
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(addr).then(done);
     } else {
@@ -2140,7 +2175,7 @@
       const inet = document.getElementById('inet-note');
       if (inet) inet.style.display =
         (d.portal && d.portal.internet === false && !d.portal.detected) ? '' : 'none';
-      renderInterfaces(d.interfaces);
+      renderInterfaces(d.interfaces, d.net_iface);
       if (window._clockSync) _clockSync(d.clock);
       wizMaybeShow(d);
       if (d.hdmi_connected) for (const n of ['1','2']) {
@@ -2171,7 +2206,7 @@
         txt.textContent = d.mode === 'local' ? 'Local OnTime — running' : `Connected — ${d.ip}:4001`;
       } else if (d.ip || d.mode === 'local') {
         bar.className = 'status-bar disconnected';
-        txt.textContent = d.mode === 'local' ? 'Local OnTime — not reachable' : `Cannot reach ${d.ip}:4001`;
+        txt.textContent = d.mode === 'local' ? 'Local OnTime — Stopped' : `Cannot reach ${d.ip}:4001`;
       } else {
         bar.className = 'status-bar disconnected';
         txt.textContent = 'Not configured';
@@ -3028,14 +3063,15 @@
       </div>`).join('');
   }
 
-  function renderInterfaces(list) {
+  function renderInterfaces(list, primary) {
     const box = document.getElementById('iface-panel');
     if (!box) return;
     if (!list || !list.length) { box.innerHTML = '<div class="iface-none">No network connection — check the cable or join WiFi below.</div>'; return; }
     box.innerHTML = list.map(function(i){
+      const prim = i.iface === primary ? '<span class="iprim">PRIMARY</span>' : '';
       return '<div class="iface-row"><span class="idot"></span>' +
         '<span class="ikind">' + i.kind + '</span>' +
-        '<span class="iip">' + i.ip + '</span>' +
+        '<span class="iip">' + i.ip + '</span>' + prim +
         '<span class="idev">' + i.iface + '</span></div>';
     }).join('');
   }
