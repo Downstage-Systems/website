@@ -576,7 +576,8 @@
                        box-shadow:0 0 7px rgba(47,217,123,0.6); flex-shrink:0; }
     .iface-row .ikind { font-family:var(--font-display); font-weight:700; font-size:13px;
                         letter-spacing:0.04em; width:88px; }
-    .iface-row .iip { font-family:var(--font-mono); font-size:14px; color:var(--accent); }
+    .iface-row .iip { font-family:var(--font-mono); font-size:14px; color:var(--accent); cursor:pointer; }
+    .iface-row .iip:hover { text-decoration:underline; text-underline-offset:3px; }
     .iface-row .iprim { font-family:var(--font-mono); font-size:9px; letter-spacing:0.1em;
       color:var(--accent); border:1px solid var(--green-bd); border-radius:4px;
       padding:2px 6px; }
@@ -1898,6 +1899,19 @@
     if (!d.ok) { showToast(d.message, 'error'); return; }
     pollJobRibbon();   // amber ribbon + elapsed timer while it copies
   }
+  function copyIp(ip) {
+    const addr = 'http://' + ip + ':8080/';
+    const done = () => showToast('Address copied — ' + addr, 'success');
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(addr).then(done);
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = addr; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) {}
+      ta.remove();
+    }
+  }
   function copyAddr() {
     const addr = 'http://' + window.location.host + '/';
     const done = () => showToast('Address copied — ' + addr, 'success');
@@ -1923,6 +1937,13 @@
       try { document.execCommand('copy'); done(); } catch (e) {}
       ta.remove();
     }
+  }
+  function downloadFile(url) {
+    // anchor-click download: never a page navigation, so it can't abort
+    // other in-flight requests (location.href downloads killed update POSTs)
+    const a = document.createElement('a');
+    a.href = url; a.download = '';
+    document.body.appendChild(a); a.click(); a.remove();
   }
   function openExternal(url) {
     const a = document.createElement('a');
@@ -2077,7 +2098,7 @@
       const d = await r.json();
       ontimeInstalled = d.ok;
       showToast(d.ok ? `OnTime ${d.message} installed.` : `Install failed: ${d.message}`, d.ok ? 'success' : 'error');
-    } catch { showToast('Network error during install.', 'error'); }
+    } catch { showToast('Could not reach the unit — the install did not complete. Try again once the unit answers.', 'error'); }
     updateLocalPanel();
   }
 
@@ -2176,7 +2197,19 @@
       document.getElementById('watchdog-bar').style.display  = d.watchdog_override  ? 'flex' : 'none';
       if (d.blackout !== blackoutActive) { blackoutActive = d.blackout; renderBlackoutBtn(); }
       const pn = document.getElementById('portal-note');
-      if (pn) pn.style.display = d.portal?.detected ? '' : 'none';
+      if (pn) {
+        pn.style.display = d.portal?.detected ? '' : 'none';
+        if (d.portal?.detected) {
+          pn.textContent = d.portal.internet
+            ? 'Captive portal on the WiFi leg — internet is flowing over the other ' +
+              'connection, so nothing is affected. The WiFi only becomes useful for ' +
+              'internet once its portal is cleared (travel router or phone hotspot instead).'
+            : 'Captive portal detected on this network — show functions are unaffected, but ' +
+              'internet features (updates, time sync) are paused until the portal is cleared. ' +
+              "Portals can't be completed from a headless unit: use the built-in hotspot for " +
+              'control, or a travel router for full networking.';
+        }
+      }
       const pill = document.getElementById('inet-pill');
       if (pill && d.portal && d.portal.internet !== null && d.portal.internet !== undefined) {
         pill.style.display = '';
@@ -2475,7 +2508,7 @@
 
   function downloadCompanionConfig() {
     showToast('Preparing Companion config backup…', 'info');
-    window.location.href = '/companion/config-download';
+    downloadFile('/companion/config-download');
   }
 
   // ── persistent job ribbon: any long updater shows progress across the page ──
@@ -2490,6 +2523,12 @@
     try { j = await (await fetch('/jobs')).json(); } catch { return; }
     const r = document.getElementById('job-ribbon');
     if (!j || !j.name || j.state === 'idle') { r.className = ''; document.body.classList.remove('job-ribboned'); return; }
+    // a finished job is only news for a couple of minutes — after that a
+    // page load shouldn't resurrect the ribbon (daily backups made every
+    // refresh open with "finished")
+    if (j.state !== 'running' && j.finished && Date.now() / 1000 - j.finished > 120) {
+      r.className = ''; document.body.classList.remove('job-ribboned'); return;
+    }
     const key = j.name + j.started;
     if (key !== _lastJobKey) { _jobDismissed = false; _lastJobKey = key; }
     if (j.state !== 'running' && _jobDismissed) return;
@@ -2526,7 +2565,18 @@
       const d = await r.json();
       if (d.ok) { showToast('Update started — progress in the status bar at the top.', 'info'); pollJobRibbon(); }
       else showToast(d.message || 'Update could not start.', 'error');
-    } catch { showToast('Network error during update.', 'error'); }
+    } catch {
+      // the click never reached the unit — nothing started. Say so plainly,
+      // then verify against the job registry once the unit answers again
+      showToast('Could not reach the unit — the update did NOT start. If the unit is restarting, wait a few seconds and try again.', 'error');
+      setTimeout(async () => {
+        try {
+          const j = await (await fetch('/jobs')).json();
+          if (j.state === 'running') { showToast('Actually — a job IS running. Watch the top bar.', 'info'); pollJobRibbon(); }
+          else showToast('Confirmed: nothing ran. The unit is untouched — try again when ready.', 'info');
+        } catch (e) {}
+      }, 5000);
+    }
     finally {
       const b = document.getElementById('companion-inline-update-btn');
       if (b) { b.disabled = false; b.textContent = 'Update'; }
@@ -3084,7 +3134,7 @@
       const prim = i.iface === primary ? '<span class="iprim">PRIMARY</span>' : '';
       return '<div class="iface-row"><span class="idot"></span>' +
         '<span class="ikind">' + i.kind + '</span>' +
-        '<span class="iip">' + i.ip + '</span>' + prim +
+        '<span class="iip" onclick="copyIp(\'' + i.ip + '\')" title="Click to copy http://' + i.ip + ':8080/">' + i.ip + '</span>' + prim +
         '<span class="idev">' + i.iface + '</span></div>';
     }).join('');
   }
@@ -3334,7 +3384,7 @@
 
   // ── Config backup / restore ───────────────────────────────────────────────────
   function downloadConfig() {
-    window.location = '/config/download';
+    downloadFile('/config/download');
   }
 
   // ── Update check ─────────────────────────────────────────────────────────────
@@ -3363,6 +3413,12 @@
     try {
       const r = await fetch('/update-status');
       const d = await r.json();
+      // right after boot the background check may still be running — keep
+      // asking until every component has actually answered (the "stuck on
+      // checking until refresh" bug)
+      if (!(d.os?.checked && d.ontime?.checked && d.companion?.checked)) {
+        setTimeout(loadUpdateStatus, 5000);
+      }
       renderVersionRow('ontime',    d.ontime);
       renderVersionRow('companion', d.companion);
       renderVersionRow('os',        d.os);
@@ -3533,7 +3589,21 @@
       if (d.reverted) showToast(`Update failed — ${d.message}`, 'error');
       else showToast(d.ok ? `OnTime updated: ${d.message}` : `Update failed: ${d.message}`, d.ok ? 'success' : 'error');
       setTimeout(loadUpdateStatus, 2000);
-    } catch { showToast('Network error during update.', 'error'); }
+    } catch {
+      // OnTime updates run inside this request — a dropped connection may
+      // mean "never started" OR "still working on the unit". Don't guess:
+      // recheck the version row and report what actually happened
+      showToast('Connection dropped — if the update was already underway it continues on the unit. Checking…', 'error');
+      setTimeout(async () => {
+        try {
+          const u = await (await fetch('/update-status')).json();
+          loadUpdateStatus();
+          const inst = u.ontime?.installed, latest = u.ontime?.latest;
+          if (inst && latest && inst === latest) showToast(`OnTime is on ${inst} — the update completed.`, 'success');
+          else showToast(`OnTime is on ${inst || '?'} — the update did not complete. Try again when ready.`, 'info');
+        } catch (e) {}
+      }, 15000);
+    }
   }
 
   async function revertOntimeServer() {
