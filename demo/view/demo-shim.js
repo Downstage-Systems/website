@@ -106,6 +106,9 @@
       if (l && /display source/i.test(l.textContent)) f.dataset.demoOk = '1';
     });
     document.querySelectorAll('.view-toggle').forEach(b => { b.dataset.demoOk = '1'; });
+    // Show Mode quick-action tiles work in the demo (Test Patterns rides the
+    // stubbed /save; OnTime links open the real getontime demo pages)
+    document.querySelectorAll('.show-quick').forEach(b => { b.dataset.demoOk = '1'; });
     document.querySelectorAll('button').forEach(b => {
       if (/save & apply/i.test(b.textContent.trim())) {
         b.dataset.demoOk = '1';
