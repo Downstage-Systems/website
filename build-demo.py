@@ -30,6 +30,8 @@ html = tpl.render(config=Cfg(config), local_ip="192.168.1.20", hostname="downsta
 
 # shim must patch fetch before the page's own scripts run
 html = html.replace("<body>", '<body>\n<script src="demo-shim.js"></script>', 1)
+# demo: the fake hostname is noise — hide the header address box
+html = html.replace("<body>", '<body>\n<style>.addr-box{display:none!important}</style>', 1)
 html = html.replace("<title>", "<title>Demo — ", 1) if "<title>" in html else html
 # the unit's favicon lives on the unit — point the demo at the site's
 import re as _re
@@ -64,6 +66,7 @@ tpl_v = env.from_string(open(SRC_VIEW).read())
 html_v = tpl_v.render(config=VCfg(view_config), local_ip="192.168.1.31",
                       hostname="downstage-v001", ip_history=[])
 html_v = html_v.replace("<body>", '<body>\n<script src="demo-shim.js"></script>', 1)
+html_v = html_v.replace("<body>", '<body>\n<style>.addr-box{display:none!important}</style>', 1)
 html_v = html_v.replace("<title>", "<title>Demo — ", 1) if "<title>" in html_v else html_v
 html_v = _re.sub(r'<link rel="apple-touch-icon"[^>]*>',
     '<link rel="apple-touch-icon" href="/apple-touch-icon.png">', html_v, count=1)
