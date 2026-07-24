@@ -1662,6 +1662,15 @@
       <div class="tpane full-only" id="tpane-system">
       <!-- Timezone -->
       <div class="field full-only">
+        <div class="section-label">Keep Screen Awake</div>
+        <div class="local-panel" style="margin-bottom:22px">
+          <div style="display:flex; align-items:center; gap:12px">
+            <span style="flex:1; font-size:13.5px; color:var(--text)">Stop this device from sleeping
+              while this page is open<br><span style="font-size:11.5px; color:var(--muted)">Per-device
+              setting — ideal for a phone taped to the desk. Tool panels always keep the screen awake.</span></span>
+            <button class="toggle" id="awake-toggle" onclick="toggleAwakeGlobal()"></button>
+          </div>
+        </div>
         <div class="section-label">Pi Timezone</div>
         <div class="local-panel">
           <div class="tz-current">Current: <span id="tz-current">Loading…</span></div>
@@ -2806,6 +2815,55 @@
   }
   // in-UI panel: every quick-action tool opens inside Show Mode, with a
   // pop-out for when it deserves its own tab
+  // ── keep-awake while a tool panel is open ──
+  // Wake Lock API needs a secure context (our units speak HTTP), so fall
+  // back to the classic trick: an invisible looping video the page records
+  // for itself (each browser produces a format it can play).
+  let awakeGlobal = false;
+  try { awakeGlobal = localStorage.getItem('ds-keepawake') === '1'; } catch (e) {}
+  function toggleAwakeGlobal() {
+    awakeGlobal = !awakeGlobal;
+    try { localStorage.setItem('ds-keepawake', awakeGlobal ? '1' : '0'); } catch (e) {}
+    document.getElementById('awake-toggle').className = 'toggle ' + (awakeGlobal ? 'on' : '');
+    keepAwake(awakeGlobal);   // the toggle tap IS the gesture — arms instantly
+    showToast(awakeGlobal ? 'This device will stay awake on this page.' : 'Normal sleep restored.', 'info');
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    const t = document.getElementById('awake-toggle');
+    if (t) t.className = 'toggle ' + (awakeGlobal ? 'on' : '');
+    if (awakeGlobal) {
+      // autoplay rules: the wake video needs one real touch — arm on it
+      const arm = () => { keepAwake(true); document.removeEventListener('pointerdown', arm); };
+      document.addEventListener('pointerdown', arm);
+    }
+  });
+  let _wakeLock = null, _wakeVideo = null;
+  function keepAwake(on) {
+    // MUST run synchronously inside the user's tap — iOS only honors
+    // video.play() during a real gesture (async recording burned it before)
+    if (on) {
+      if (navigator.wakeLock && window.isSecureContext) {
+        navigator.wakeLock.request('screen').then(l => { _wakeLock = l; }).catch(() => {});
+      }
+      if (!_wakeVideo) {
+        _wakeVideo = document.createElement('video');
+        _wakeVideo.setAttribute('playsinline', '');
+        _wakeVideo.muted = true; _wakeVideo.loop = true;
+        _wakeVideo.style.cssText = 'position:fixed;left:-10px;top:-10px;width:2px;height:2px;opacity:0.01;pointer-events:none';
+        _wakeVideo.src = '/static/nosleep.mp4';
+        document.body.appendChild(_wakeVideo);
+      }
+      _wakeVideo.play().catch(() => {});
+    } else {
+      try { _wakeLock && _wakeLock.release(); } catch (e) {}
+      _wakeLock = null;
+      if (_wakeVideo) _wakeVideo.pause();
+    }
+  }
+  document.addEventListener('visibilitychange', () => {
+    // returning to a page with an open panel re-arms the lock
+    if (!document.hidden && (awakeGlobal || document.getElementById('emu-overlay')?.classList.contains('on'))) keepAwake(true);
+  });
   let _panelUrl = '';
   let _panelScrollY = 0;
   function openPanel(url, title) {
@@ -2816,8 +2874,10 @@
     _panelScrollY = window.scrollY;
     document.body.style.top = `-${_panelScrollY}px`;
     document.body.classList.add('panel-open');
+    keepAwake(true);   // buttons/timer pages shouldn't die with the screen
   }
   function closeEmulator() {
+    if (!awakeGlobal) keepAwake(false);
     document.getElementById('emu-overlay').classList.remove('on');
     document.getElementById('emu-frame').src = 'about:blank';   // stop it cold
     document.body.classList.remove('panel-open');
