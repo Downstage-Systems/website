@@ -132,6 +132,11 @@
       if (l && /display source/i.test(l.textContent)) f.dataset.demoOk = '1';
     });
     document.querySelectorAll('.view-toggle').forEach(b => { b.dataset.demoOk = '1'; });
+    // the setup tabs are pure navigation — the whole point is seeing each pane
+    const stabs = document.getElementById('setup-tabs');
+    if (stabs) stabs.dataset.demoOk = '1';
+    // Quick Status Bar cells just jump to tabs — navigation, demo-safe
+    document.querySelectorAll('.status-strip').forEach(b => { b.dataset.demoOk = '1'; });
     // Show Mode quick-action tiles work in the demo (Test Patterns rides the
     // stubbed /save; OnTime links open the real getontime demo pages)
     document.querySelectorAll('.show-quick').forEach(b => { b.dataset.demoOk = '1'; });
