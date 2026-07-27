@@ -242,6 +242,9 @@
       const f = document.createElement('iframe');
       f.id = `demo-frame-${n}`;
       f.style.cssText = 'width:100%;height:100%;border:0;pointer-events:none;display:block;aspect-ratio:16/9;background:#000';
+      const shield = document.createElement('div');
+      shield.style.cssText = 'position:absolute;inset:0;z-index:1';
+      f.insertAdjacentElement && setTimeout(() => { if (f.parentElement) { f.parentElement.style.position = 'relative'; f.parentElement.appendChild(shield); } }, 0);
       img.replaceWith(f);
       const off = document.getElementById(`preview-off-${n}`);
       if (off) off.remove();
