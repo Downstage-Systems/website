@@ -12,18 +12,44 @@
   function status() {
     return {
       clock: { epoch: Date.now() / 1000, offset_min: -new Date().getTimezoneOffset() },
+      portal: { detected: false, internet: true, checked: true },
       connected: true, ip: S.ip, local_ip: '192.168.1.31',
       serial: 'Serial #', source: S.source, external_url: S.external_url,
       watchdog: S.watchdog, watchdog_override: false,
       os_version: '2.0.0', os_latest: '2.0.0',
       os_update_available: false, os_checked: true, os_update_result: null,
+      os_dismissed: null,
+      output: { hdmi: { connected: true, enabled: true, mode: '1920x1080' },
+                render: { up: true, url: 'http://localhost:8080/timer' },
+                display: { mfr: 'SAM', name: 'SAMSUNG LU28' } },
+      wifi: { up: true, dbm: -54, quality: 62, drops_10m: 0, concern: null },
+      cpu_temp: '48.2', hotspot_active: false,
+      name: S.unitName || 'Stage Left', now_showing: 'Stage Timer',
+      health: { ok: true, why: '' },
+      primary_kind: 'Ethernet', primary_ip: '192.168.1.31',
+      interfaces: [{ kind: 'Ethernet', ip: '192.168.1.31', iface: 'eth0' },
+                   { kind: 'WiFi', ip: '192.168.1.44', iface: 'wlan0' }],
+      net_iface: 'eth0',
     };
+  }
+
+  function fleet() {
+    return { ok: true, ts: Date.now() / 1000 - 240, units: [
+      { product: 'One', name: 'FOH Rack', ip: '192.168.1.20', kind: 'Ethernet',
+        serial: 'DS1-A-2607-0001', version: '1.5.2', showing: '1: Stage Timer \u00b7 2: \u2014',
+        health_ok: true, health_why: '', upd: false },
+    ]};
   }
 
   const NO = () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' });
 
   const routes = {
     '/status': () => status(),
+    '/discover/last': () => fleet(),
+    '/discover': () => fleet(),
+    '/fleet/identify': () => ({ ok: true }),
+    '/unit-name': (b) => { S.unitName = (b && b.name) || ''; return { ok: true, name: S.unitName }; },
+    '/output/identify': () => ({ ok: true }),
     '/save': (b) => { Object.assign(S, b || {}); return { ok: true }; },
     '/check': () => ({ ok: true }),
     '/refresh': () => ({ ok: true }),

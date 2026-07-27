@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Render the real One setup page as a static demo with the API shim."""
-import os, jinja2
+import os, time, jinja2
+BUILD_TS = str(int(time.time()))
 
 SRC = os.path.expanduser("~/Documents/Downstage Systems/downstage-os/one/templates/index.html")
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "demo", "index.html")
@@ -29,7 +30,7 @@ html = tpl.render(config=Cfg(config), local_ip="192.168.1.20", hostname="downsta
                   companion_installed=True, companion_running=True)
 
 # shim must patch fetch before the page's own scripts run
-html = html.replace("<body>", '<body>\n<script src="demo-shim.js"></script>', 1)
+html = html.replace("<body>", '<body>\n<script src="demo-shim.js?v=' + BUILD_TS + '"></script>', 1)
 # demo: the fake hostname is noise — hide the header address box
 html = html.replace("<body>", '<body>\n<style>.addr-box{display:none!important}</style>', 1)
 html = html.replace("<title>", "<title>Demo — ", 1) if "<title>" in html else html
@@ -65,7 +66,7 @@ class VCfg(dict):
 tpl_v = env.from_string(open(SRC_VIEW).read())
 html_v = tpl_v.render(config=VCfg(view_config), local_ip="192.168.1.31",
                       hostname="downstage-v001", ip_history=[])
-html_v = html_v.replace("<body>", '<body>\n<script src="demo-shim.js"></script>', 1)
+html_v = html_v.replace("<body>", '<body>\n<script src="demo-shim.js?v=' + BUILD_TS + '"></script>', 1)
 html_v = html_v.replace("<body>", '<body>\n<style>.addr-box{display:none!important}</style>', 1)
 html_v = html_v.replace("<title>", "<title>Demo — ", 1) if "<title>" in html_v else html_v
 html_v = _re.sub(r'<link rel="apple-touch-icon"[^>]*>',

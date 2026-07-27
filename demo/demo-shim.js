@@ -43,7 +43,7 @@
       hdmi1_rotate: S.hdmi1_rotate, hdmi2_rotate: S.hdmi2_rotate,
       hdmi1_external_url: S.hdmi1_external_url, hdmi2_external_url: S.hdmi2_external_url,
       connected: S.ontime_running && (S.mode === 'local' || !!S.ip),
-      os_version: '1.4.0', serial: 'Serial #',
+      os_version: '1.5.2', serial: 'Serial #',
       local_ip: '192.168.1.20', net_iface: 'eth0', displays: 2,
       ontime_installed: true, ontime_running: S.ontime_running,
       companion_installed: true, companion_running: true,
@@ -55,11 +55,36 @@
       cpu_temp: jig(51, 3) + '°C', cpu_percent: jig(7, 5),
       gpu_clock_mhz: 500, ram_used: Math.round(jig(1450, 60)), ram_total: 4045,
       uptime: uptime(), undervolt_now: false, undervolt_boot: false,
+      hdmi_connected: { 1: true, 2: false },
+      hdmi_names: { 1: 'SAMSUNG Q60B', 2: '' },
+      wifi: { up: false, drops_10m: 0, concern: null },
+      primary_kind: 'Ethernet', primary_ip: '192.168.1.20',
+      name: S.unitName || '', now_showing: '1: Stage Timer \u00b7 2: \u2014',
+      health: { ok: true, why: '' },
+      os_update_available: false,
+      interfaces: [{ kind: 'Ethernet', ip: '192.168.1.20', iface: 'eth0' }],
     };
+  }
+
+  function fleet() {
+    return { ok: true, ts: Date.now() / 1000 - 240, units: [
+      { product: 'View', name: 'Stage Left', ip: '192.168.1.31', kind: 'Ethernet',
+        serial: 'DSV-A-2607-0002', version: '1.5.2', showing: 'Stage Timer',
+        health_ok: true, health_why: '', upd: false },
+      { product: 'One', name: 'Monitor World', ip: '192.168.1.22', kind: 'WiFi',
+        serial: 'DS1-A-2607-0003', version: '1.5.1', showing: '1: Countdown \u00b7 2: \u2014',
+        health_ok: false, health_why: 'HDMI 2 no display', upd: true },
+    ]};
   }
 
   const routes = {
     '/status': () => status(),
+    '/discover/last': () => fleet(),
+    '/discover': () => fleet(),
+    '/fleet/identify': () => ({ ok: true }),
+    '/unit-name': (b) => { S.unitName = (b && b.name) || ''; return { ok: true, name: S.unitName }; },
+    '/source/url/1': () => ({ ok: true, url: screenUrl(1) }),
+    '/source/url/2': () => ({ ok: true, url: screenUrl(2) }),
     '/save': (b) => {
       Object.assign(S, {
         mode: b.mode, ip: b.ip || '',
