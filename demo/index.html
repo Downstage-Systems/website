@@ -1166,7 +1166,7 @@
 </head>
 <body>
 <style>.addr-box{display:none!important}</style>
-<script src="demo-shim.js?v=1785155973"></script>
+<script src="demo-shim.js?v=1785158597"></script>
 <div id="ptr-spin"><svg viewBox="0 0 24 24"><path d="M12 4l-6 6h4v6h4v-6h4l-6-6z"/></svg></div>
 
 <div id="job-ribbon">
@@ -1549,6 +1549,10 @@
               <div class="chip-opt-item" title="Hide operator message cards">
                 <span class="chip-opt-label">Hide message cards</span>
                 <button class="toggle on" id="cleantimer-hidecards-toggle" onclick="toggleCleanOpt('hidecards')"></button>
+              </div>
+              <div class="chip-opt-item" title="Hide the coloured overtime/warning styling on the timer">
+                <span class="chip-opt-label">Hide phase colours</span>
+                <button class="toggle on" id="cleantimer-hidephase-toggle" onclick="toggleCleanOpt('hidephase')"></button>
               </div>
               <div class="chip-opt-item" title="Background colour — set to your chromakey colour, black for direct video">
                 <span class="chip-opt-label">Key colour</span>
@@ -2136,6 +2140,7 @@
       hideprogress: true,
       hideclock:    true,
       hidecards:    true,
+      hidephase:    true,
       keycolour:    "000000",
       timercolour:  "ffffff",
     },
@@ -2144,6 +2149,7 @@
       hideprogress: true,
       hideclock:    true,
       hidecards:    true,
+      hidephase:    true,
       keycolour:    "000000",
       timercolour:  "ffffff",
     },
@@ -2891,8 +2897,8 @@
           hdmi1_res: hdmi1Res, hdmi2_res: hdmi2Res,
           hdmi1_rotate: hdmi1Rotate, hdmi2_rotate: hdmi2Rotate,
           hdmi1_external_url: hdmi1ExternalUrl, hdmi2_external_url: hdmi2ExternalUrl,
-          hdmi1_ct_freeze: ctOpts[1].freeze, hdmi1_ct_hideprogress: ctOpts[1].hideprogress, hdmi1_ct_hideclock: ctOpts[1].hideclock, hdmi1_ct_hidecards: ctOpts[1].hidecards,
-          hdmi2_ct_freeze: ctOpts[2].freeze, hdmi2_ct_hideprogress: ctOpts[2].hideprogress, hdmi2_ct_hideclock: ctOpts[2].hideclock, hdmi2_ct_hidecards: ctOpts[2].hidecards,
+          hdmi1_ct_freeze: ctOpts[1].freeze, hdmi1_ct_hideprogress: ctOpts[1].hideprogress, hdmi1_ct_hideclock: ctOpts[1].hideclock, hdmi1_ct_hidecards: ctOpts[1].hidecards, hdmi1_ct_hidephase: ctOpts[1].hidephase,
+          hdmi2_ct_freeze: ctOpts[2].freeze, hdmi2_ct_hideprogress: ctOpts[2].hideprogress, hdmi2_ct_hideclock: ctOpts[2].hideclock, hdmi2_ct_hidecards: ctOpts[2].hidecards, hdmi2_ct_hidephase: ctOpts[2].hidephase,
           hdmi1_ct_keycolour: ctOpts[1].keycolour, hdmi1_ct_timercolour: ctOpts[1].timercolour,
           hdmi2_ct_keycolour: ctOpts[2].keycolour, hdmi2_ct_timercolour: ctOpts[2].timercolour,
           watchdog: watchdogOn,
