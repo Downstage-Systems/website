@@ -865,7 +865,7 @@
 </head>
 <body>
 <style>.addr-box{display:none!important}</style>
-<script src="demo-shim.js?v=1785279632"></script>
+<script src="demo-shim.js?v=1785330781"></script>
 <div id="ptr-spin"><svg viewBox="0 0 24 24"><path d="M12 4l-6 6h4v6h4v-6h4l-6-6z"/></svg></div>
 
 <div id="conn-ribbon">
@@ -1783,6 +1783,13 @@
   (async () => {   // last scan is remembered on the unit — show it on load
     try { renderFleet(await (await fetch('/discover/last')).json()); } catch (e) {}
   })();
+  // while the Network tab is open, freshen the CACHED units (targeted probes,
+  // never a sweep) so health / showing / versions stay live
+  setInterval(async () => {
+    const pane = document.getElementById('tpane-network');
+    if (!pane || pane.offsetParent === null) return;
+    try { renderFleet(await (await fetch('/discover/refresh', { method: 'POST' })).json()); } catch (e) {}
+  }, 60000);
   function ocNode(id, state, val) {
     const el = document.getElementById(id);
     el.className = 'oc-node' + (state ? ' ' + state : '');
