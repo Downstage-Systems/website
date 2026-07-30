@@ -328,6 +328,11 @@
       background: var(--surface2); border: 1px solid var(--border2);
       border-radius: 10px; padding: 16px; margin-bottom: 22px;
     }
+    /* System tab: OS / Unit Name / Virtual Previews as three equal-height panels */
+    .sys-trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 22px; }
+    .sys-trio .field { margin: 0; display: flex; flex-direction: column; }
+    .sys-trio .local-panel { flex: 1; margin-bottom: 0; }
+    @media (max-width: 900px) { .sys-trio { grid-template-columns: 1fr; } }
     .local-panel-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; overflow: hidden; }
     .local-panel-title { font-size: 13px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1; }
     .local-panel-title svg { width: 14px; height: 14px; fill: var(--muted); flex-shrink: 0; }
@@ -1170,7 +1175,7 @@
 </head>
 <body>
 <style>.addr-box{display:none!important}</style>
-<script src="demo-shim.js?v=1785330842"></script>
+<script src="demo-shim.js?v=1785420725"></script>
 <div id="ptr-spin"><svg viewBox="0 0 24 24"><path d="M12 4l-6 6h4v6h4v-6h4l-6-6z"/></svg></div>
 
 <div id="job-ribbon">
@@ -1479,9 +1484,7 @@
           <div class="pv-bar" id="pv-bar-2"></div>
         </div>
 
-        <div class="preview-hint">Right-click a preview (long-press on phones) for quick actions
-          — captured previews trail the real outputs by ±1s; virtual previews render live and can run slightly ahead</div>
-
+        
         <!-- Display controls — act on the outputs previewed above -->
         <div class="display-ctl-row">
           <button class="btn-sm" onclick="refreshDisplays()" title="Reload the web pages on all outputs — recovers a stuck or frozen view. Plugging in a display is detected automatically.">
@@ -1912,7 +1915,8 @@
         </div>
       </div>
 
-      <!-- Downstage OS version -->
+      <!-- Downstage OS / Unit Name / Virtual Previews — three-up -->
+      <div class="sys-trio full-only">
       <div class="field full-only">
         <div class="section-label">Downstage OS</div>
         <div class="local-panel">
@@ -1939,18 +1943,32 @@
         </div>
       </div>
 
-      <!-- System Health -->
       <div class="field full-only">
         <div class="section-label">Unit Name</div>
-        <div style="display:flex; gap:8px">
-          <input id="unit-name-input" maxlength="24" placeholder="e.g. FOH, Stage Left, Green Room"
-                 style="flex:1; background:var(--surface2); border:1px solid var(--border2);
-                        border-radius:8px; color:var(--text); padding:9px 12px; font:inherit">
-          <button class="btn-sm" onclick="saveUnitName()">Save</button>
+        <div class="local-panel">
+          <div style="display:flex; gap:8px">
+            <input id="unit-name-input" maxlength="24" placeholder="e.g. FOH, Stage Left, Green Room"
+                   style="flex:1; min-width:0; background:var(--surface2); border:1px solid var(--border2);
+                          border-radius:8px; color:var(--text); padding:9px 12px; font:inherit">
+            <button class="btn-sm" onclick="saveUnitName()">Save</button>
+          </div>
+          <div class="external-url-hint">Shown in other units' fleet lists and on Identify flashes.</div>
         </div>
-        <div class="external-url-hint">Shown in other units' fleet lists and on Identify flashes.</div>
       </div>
 
+      <div class="field full-only">
+        <div class="section-label">Virtual Previews</div>
+        <div class="local-panel">
+          <div class="toggle-row">
+            <span class="toggle-label">Render an output's source in its preview tile when no display is connected</span>
+            <button class="toggle on" id="virtprev-toggle" onclick="toggleVirtualPreviews()"></button>
+          </div>
+          <div class="external-url-hint">Captured previews trail the real outputs by &plusmn;1s; virtual previews render live and can run slightly ahead. Saved on this unit &mdash; applies to every browser that opens this UI.</div>
+        </div>
+      </div>
+      </div>
+
+      <!-- System Health -->
       <div class="field full-only">
         <div class="section-label">System Health</div>
         <div class="local-panel">
@@ -2745,6 +2763,11 @@
         fb.title = 'Copy the current show state to the failsafe SD now — last backed up ' +
           t.toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
       }
+      if (typeof d.virtual_previews !== 'undefined' && !window._virtprevTouched) {
+        window._virtualPreviews = d.virtual_previews !== false;
+        const vpt = document.getElementById('virtprev-toggle');
+        if (vpt) vpt.className = 'toggle ' + (window._virtualPreviews ? 'on' : '');
+      }
       if (d.hdmi_connected) {
         for (const n of ['1','2']) {
           const on = d.hdmi_connected[n];
@@ -2763,19 +2786,8 @@
           updateVirtualPreview(n, on);
           const bq = document.getElementById('blackout-btn-quick');
           if (bq) bq.disabled = !d.hdmi_connected['1'] && !d.hdmi_connected['2'] && !d.blackout;
-          const bar = document.getElementById('pv-bar-' + n);
-          if (bar) {
-            if (on) {
-              bar.className = 'pv-bar ok';
-              const nm = d.hdmi_names && d.hdmi_names[n];
-              bar.textContent = nm ? 'Connected \u2014 ' + nm : 'Display connected';
-              bar.title = 'Captured from the physical output \u2014 the preview trails the real screen by about a second.';
-            } else {
-              bar.className = 'pv-bar virt';
-              bar.textContent = 'Virtual \u00b7 no display';
-              bar.title = 'No display on this output \u2014 its source is rendered live in this browser, so it can run slightly ahead of captured previews.';
-            }
-          }
+          window._hdmiNames = d.hdmi_names || window._hdmiNames || {};
+          updatePvBar(n, on);
         }
         window._hdmiWas = { 1: !!d.hdmi_connected['1'], 2: !!d.hdmi_connected['2'] };
         for (const n of ['1','2']) {
@@ -3501,12 +3513,14 @@
 
   async function ctxReload(n) {
     closeCtxMenu();
+    if (reloadVirtualPreview(n)) { showToast(`Reloading virtual preview ${n}…`, 'info'); return; }
     showToast(`Reloading HDMI ${n}…`, 'info');
     await fetch('/refresh', { method: 'POST', headers: { 'Content-Type': 'application/json' },
                               body: JSON.stringify({ output: n }) });
   }
   function ctxRefreshPreview(n) {
     closeCtxMenu();
+    if (reloadVirtualPreview(n)) return;
     armPreview(n);
   }
   function ctxIdentify() { closeCtxMenu(); identifyDisplays(); }
@@ -3577,6 +3591,12 @@
     document.getElementById('view-tab-show').classList.toggle('active', m === 'show');
     document.getElementById('view-tab-full').classList.toggle('active', m !== 'show');
     try { localStorage.setItem('ds1-view-mode', m); } catch (e) {}
+    // Show Mode forces the displays pane visible — if we arrived from another
+    // tab, its virtual tiles were hidden (possibly evicted); re-arm them
+    if (m === 'show' && window._lastViewMode && window._lastViewMode !== 'show' &&
+        document.body.dataset.page !== 'displays')
+      reviveVirtualPreviews();
+    window._lastViewMode = m;
   }
   try { setViewMode(localStorage.getItem('ds1-view-mode') || 'full'); } catch (e) {}
 
@@ -3593,6 +3613,10 @@
     // top-anchored page: a tab switch puts the chrome back at the top
     if (window.scrollY > 0) window.scrollTo(0, 0);
     try { localStorage.setItem('ds1-setup-tab', t); } catch (e) {}
+    // returning to the previews after a visit elsewhere — re-arm virtual tiles
+    if (t === 'displays' && window._lastSetupTab && window._lastSetupTab !== 'displays')
+      reviveVirtualPreviews();
+    window._lastSetupTab = t;
   }
   try { showSetupTab(localStorage.getItem('ds1-setup-tab') || 'displays'); } catch (e) {}
   document.body.dataset.hdmi = activeHdmiTab;   // colour identity from first paint
@@ -3600,7 +3624,37 @@
   async function refreshDisplays() {
     showToast('Refreshing displays…', 'info');
     await fetch('/refresh', { method: 'POST' });
+    reloadVirtualPreview(1); reloadVirtualPreview(2);
     showToast('Displays refreshed.', 'success');
+  }
+
+  // Hidden panes get their iframes evicted by the browser (Safari especially),
+  // so a virtual tile comes back blank after a visit to another tab. Re-scale
+  // and reload whenever the previews return to view.
+  function reviveVirtualPreviews() {
+    for (const n of [1, 2]) {
+      const box = document.getElementById('preview-virt-' + n);
+      if (!box || box.style.display === 'none' || !box.dataset.url) continue;
+      const w = box.parentElement.getBoundingClientRect().width;
+      if (w > 0) box.querySelector('iframe').style.transform = 'scale(' + (w / 1280) + ')';
+      reloadVirtualPreview(n);
+    }
+  }
+  // …and after the whole browser tab/app was backgrounded (iOS evicts there too)
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') reviveVirtualPreviews();
+  });
+
+  // Reload a virtual tile's iframe (it lives in THIS browser, so the kiosk's
+  // /refresh can't reach it). Returns true if the tile was virtual and handled.
+  function reloadVirtualPreview(n) {
+    const box = document.getElementById('preview-virt-' + n);
+    if (!box || box.style.display === 'none' || !box.dataset.url) return false;
+    const frame = box.querySelector('iframe');
+    const u = box.dataset.url;
+    frame.src = 'about:blank';
+    setTimeout(() => { frame.src = u; }, 50);
+    return true;
   }
 
   // Arm a preview with a cache-busted stream URL. If the stream fails (the
@@ -3612,11 +3666,15 @@
     const box = document.getElementById('preview-virt-' + n);
     if (!box) return;
     const frame = box.querySelector('iframe');
-    if (connected) {
+    if (connected || window._virtualPreviews === false) {
       if (box.style.display !== 'none') {
         box.style.display = 'none';
         box.dataset.url = '';
         frame.src = 'about:blank';
+      }
+      if (!connected) {
+        const nod = document.getElementById('preview-nodisp-' + n);
+        if (nod) nod.style.display = '';
       }
       return;
     }
@@ -3628,7 +3686,9 @@
         .replace('//localhost', '//' + location.hostname)
         .replace('//127.0.0.1', '//' + location.hostname);
       if (box.dataset.url !== u) { box.dataset.url = u; frame.src = u; }
-      frame.style.transform = 'scale(' + (box.parentElement.getBoundingClientRect().width / 1280) + ')';
+      // never scale against a hidden (0-width) pane — that paints scale(0)
+      const w = box.parentElement.getBoundingClientRect().width;
+      if (w > 0) frame.style.transform = 'scale(' + (w / 1280) + ')';
       box.style.display = '';
       const nod = document.getElementById('preview-nodisp-' + n);
       if (nod) nod.style.display = 'none';
@@ -4032,6 +4092,48 @@
     watchdogOn = !watchdogOn;
     document.getElementById('watchdog-toggle').className = 'toggle ' + (watchdogOn ? 'on' : '');
     markDirty();
+  }
+
+  // The status bar under a preview tile — shared by the status poll and the
+  // Virtual Previews toggle so both keep it current.
+  function updatePvBar(n, connected) {
+    const bar = document.getElementById('pv-bar-' + n);
+    if (!bar) return;
+    if (connected) {
+      bar.className = 'pv-bar ok';
+      const nm = window._hdmiNames && window._hdmiNames[n];
+      bar.textContent = nm ? 'Connected — ' + nm : 'Display connected';
+      bar.title = 'Captured from the physical output — the preview trails the real screen by about a second.';
+    } else if (window._virtualPreviews === false) {
+      bar.className = 'pv-bar virt';
+      bar.textContent = 'No display';
+      bar.title = 'No display on this output. Virtual previews are off — turn them on in System settings.';
+    } else {
+      bar.className = 'pv-bar virt';
+      bar.textContent = 'Virtual · no display';
+      bar.title = 'No display on this output — its source is rendered live in this browser, so it can run slightly ahead of captured previews.';
+    }
+  }
+
+  // Virtual previews preference — saved on the unit, so it applies to every
+  // browser that opens this UI. Takes effect immediately, no Apply needed.
+  async function toggleVirtualPreviews() {
+    const on = window._virtualPreviews === false;
+    window._virtualPreviews = on;
+    window._virtprevTouched = true;
+    document.getElementById('virtprev-toggle').className = 'toggle ' + (on ? 'on' : '');
+    try {
+      await fetch('/virtual-previews', { method: 'POST',
+        headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ on }) });
+      window._virtprevTouched = false;
+    } catch (e) { showToast('Could not save the setting.', 'error'); }
+    const was = window._hdmiWas || {};
+    for (const n of ['1', '2']) {
+      const conn = !!was[n];
+      updateVirtualPreview(n, conn);
+      if (conn) armPreview(n);          // fresh captured grab on toggle
+      updatePvBar(n, conn);
+    }
   }
 
   // ── Presets ───────────────────────────────────────────────────────────────────

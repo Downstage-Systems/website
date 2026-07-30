@@ -60,6 +60,7 @@
       wifi: { up: false, drops_10m: 0, concern: null },
       primary_kind: 'Ethernet', primary_ip: '192.168.1.20',
       name: S.unitName || '', now_showing: '1: Stage Timer \u00b7 2: \u2014',
+      virtual_previews: S.virtPrev !== false,
       health: { ok: true, why: '' },
       os_update_available: false,
       interfaces: [{ kind: 'Ethernet', ip: '192.168.1.20', iface: 'eth0' }],
@@ -83,6 +84,7 @@
     '/discover': () => fleet(),
     '/fleet/identify': () => ({ ok: true }),
     '/unit-name': (b) => { S.unitName = (b && b.name) || ''; return { ok: true, name: S.unitName }; },
+    '/virtual-previews': (b) => { S.virtPrev = !!(b && b.on); return { ok: true, on: S.virtPrev }; },
     '/source/url/1': () => ({ ok: true, url: screenUrl(1) }),
     '/source/url/2': () => ({ ok: true, url: screenUrl(2) }),
     '/save': (b) => {
@@ -318,6 +320,9 @@
     document.querySelectorAll('.alert-bar').forEach(b => { b.dataset.demoOk = '1'; });
     const ctx = document.getElementById('ctx-menu');
     if (ctx) ctx.dataset.demoOk = '1';
+    // Virtual Previews toggle is fully simulated — let visitors flip it
+    const vp = document.getElementById('virtprev-toggle');
+    if (vp) vp.dataset.demoOk = '1';
     document.querySelectorAll('button').forEach(b => {
       if (b.textContent.trim() === 'Save & Apply') {
         b.dataset.demoOk = '1';
