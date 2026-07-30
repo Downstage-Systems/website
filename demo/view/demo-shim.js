@@ -36,7 +36,7 @@
   function fleet() {
     return { ok: true, ts: Date.now() / 1000 - 240, units: [
       { product: 'One', name: 'FOH Rack', ip: '192.168.1.20', kind: 'Ethernet',
-        serial: 'DS1-A-2607-0001', version: '1.5.2', showing: '1: Stage Timer \u00b7 2: \u2014',
+        serial: 'DS1-A-2607-0001', version: '1.5.3', showing: '1: Stage Timer \u00b7 2: \u2014',
         health_ok: true, health_why: '', upd: false },
     ]};
   }

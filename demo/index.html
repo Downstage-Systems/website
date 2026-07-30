@@ -175,6 +175,12 @@
     body:not(.show-mode)[data-page="companion"] .card { background: #16141b; }
     body:not(.show-mode)[data-page="network"]   .card { background: #121822; }
     body:not(.show-mode)[data-page="system"]    .card { background: #1a1613; }
+    /* the SELECTED setup tab takes its page's hue (section labels stay amber
+       everywhere — tried tinting them 2026-07-30, Rob vetoed) */
+    #stab-displays.on  { color: var(--amber); }
+    #stab-companion.on { color: #8E6FE6; }
+    #stab-network.on   { color: #2E90D9; }
+    #stab-system.on    { color: #E0913F; }
     .card-body { padding: 28px; }
 
     /* ── Status bar ── */
@@ -333,6 +339,24 @@
     .sys-trio .field { margin: 0; display: flex; flex-direction: column; }
     .sys-trio .local-panel { flex: 1; margin-bottom: 0; }
     @media (max-width: 900px) { .sys-trio { grid-template-columns: 1fr; } }
+    .cue-seg { display: flex; gap: 8px; flex: 1; min-width: 240px; }
+    .cue-seg button { flex: 1; min-width: 70px; padding: 9px 0; background: var(--surface2);
+      border: 1px solid var(--border2); border-radius: 8px; color: var(--muted);
+      font-family: var(--font-display); font-size: 13px; font-weight: 600;
+      letter-spacing: 0.04em; cursor: pointer;
+      text-align: center; display: flex; align-items: center; justify-content: center; }
+    .cue-seg button.on { border-color: var(--green-bd); color: var(--green); background: var(--green-bg); }
+    .cue-marks { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .cue-marks button { flex: 1; min-width: 58px; padding: 8px 0; background: var(--surface2);
+      border: 1px solid var(--border2); border-radius: 8px; color: var(--text);
+      font-family: 'Share Tech Mono', monospace; font-size: 13px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; }
+    .cue-marks button:not(.on) { opacity: 0.35; }
+    @media (max-width: 600px) {
+      .cue-seg { min-width: 100%; }
+      .cue-seg button { padding: 12px 4px; font-size: 14px; white-space: nowrap; }
+      .cue-marks button { min-width: 72px; padding: 12px 0; font-size: 14px; }
+    }
     .local-panel-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; overflow: hidden; }
     .local-panel-title { font-size: 13px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1; }
     .local-panel-title svg { width: 14px; height: 14px; fill: var(--muted); flex-shrink: 0; }
@@ -1175,7 +1199,7 @@
 </head>
 <body>
 <style>.addr-box{display:none!important}</style>
-<script src="demo-shim.js?v=1785420725"></script>
+<script src="demo-shim.js?v=1785455877"></script>
 <div id="ptr-spin"><svg viewBox="0 0 24 24"><path d="M12 4l-6 6h4v6h4v-6h4l-6-6z"/></svg></div>
 
 <div id="job-ribbon">
@@ -1375,6 +1399,8 @@
       <div class="alert-bar power" id="power-bar" style="display:none">
         <div class="alert-dot"></div>
         <span id="power-bar-text">Low voltage detected — check the power supply</span>
+        <button class="alert-action" id="power-bar-ack" style="display:none"
+                onclick="powerAck()" title="Hide until reboot — a new active dip brings it back">&times;</button>
       </div>
 
       <div class="alert-bar watchdog" id="watchdog-bar" style="display:none">
@@ -1657,6 +1683,11 @@
           </div>
 
           <div class="source-group-label">System</div>
+
+          <div class="source-chip" data-source="welcome" onclick="selectSource(this)">
+            <div class="source-chip-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div>
+            <span class="source-chip-label">Unit Info</span>
+          </div>
 
           <div class="source-chip" data-source="config" onclick="selectSource(this)">
             <div class="source-chip-icon"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></div>
@@ -1964,6 +1995,30 @@
             <button class="toggle on" id="virtprev-toggle" onclick="toggleVirtualPreviews()"></button>
           </div>
           <div class="external-url-hint">Captured previews trail the real outputs by &plusmn;1s; virtual previews render live and can run slightly ahead. Saved on this unit &mdash; applies to every browser that opens this UI.</div>
+        </div>
+      </div>
+
+      <div class="field full-only" style="grid-column:1 / -1">
+        <div class="section-label">Audio Cues</div>
+        <div class="local-panel">
+          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap">
+            <div class="cue-seg">
+              <button id="cue-off" class="on" onclick="setAudioCues('off')">Off</button>
+              <button id="cue-tones" onclick="setAudioCues('tones')">Tones</button>
+              <button id="cue-spoken" onclick="setAudioCues('spoken')">Spoken Times</button>
+            </div>
+            <button class="btn-sm" onclick="testAudioCues()">Test Audio</button>
+          </div>
+          <div class="cue-marks" id="cue-marks">
+            <button data-ms="600000" class="on" onclick="toggleCueMark(600000)">10:00</button>
+            <button data-ms="300000" class="on" onclick="toggleCueMark(300000)">5:00</button>
+            <button data-ms="120000" class="on" onclick="toggleCueMark(120000)">2:00</button>
+            <button data-ms="60000" class="on" onclick="toggleCueMark(60000)">1:00</button>
+            <button data-ms="30000" class="on" onclick="toggleCueMark(30000)">0:30</button>
+            <button data-ms="10000" class="on" onclick="toggleCueMark(10000)">0:10</button>
+            <button data-ms="0" class="on" onclick="toggleCueMark(0)">0:00</button>
+          </div>
+          <div class="external-url-hint">Time calls through the unit's 3.5mm jack as the timer passes each selected mark &mdash; tap a time to turn that callout on or off, and feed the jack to comms or a backstage speaker. Requires the OnTime server (local or remote): cues follow the OnTime timer, so other display sources (external URLs, patterns, Companion) have nothing to cue from. Saved on this unit.</div>
         </div>
       </div>
       </div>
@@ -2712,13 +2767,17 @@
       // Power supply warning (Pi firmware undervoltage flags)
       const pw = d.power || {};
       const pwBar = document.getElementById('power-bar');
+      const pwAck = document.getElementById('power-bar-ack');
       if (pw.undervolt_now) {
         document.getElementById('power-bar-text').textContent =
           'LOW VOLTAGE — the power supply cannot deliver enough current. Use the official 27W USB-C supply.';
+        pwAck.style.display = 'none';
         pwBar.style.display = 'flex';
-      } else if (pw.undervolt_boot) {
+      } else if (pw.undervolt_boot && !pw.ack) {
         document.getElementById('power-bar-text').textContent =
-          'Low voltage was detected since boot — the power supply may be marginal. Displays and USB may misbehave.';
+          'Voltage dipped at some point since boot — often from plugging in power-hungry USB gear ' +
+          '(Stream Decks). If it happened with nothing plugged in, suspect the power supply.';
+        pwAck.style.display = '';
         pwBar.style.display = 'flex';
       } else {
         pwBar.style.display = 'none';
@@ -2768,6 +2827,8 @@
         const vpt = document.getElementById('virtprev-toggle');
         if (vpt) vpt.className = 'toggle ' + (window._virtualPreviews ? 'on' : '');
       }
+      if (d.audio_cues && !window._cueTouched) paintAudioCues(d.audio_cues);
+      if (d.cue_marks && !window._marksTouched) paintCueMarks(d.cue_marks);
       if (d.hdmi_connected) {
         for (const n of ['1','2']) {
           const on = d.hdmi_connected[n];
@@ -2784,8 +2845,13 @@
             setTimeout(() => armPreview(n), 7000);
           }
           updateVirtualPreview(n, on);
-          const bq = document.getElementById('blackout-btn-quick');
-          if (bq) bq.disabled = !d.hdmi_connected['1'] && !d.hdmi_connected['2'] && !d.blackout;
+          // fully virtual (no physical displays) — blackout has nothing to
+          // black out, so dim BOTH blackout buttons until glass returns
+          window._noDisplays = !d.hdmi_connected['1'] && !d.hdmi_connected['2'] && !d.blackout;
+          for (const id of ['blackout-btn', 'blackout-btn-quick']) {
+            const b = document.getElementById(id);
+            if (b) b.disabled = window._noDisplays;
+          }
           window._hdmiNames = d.hdmi_names || window._hdmiNames || {};
           updatePvBar(n, on);
         }
@@ -4136,6 +4202,55 @@
     }
   }
 
+  // ── Audio cues — Off / Tones / Spoken, saved on the unit ──
+  function paintAudioCues(m) {
+    for (const k of ['off', 'tones', 'spoken']) {
+      const b = document.getElementById('cue-' + k);
+      if (b) b.classList.toggle('on', m === k);
+    }
+  }
+  async function setAudioCues(m) {
+    window._audioCues = m;
+    window._cueTouched = true;
+    paintAudioCues(m);
+    try {
+      await fetch('/audio-cues', { method: 'POST',
+        headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: m }) });
+      window._cueTouched = false;
+    } catch (e) { showToast('Could not save the setting.', 'error'); }
+  }
+  function paintCueMarks(list) {
+    const set = new Set((list || []).map(Number));
+    document.querySelectorAll('#cue-marks button').forEach(b =>
+      b.classList.toggle('on', set.has(+b.dataset.ms)));
+    window._cueMarks = Array.from(set);
+  }
+  async function toggleCueMark(ms) {
+    const set = new Set(window._cueMarks ||
+      [600000, 300000, 120000, 60000, 30000, 10000, 0]);
+    set.has(ms) ? set.delete(ms) : set.add(ms);
+    window._marksTouched = true;
+    paintCueMarks(Array.from(set));
+    try {
+      await fetch('/audio-cues', { method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ marks: Array.from(set) }) });
+      window._marksTouched = false;
+    } catch (e) { showToast('Could not save the setting.', 'error'); }
+  }
+  async function powerAck() {
+    document.getElementById('power-bar').style.display = 'none';
+    try { await fetch('/power/ack', { method: 'POST' }); }
+    catch (e) { showToast('Could not save the dismissal.', 'error'); }
+  }
+  async function testAudioCues() {
+    try {
+      const d = await (await fetch('/audio-cues/test', { method: 'POST' })).json();
+      showToast(d.ok ? 'Playing test audio on the 3.5mm jack…'
+                     : (d.error || 'Could not play test audio.'), d.ok ? 'success' : 'error');
+    } catch (e) { showToast('Could not play test audio.', 'error'); }
+  }
+
   // ── Presets ───────────────────────────────────────────────────────────────────
   async function loadPresets() {
     try {
@@ -4214,7 +4329,7 @@
     for (const id of ['blackout-btn', 'blackout-btn-quick']) {
       const btn = document.getElementById(id);
       if (!btn) continue;
-      btn.disabled = false;
+      btn.disabled = !!window._noDisplays && !blackoutActive;
       btn.style.display = '';
       btn.innerHTML = BLACKOUT_ICON + (blackoutActive ? 'Resume' : 'Blackout');
       btn.classList.toggle('flashing', blackoutActive);

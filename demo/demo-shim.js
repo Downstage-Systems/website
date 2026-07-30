@@ -43,7 +43,7 @@
       hdmi1_rotate: S.hdmi1_rotate, hdmi2_rotate: S.hdmi2_rotate,
       hdmi1_external_url: S.hdmi1_external_url, hdmi2_external_url: S.hdmi2_external_url,
       connected: S.ontime_running && (S.mode === 'local' || !!S.ip),
-      os_version: '1.5.2', serial: 'Serial #',
+      os_version: '1.5.3', serial: 'Serial #',
       local_ip: '192.168.1.20', net_iface: 'eth0', displays: 2,
       ontime_installed: true, ontime_running: S.ontime_running,
       companion_installed: true, companion_running: true,
@@ -61,6 +61,8 @@
       primary_kind: 'Ethernet', primary_ip: '192.168.1.20',
       name: S.unitName || '', now_showing: '1: Stage Timer \u00b7 2: \u2014',
       virtual_previews: S.virtPrev !== false,
+      audio_cues: S.audioCues || 'off',
+      cue_marks: S.cueMarks || [600000, 300000, 120000, 60000, 30000, 10000, 0],
       health: { ok: true, why: '' },
       os_update_available: false,
       interfaces: [{ kind: 'Ethernet', ip: '192.168.1.20', iface: 'eth0' }],
@@ -70,7 +72,7 @@
   function fleet() {
     return { ok: true, ts: Date.now() / 1000 - 240, units: [
       { product: 'View', name: 'Stage Left', ip: '192.168.1.31', kind: 'Ethernet',
-        serial: 'DSV-A-2607-0002', version: '1.5.2', showing: 'Stage Timer',
+        serial: 'DSV-A-2607-0002', version: '1.5.3', showing: 'Stage Timer',
         health_ok: true, health_why: '', upd: false },
       { product: 'One', name: 'Monitor World', ip: '192.168.1.22', kind: 'WiFi',
         serial: 'DS1-A-2607-0003', version: '1.5.1', showing: '1: Countdown \u00b7 2: \u2014',
@@ -85,6 +87,12 @@
     '/fleet/identify': () => ({ ok: true }),
     '/unit-name': (b) => { S.unitName = (b && b.name) || ''; return { ok: true, name: S.unitName }; },
     '/virtual-previews': (b) => { S.virtPrev = !!(b && b.on); return { ok: true, on: S.virtPrev }; },
+    '/audio-cues': (b) => {
+      if (b && b.mode) S.audioCues = b.mode;
+      if (b && b.marks) S.cueMarks = b.marks;
+      return { ok: true };
+    },
+    '/audio-cues/test': () => ({ ok: true }),
     '/source/url/1': () => ({ ok: true, url: screenUrl(1) }),
     '/source/url/2': () => ({ ok: true, url: screenUrl(2) }),
     '/save': (b) => {
@@ -226,7 +234,7 @@
     if (S.testcard[n]) return 'screen.html?src=pattern-card';
     let src = S[`hdmi${n}_source`];
     const unconfigured = S.mode === 'remote' && !S.ip;
-    const ontimeSrc = !['config', 'off', 'external'].includes(src) && !src.startsWith('pattern-');
+    const ontimeSrc = !['config', 'off', 'external', 'welcome'].includes(src) && !src.startsWith('pattern-');
     if (ontimeSrc && unconfigured) return 'screen.html?src=welcome';
     if (ontimeSrc && !S.ontime_running && S.mode === 'local') return 'screen.html?src=holding';
     if (src === 'external') return 'screen.html?src=external&url=' + encodeURIComponent(S[`hdmi${n}_external_url`] || '');
@@ -323,6 +331,9 @@
     // Virtual Previews toggle is fully simulated — let visitors flip it
     const vp = document.getElementById('virtprev-toggle');
     if (vp) vp.dataset.demoOk = '1';
+    // Audio Cues panel is fully simulated — selector, marks, and Test
+    const cm = document.getElementById('cue-marks');
+    if (cm) { const f = cm.closest('.field'); if (f) f.dataset.demoOk = '1'; }
     document.querySelectorAll('button').forEach(b => {
       if (b.textContent.trim() === 'Save & Apply') {
         b.dataset.demoOk = '1';
