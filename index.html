@@ -25,6 +25,9 @@
       --green:   #2FD97B;   /* Run Green */
       --green-lo: rgba(47,217,123,0.1);
       --amber:   #F5A524;
+      --violet:  #8E6FE6;   /* Cue Violet — control surfaces */
+      --blue:    #2E90D9;
+      --red:     #E5484D;
       --display: 'Rajdhani', sans-serif;
       --mono:    'Share Tech Mono', monospace;
       --body:    'Inter', sans-serif;
@@ -142,6 +145,13 @@
     .feature .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; margin-top: 7px; }
     .feature h4 { font-family: var(--display); font-size: 16px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
     .feature p { color: var(--dim); font-size: 13.5px; }
+    /* semantic accents — same doctrine as the setup UI: green run, violet
+       control surfaces, amber attention/test, red emergency, blue network */
+    .feature.fg h4 { color: var(--green); }
+    .feature.fv .dot { background: var(--violet); } .feature.fv h4 { color: var(--violet); }
+    .feature.fb .dot { background: var(--blue); }   .feature.fb h4 { color: var(--blue); }
+    .feature.fa .dot { background: var(--amber); }  .feature.fa h4 { color: var(--amber); }
+    .feature.fr .dot { background: var(--red); }    .feature.fr h4 { color: var(--red); }
 
     /* ── Open source ── */
     .oss {
@@ -361,19 +371,19 @@
     <h2>One box. Four jobs.</h2>
     <p class="section-lede">The timer is the headline act — but the same box earns its rack space all day.</p>
     <div class="features">
-      <div class="feature"><div class="dot"></div><div>
+      <div class="feature fg"><div class="dot"></div><div>
         <h4>Show timer server</h4>
         <p>The main gig: rock-solid countdowns and cues on two hardware outputs and every browser in the building, with spoken time calls and cue tones from the audio jack.</p>
       </div></div>
-      <div class="feature"><div class="dot"></div><div>
+      <div class="feature fv"><div class="dot"></div><div>
         <h4>Stream Deck control room</h4>
         <p>Bitfocus Companion runs onboard — and Companion speaks to hundreds of devices. A Stream&nbsp;Deck plugged into the One can drive your switcher, PTZ cameras, OBS, projectors, and the timer, all at once. That's one laptop that stays home.</p>
       </div></div>
-      <div class="feature"><div class="dot"></div><div>
+      <div class="feature fb"><div class="dot"></div><div>
         <h4>Signage &amp; dashboards</h4>
         <p>External Viewer puts any web page on either output — the day's schedule, slides, a stagetimer.io room, a dashboard. Two independent 1080p pages per One, managed from your phone.</p>
       </div></div>
-      <div class="feature"><div class="dot"></div><div>
+      <div class="feature fa"><div class="dot"></div><div>
         <h4>Signal check</h4>
         <p>Test card, SMPTE bars, grid, and gray ramp — drawn on-device at native resolution, working before any server is configured. A line-check generator that lives in the rack.</p>
       </div></div>
@@ -391,7 +401,7 @@
         <h4>Watchdog failover</h4>
         <p>If the timer server ever drops, displays switch to a clean holding screen — and restore themselves when it returns. The audience never sees an error page.</p>
       </div></div>
-      <div class="feature"><div class="dot"></div><div>
+      <div class="feature fa"><div class="dot"></div><div>
         <h4>Setup hotspot</h4>
         <p>No venue WiFi? Each unit broadcasts its own network with per-unit credentials printed on the quick-start card.</p>
       </div></div>
@@ -403,11 +413,11 @@
         <h4>Pre-loaded show profile</h4>
         <p>Install Ontime and Companion with one click and they come up pre-loaded with the Downstage show profile — timers, views, and Stream&nbsp;Deck layout ready for doors, not a blank slate.</p>
       </div></div>
-      <div class="feature"><div class="dot"></div><div>
+      <div class="feature fv"><div class="dot"></div><div>
         <h4>Stream Deck control</h4>
         <p>Start, pause, next, add time, send messages — from hardware buttons via Bitfocus Companion.</p>
       </div></div>
-      <div class="feature"><div class="dot"></div><div>
+      <div class="feature fr"><div class="dot"></div><div>
         <h4>Blackout button</h4>
         <p>Every output to black, one press, from any phone on the network. Resume just as fast.</p>
       </div></div>
