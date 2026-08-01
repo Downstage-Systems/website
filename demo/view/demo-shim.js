@@ -15,7 +15,8 @@
       portal: { detected: false, internet: true, checked: true },
       connected: true, ip: S.ip, local_ip: '192.168.1.31',
       serial: 'Serial #', source: S.source, external_url: S.external_url,
-      watchdog: S.watchdog, watchdog_override: false,
+      watchdog: S.watchdog,
+      watchdog_fallback: 'holding', watchdog_override: false,
       os_version: '2.0.0', os_latest: '2.0.0',
       os_update_available: false, os_checked: true, os_update_result: null,
       os_dismissed: null,
@@ -36,7 +37,7 @@
   function fleet() {
     return { ok: true, ts: Date.now() / 1000 - 240, units: [
       { product: 'One', name: 'FOH Rack', ip: '192.168.1.20', kind: 'Ethernet',
-        serial: 'DS1-A-2607-0001', version: '1.5.3', showing: '1: Stage Timer \u00b7 2: \u2014',
+        serial: 'DS1-A-2607-0001', version: '1.5.4', showing: '1: Stage Timer \u00b7 2: \u2014',
         health_ok: true, health_why: '', upd: false },
     ]};
   }

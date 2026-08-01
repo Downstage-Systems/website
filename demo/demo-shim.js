@@ -43,7 +43,7 @@
       hdmi1_rotate: S.hdmi1_rotate, hdmi2_rotate: S.hdmi2_rotate,
       hdmi1_external_url: S.hdmi1_external_url, hdmi2_external_url: S.hdmi2_external_url,
       connected: S.ontime_running && (S.mode === 'local' || !!S.ip),
-      os_version: '1.5.3', serial: 'Serial #',
+      os_version: '1.5.4', serial: 'Serial #',
       local_ip: '192.168.1.20', net_iface: 'eth0', displays: 2,
       ontime_installed: true, ontime_running: S.ontime_running,
       companion_installed: true, companion_running: true,
@@ -62,6 +62,11 @@
       name: S.unitName || '', now_showing: '1: Stage Timer \u00b7 2: \u2014',
       virtual_previews: S.virtPrev !== false,
       audio_cues: S.audioCues || 'off',
+      line_tone: !!S.lineTone,
+      watchdog_fallback: S.wdFallback || 'holding',
+      companion_remote: null,
+      satellite: { installed: false, running: false, enabled: false, ip: '',
+                   install_state: 'idle', version: null },
       cue_marks: S.cueMarks || [600000, 300000, 120000, 60000, 30000, 10000, 0],
       health: { ok: true, why: '' },
       os_update_available: false,
@@ -72,7 +77,7 @@
   function fleet() {
     return { ok: true, ts: Date.now() / 1000 - 240, units: [
       { product: 'View', name: 'Stage Left', ip: '192.168.1.31', kind: 'Ethernet',
-        serial: 'DSV-A-2607-0002', version: '1.5.3', showing: 'Stage Timer',
+        serial: 'DSV-A-2607-0002', version: '1.5.4', showing: 'Stage Timer',
         health_ok: true, health_why: '', upd: false },
       { product: 'One', name: 'Monitor World', ip: '192.168.1.22', kind: 'WiFi',
         serial: 'DS1-A-2607-0003', version: '1.5.1', showing: '1: Countdown \u00b7 2: \u2014',
@@ -93,6 +98,12 @@
       return { ok: true };
     },
     '/audio-cues/test': () => ({ ok: true }),
+    '/audio-cues/line-tone': (b) => { S.lineTone = !!(b && b.on); return { ok: true, on: S.lineTone }; },
+    '/power/ack': () => ({ ok: true }),
+    '/satellite/status': () => ({ installed: false, running: false, enabled: false, ip: '',
+                                  install_state: 'idle', version: null }),
+    '/satellite/install': () => ({ ok: true, state: 'installing' }),
+    '/satellite/mode': () => ({ ok: false, error: 'Satellite is simulated in the demo' }),
     '/source/url/1': () => ({ ok: true, url: screenUrl(1) }),
     '/source/url/2': () => ({ ok: true, url: screenUrl(2) }),
     '/save': (b) => {
@@ -103,6 +114,7 @@
         hdmi1_rotate: b.hdmi1_rotate, hdmi2_rotate: b.hdmi2_rotate,
         hdmi1_external_url: b.hdmi1_external_url || '', hdmi2_external_url: b.hdmi2_external_url || '',
         watchdog: !!b.watchdog,
+        wdFallback: b.watchdog_fallback || 'holding',
       });
       for (const n of [1, 2]) for (const k of ['freeze', 'hideprogress', 'hideclock', 'hidecards', 'keycolour', 'timercolour']) {
         const v = b[`hdmi${n}_ct_${k}`];

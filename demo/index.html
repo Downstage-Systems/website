@@ -346,6 +346,13 @@
       letter-spacing: 0.04em; cursor: pointer;
       text-align: center; display: flex; align-items: center; justify-content: center; }
     .cue-seg button.on { border-color: var(--green-bd); color: var(--green); background: var(--green-bg); }
+    .wd-box { background: var(--surface2); border: 1px solid var(--border2);
+      border-radius: 10px; padding: 12px 14px; margin-top: 14px; }
+    .wd-box .toggle-row { margin-top: 0; }
+    .wd-sub { display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border);
+      transition: opacity 0.2s; }
+    .wd-sub.off { opacity: 0.4; pointer-events: none; }
     .cue-marks { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
     .cue-marks button { flex: 1; min-width: 58px; padding: 8px 0; background: var(--surface2);
       border: 1px solid var(--border2); border-radius: 8px; color: var(--text);
@@ -1029,6 +1036,33 @@
     }
     .show-quick-label { display: none; }
     body.show-mode .show-quick-label { display: block; text-align: center; margin-bottom: 10px; }
+    .show-quick .qb-emulator.dimmed { opacity: 0.45; }
+    #float-wall { position: fixed; z-index: 1200; top: 72px; left: 12px;
+      width: min(92vw, 880px); background: var(--surface);
+      border: 1px solid var(--border2); border-radius: 12px; overflow: hidden;
+      box-shadow: 0 14px 44px rgba(0,0,0,0.55); display: flex; flex-direction: column; }
+    .fw-head { display: flex; justify-content: space-between; align-items: center;
+      padding: 7px 12px; background: var(--surface2); border-bottom: 1px solid var(--border);
+      cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
+    .fw-title { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.18em;
+      color: var(--amber); }
+    .fw-x { background: none; border: none; color: var(--muted); font-size: 18px;
+      cursor: pointer; padding: 0 4px; line-height: 1; }
+    #float-wall-frame { border: 0; background: #000; flex: 1; width: 100%; min-height: 0; }
+    .fw-size { position: absolute; right: 0; bottom: 0; width: 22px; height: 22px;
+      cursor: nwse-resize; touch-action: none;
+      background: linear-gradient(135deg, transparent 55%, var(--border2) 55%); }
+    /* phone: the wall is width-fitted inside the frame, so extra height is
+       pure letterbox — let the aspect ratio hug the grid instead */
+    @media (max-width: 600px) {
+      #show-embed-frame { min-height: 0 !important; aspect-ratio: 2 / 1 !important;
+                          border-radius: 10px !important; }
+      /* Pop Out is a desktop/tablet feature — phones get inline + Viewer
+         (mobile browsers can't make sized windows; Copy Link stays) */
+      button[onclick="popOutButtons()"] { display: none; }
+    }
+    #show-embed { display: none !important; }
+    body.show-mode #show-embed.on { display: block !important; margin-bottom: 34px; }
     /* blacked out: the Resume controls flash until someone brings it back */
     @keyframes resume-flash {
       0%, 100% { border-color: var(--red); box-shadow: 0 0 12px rgba(229,72,77,0.55); }
@@ -1199,7 +1233,7 @@
 </head>
 <body>
 <style>.addr-box{display:none!important}</style>
-<script src="demo-shim.js?v=1785462764"></script>
+<script src="demo-shim.js?v=1785559773"></script>
 <div id="ptr-spin"><svg viewBox="0 0 24 24"><path d="M12 4l-6 6h4v6h4v-6h4l-6-6z"/></svg></div>
 
 <div id="job-ribbon">
@@ -1358,7 +1392,7 @@
       <div class="section-label show-quick-label">Quick Actions</div>
       <div class="show-quick" id="show-quick" style="display:none">
         <button class="btn-sm blackout" id="blackout-btn-quick" onclick="blackout()" title="Black out all displays — press again to resume">
-          <svg viewBox="0 0 24 24"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="13" rx="2" stroke="currentColor" stroke-width="2"/><line x1="5.5" y1="7.5" x2="18.5" y2="15.5" stroke="currentColor" stroke-width="2"/></svg>
           Blackout</button>
         <button class="btn-sm qb-ontime" onclick="quickOpen('/editor/')" title="Open the OnTime Editor in a new tab" style="display:none">
           <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
@@ -1376,9 +1410,9 @@
         <button class="btn-sm qb-companion" onclick="openCompanionButtons()" title="Open Companion's web button surface — your Stream Deck pages, tappable from this device" style="display:none">
           <svg viewBox="0 0 24 24"><path d="M4 4h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zM4 10h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4zM4 16h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4z"/></svg>
           Buttons</button>
-        <button class="btn-sm qb-companion qb-emulator" onclick="openEmulator()" title="Open your Companion emulator — the custom surface set on the Companion tab" style="display:none">
+        <button class="btn-sm qb-companion qb-emulator" onclick="toggleShowEmbed()" title="Show your Companion button wall right here under Quick Actions — tap again to close" style="display:none">
           <svg viewBox="0 0 24 24"><path d="M20 5H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 3h2v2h-2V8zm0 3h2v2h-2v-2zM8 8h2v2H8V8zm0 3h2v2H8v-2zm-1 2H5v-2h2v2zm0-3H5V8h2v2zm9 7H8v-2h8v2zm0-4h-2v-2h2v2zm0-3h-2V8h2v2zm3 3h-2v-2h2v2zm0-3h-2V8h2v2z"/></svg>
-          My Buttons</button>
+          Virtual Deck</button>
         <button class="btn-sm qb-companion" onclick="openCompanion()" title="Open the Companion admin UI in a new tab — edit Stream Deck buttons and pages" style="display:none">
           <svg viewBox="0 0 24 24"><path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg>
           Companion
@@ -1386,6 +1420,41 @@
         <button class="btn-sm qb-power" onclick="shutdownPi()" title="Shut the unit down cleanly — the panel confirms when it's safe to unplug">
           <svg viewBox="0 0 24 24"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/></svg>
           Power Off</button>
+      </div>
+
+      <!-- My Buttons, live on the Show Mode page — the button wall under the
+           tiles, no overlay hop -->
+      <div id="show-embed" style="display:none">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:22px; margin-bottom:10px">
+          <div class="section-label" style="margin:0">Virtual Deck</div>
+          <div style="display:flex; gap:8px">
+            <button class="btn-sm" onclick="openEmulator()" title="Open the Virtual Deck in the tool viewer — tabbed, full-height, survives page switches">Open in Viewer</button>
+            <button class="btn-sm" onclick="popOutButtons()" title="Float the Virtual Deck in its own movable window, sized to the deck layout">Pop Out &#8599;</button>
+            <button class="btn-sm" onclick="toggleShowEmbed()" title="Close — the quick action brings it back">&times;</button>
+          </div>
+        </div>
+        <iframe id="show-embed-frame" title="Virtual Deck"
+                style="width:100%; aspect-ratio:1.9/1; min-height:300px; max-height:64vh;
+                       border:1px solid var(--border2); border-radius:14px; background:#000"></iframe>
+      </div>
+
+      <!-- floating My Buttons window: draggable, resizable, works in
+           standalone web-app mode where OS popups can't -->
+      <div id="float-wall" style="display:none">
+        <div class="fw-head" id="fw-head">
+          <span class="fw-title">VIRTUAL DECK</span>
+          <button class="fw-x" onclick="closeFloatWall()" title="Close">&times;</button>
+        </div>
+        <iframe id="float-wall-frame" title="Virtual Deck floating"></iframe>
+        <div class="fw-size" id="fw-size" title="Drag to resize"></div>
+      </div>
+
+      <!-- discovery nudge: Companion is up but no button wall configured -->
+      <div id="show-embed-hint" class="show-quick-label" style="display:none; text-align:center;
+           margin-top:18px; font-size:12.5px; color:var(--muted); font-family:inherit;
+           text-transform:none; letter-spacing:normal">
+        No Stream Deck? No problem &mdash; add a Virtual Deck right here.
+        Set an <b>Emulator ID</b> on the Companion tab and it appears under Quick Actions.
       </div>
 
       <!-- Blackout banner -->
@@ -1518,7 +1587,7 @@
             Reload Pages
           </button>
           <button class="btn-sm blackout" id="blackout-btn" onclick="blackout()" title="Black out all displays">
-            <svg viewBox="0 0 24 24"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="13" rx="2" stroke="currentColor" stroke-width="2"/><line x1="5.5" y1="7.5" x2="18.5" y2="15.5" stroke="currentColor" stroke-width="2"/></svg>
             Blackout
           </button>
           <button class="btn-sm" onclick="identifyDisplays()" title="Flash a big 1 and 2 on the outputs">Identify</button>
@@ -1682,6 +1751,16 @@
             <span class="source-chip-label">Gray Ramp</span>
           </div>
 
+          <div class="source-chip" data-source="pattern-sync" onclick="selectSource(this)">
+            <div class="source-chip-icon"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16zm1-13h-2v6l5.2 3.1 1-1.6-4.2-2.5V7z"/></svg></div>
+            <span class="source-chip-label">Sync Clock &mdash; Video</span>
+          </div>
+
+          <div class="source-chip" data-source="pattern-dvd" onclick="selectSource(this)">
+            <div class="source-chip-icon"><svg viewBox="0 0 24 24"><path d="M12 4C6.48 4 2 7.58 2 12s4.48 8 10 8 10-3.58 10-8-4.48-8-10-8zm0 11a3 3 0 110-6 3 3 0 010 6zm0-4a1 1 0 100 2 1 1 0 000-2z"/></svg></div>
+            <span class="source-chip-label">DVD &mdash; Video</span>
+          </div>
+
           <div class="source-group-label">System</div>
 
           <div class="source-chip" data-source="welcome" onclick="selectSource(this)">
@@ -1764,9 +1843,20 @@
             <button class="btn-sm" id="hdmi1-power-btn" onclick="toggleOutputPower(1)">HDMI 1: On</button>
             <button class="btn-sm" id="hdmi2-power-btn" onclick="toggleOutputPower(2)">HDMI 2: On</button>
           </div>
-          <div class="toggle-row">
-            <span class="toggle-label">OnTime watchdog (auto-switch to holding page when offline)</span>
-            <button class="toggle on" id="watchdog-toggle" onclick="toggleWatchdog()"></button>
+          <div class="wd-box">
+            <div class="toggle-row" style="margin-top:0">
+              <span class="toggle-label">OnTime watchdog &mdash; auto-switch displays when the server is offline, restore when it returns</span>
+              <button class="toggle on" id="watchdog-toggle" onclick="toggleWatchdog()"></button>
+            </div>
+            <div class="wd-sub" id="wd-sub">
+              <span class="toggle-label" style="color:var(--muted)">While the server is down, show</span>
+              <div class="cue-seg" style="flex:0 0 auto; min-width:0">
+                <button id="wdfb-holding" class="on" style="flex:0 0 auto; padding:6px 14px"
+                        onclick="setWdFallback('holding')">Holding Page</button>
+                <button id="wdfb-black" style="flex:0 0 auto; padding:6px 14px"
+                        onclick="setWdFallback('black')">Black</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1804,9 +1894,29 @@
             <button class="btn-sm success" onclick="setEmulatorId()">Set</button>
           </div>
           <div class="external-url-hint" style="display:block; margin-top:6px">Paste a Companion
-            emulator ID and a My Buttons tile appears in Show Mode, opening that emulator
+            emulator ID and a Virtual Deck tile appears in Show Mode, opening that emulator
             full-page. Clear the field and Set to remove it.</div>
+          <div class="channel-row" style="margin-top:10px">
+            <span class="channel-label">Virtual Deck</span>
+            <button class="btn-sm" onclick="popOutButtons()"
+                    title="The Virtual Deck in its own small window — drag it to any display">Open in Window</button>
+            <button class="btn-sm" onclick="copyWallLink(this)"
+                    title="Copy the Virtual Deck page address for another device — a touchscreen, a tablet, a spare display">Copy Link</button>
+          </div>
+
           <div class="external-url-hint" style="display:block; margin-top:10px">Up to two 15-key Stream Decks can run from the USB ports (an XL counts as two — key backlights add up). For more, connect them through a powered USB hub.</div>
+        </div>
+      </div>
+
+      <div class="field full-only">
+        <div class="section-label">Companion Satellite</div>
+        <div class="local-panel">
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
+            <span class="status-badge missing" id="sat-badge">Checking&hellip;</span>
+            <span style="font-size:12.5px; color:var(--muted)" id="sat-note"></span>
+          </div>
+          <div id="sat-actions" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:12px"></div>
+          <div class="external-url-hint">Satellite hands this unit's Stream Decks to a Companion server somewhere else &mdash; the FOH laptop, or another One. While Satellite is on, the onboard Companion stands down (two brains can't share one deck). Downloads from Bitfocus. The reverse also works with no setup: other machines running Bitfocus Satellite can join <i>this</i> unit's Companion. Laptop running Satellite? Keep it on power with the Satellite window visible &mdash; macOS power-naps hidden apps and drops the link about every 90 seconds.</div>
         </div>
       </div>
 
@@ -2008,6 +2118,8 @@
               <button id="cue-spoken" onclick="setAudioCues('spoken')">Spoken Times</button>
             </div>
             <button class="btn-sm" onclick="testAudioCues()">Test Audio</button>
+            <button class="btn-sm" id="linetone-btn" onclick="toggleLineTone()"
+                    title="Continuous 1 kHz reference out the 3.5mm jack — for console line checks. A firing cue cuts the tone.">Line Tone</button>
           </div>
           <div class="cue-marks" id="cue-marks">
             <button data-ms="600000" class="on" onclick="toggleCueMark(600000)">10:00</button>
@@ -2018,7 +2130,7 @@
             <button data-ms="10000" class="on" onclick="toggleCueMark(10000)">0:10</button>
             <button data-ms="0" class="on" onclick="toggleCueMark(0)">0:00</button>
           </div>
-          <div class="external-url-hint">Time calls through the unit's 3.5mm jack as the timer passes each selected mark &mdash; tap a time to turn that callout on or off, and feed the jack to comms or a backstage speaker. Requires the OnTime server (local or remote): cues follow the OnTime timer, so other display sources (external URLs, patterns, Companion) have nothing to cue from. Saved on this unit.</div>
+          <div class="external-url-hint">Time calls through the unit's 3.5mm jack as the timer passes each selected mark &mdash; tap a time to turn that callout on or off, and feed the jack to comms or a backstage speaker. Requires the OnTime server (local or remote): cues follow the OnTime timer, so other display sources (external URLs, patterns, Companion) have nothing to cue from. Saved on this unit. Line Tone plays a continuous 1&nbsp;kHz reference for console line checks &mdash; a firing cue cuts it.</div>
         </div>
       </div>
       </div>
@@ -2739,17 +2851,22 @@
       // when its service is running
       document.querySelectorAll('.show-quick .qb-ontime')
         .forEach(b => { b.style.display = d.connected ? '' : 'none'; });
+      window._compHost = (d.companion_remote && d.companion_remote.ok) ? d.companion_remote.ip : null;
+      const compOn = d.companion_running || !!window._compHost;
       document.querySelectorAll('.show-quick .qb-companion')
-        .forEach(b => { b.style.display = d.companion_running ? '' : 'none'; });
+        .forEach(b => { b.style.display = compOn ? '' : 'none'; });
       if (d.companion_emulator_id !== undefined) {
         emulatorId = d.companion_emulator_id;
         const ef = document.getElementById('emulator-id');
         if (ef && document.activeElement !== ef) ef.value = emulatorId;
       }
-      const emuTileOn = !!(d.companion_running && emulatorId);
+      window._emuOn = !!(compOn && emulatorId);
+      const seh = document.getElementById('show-embed-hint');
+      if (seh) seh.style.display = (compOn && !emulatorId) ? '' : 'none';
       document.querySelectorAll('.show-quick .qb-emulator')
-        .forEach(b => { b.style.display = emuTileOn ? '' : 'none'; });
-      document.getElementById('show-quick')?.classList.toggle('has-emu', emuTileOn);
+        .forEach(b => { b.style.display = window._emuOn ? '' : 'none'; });
+      document.getElementById('show-quick')?.classList.toggle('has-emu', window._emuOn);
+      paintShowEmbed();
       const qb = document.getElementById('show-quick');
       if (qb) {
         qb.style.display = '';
@@ -2830,6 +2947,10 @@
       }
       if (d.audio_cues && !window._cueTouched) paintAudioCues(d.audio_cues);
       if (d.cue_marks && !window._marksTouched) paintCueMarks(d.cue_marks);
+      if (typeof d.line_tone !== 'undefined' && !window._toneTouched) {
+        window._lineTone = !!d.line_tone; paintLineTone();
+      }
+      if (d.satellite && document.activeElement?.id !== 'sat-ip') renderSatellite(d.satellite);
       if (d.hdmi_connected) {
         for (const n of ['1','2']) {
           const on = d.hdmi_connected[n];
@@ -2872,9 +2993,11 @@
       const cp = document.getElementById('comp-pill');
       if (cp && companionInstalled) {
         cp.style.display = '';
-        cp.className = 'status-bar ' + (companionRunning ? 'connected' : 'disconnected');
+        const remote = !companionRunning && !!window._compHost;
+        cp.className = 'status-bar ' + ((companionRunning || remote) ? 'connected' : 'disconnected');
         document.getElementById('comp-pill-text').textContent =
-          'COMPANION' + (companionRunning ? '' : ' — STOPPED');
+          'COMPANION' + (remote ? ' — REMOTE' : (companionRunning ? '' : ' — STOPPED'));
+        cp.title = remote ? 'Satellite is serving the Companion at ' + window._compHost : '';
       }
       const wp = document.getElementById('wifi-pill');
       if (wp) {
@@ -2911,6 +3034,8 @@
       // Watchdog toggle
       watchdogOn = d.watchdog ?? true;
       document.getElementById('watchdog-toggle').className = 'toggle ' + (watchdogOn ? 'on' : '');
+      paintWdSub();
+      if (!isDirty && d.watchdog_fallback) { wdFallback = d.watchdog_fallback; paintWdFallback(); }
 
       // Hotspot — if state changed (e.g. auto-fallback fired, or another
       // browser toggled it), update the chip and refresh the WiFi list too
@@ -2992,6 +3117,7 @@
           hdmi1_ct_keycolour: ctOpts[1].keycolour, hdmi1_ct_timercolour: ctOpts[1].timercolour,
           hdmi2_ct_keycolour: ctOpts[2].keycolour, hdmi2_ct_timercolour: ctOpts[2].timercolour,
           watchdog: watchdogOn,
+          watchdog_fallback: wdFallback,
         }),
       });
       const d = await r.json();
@@ -3286,15 +3412,18 @@
       updateCompanionPanel();
       if (d.ok) {
         showToast('USB rescanned. Opening Companion Surfaces…', 'success');
-        setTimeout(() => openExternal(`http://${window.location.hostname}:8000/#/surfaces`), 1000);
+        setTimeout(() => openExternal(`http://${compHost()}:8000/#/surfaces`), 1000);
       } else {
         showToast(`Rescan failed: ${d.message}`, 'error');
       }
     } catch { showToast('Failed to rescan USB.', 'error'); }
   }
 
+  // While Satellite serves a remote Companion, every Companion surface —
+  // tiles, panel, emulator — follows the remote brain
+  function compHost() { return window._compHost || window.location.hostname; }
   function openCompanion() {
-    openPanel(`http://${window.location.hostname}:8000`, 'Companion');
+    openPanel(`http://${compHost()}:8000`, 'Companion');
   }
   let emulatorId = '';
   async function setEmulatorId() {
@@ -3305,7 +3434,7 @@
     if (d.ok) {
       emulatorId = d.id;
       document.getElementById('emulator-id').value = d.id;
-      showToast(d.id ? 'Emulator set — My Buttons tile added to Show Mode.' : 'Emulator cleared.', 'success');
+      showToast(d.id ? 'Emulator set — Virtual Deck tile added to Show Mode.' : 'Emulator cleared.', 'success');
       fetchStatus(true);
     }
   }
@@ -3345,6 +3474,23 @@
     }
   }
 
+  // Hidden iframes get their canvas backing stores purged (Companion's
+  // emulator buttons come back BLANK until poked). On return to view:
+  // stateless surface pages reload outright after a long hide; everything
+  // else gets a resize nudge, which repaints without losing state.
+  function _reviveFrame(k) {
+    const pn = _panels[k];
+    if (!pn) return;
+    const stateless = /\/emulator\/|\/tablet/.test(pn.url);
+    if (stateless && pn.hiddenAt && Date.now() - pn.hiddenAt > 30000) {
+      pn.frame.src = pn.url;
+    } else {
+      pn.frame.style.width = '99.99%';
+      requestAnimationFrame(() => { pn.frame.style.width = ''; });
+    }
+    pn.hiddenAt = null;
+  }
+
   function renderPanelTabs() {
     const bar = document.getElementById('emu-tabs');
     bar.innerHTML = '';
@@ -3359,7 +3505,12 @@
       x.onclick = (e) => { e.stopPropagation(); closePanelTab(k); };
       t.appendChild(x);
       bar.appendChild(t);
-      _panels[k].frame.style.display = (k === _activePanel) ? '' : 'none';
+      const pn = _panels[k];
+      const show = (k === _activePanel);
+      if (show && !pn.visible) _reviveFrame(k);
+      if (!show && pn.visible) pn.hiddenAt = Date.now();
+      pn.visible = show;
+      pn.frame.style.display = show ? '' : 'none';
     }
   }
 
@@ -3376,6 +3527,9 @@
     document.body.classList.remove('panel-open');
     document.body.style.top = '';
     window.scrollTo(0, _panelScrollY);
+    for (const k of Object.keys(_panels)) {
+      if (_panels[k].visible) { _panels[k].hiddenAt = Date.now(); _panels[k].visible = false; }
+    }
   }
   const CLOSER_ALIAS = hidePanel;   // legacy name kept below
 
@@ -3402,10 +3556,10 @@
   function closeEmulator() { hidePanel(); }
   function openEmulator() {
     if (!emulatorId) return;
-    openPanel(`http://${window.location.hostname}:8000/emulator/${emulatorId}`, 'My Buttons');
+    openPanel(`http://${compHost()}:8000/emulator/${emulatorId}`, 'Virtual Deck');
   }
   function openCompanionButtons() {
-    openPanel(`http://${window.location.hostname}:8000/tablet`, 'Buttons');
+    openPanel(`http://${compHost()}:8000/tablet`, 'Buttons');
   }
 
   // ── OnTime Editor ─────────────────────────────────────────────────────────────
@@ -3663,6 +3817,7 @@
     if (m === 'show' && window._lastViewMode && window._lastViewMode !== 'show' &&
         document.body.dataset.page !== 'displays')
       reviveVirtualPreviews();
+    if (m === 'show') reviveShowEmbed();
     window._lastViewMode = m;
   }
   try { setViewMode(localStorage.getItem('ds1-view-mode') || 'full'); } catch (e) {}
@@ -3708,8 +3863,53 @@
     }
   }
   // …and after the whole browser tab/app was backgrounded (iOS evicts there too)
+  // Inline My Buttons wall: toggled by its quick action (which dims while
+  // the wall is open); choice persists per browser
+  function embedOpen() {
+    try { return localStorage.getItem('ds1-embed-open') === '1'; } catch (e) { return false; }
+  }
+  function toggleShowEmbed() {
+    try { localStorage.setItem('ds1-embed-open', embedOpen() ? '0' : '1'); } catch (e) {}
+    paintShowEmbed();
+  }
+  function paintShowEmbed() {
+    const open = !!window._emuOn && embedOpen();
+    const se = document.getElementById('show-embed');
+    const sef = document.getElementById('show-embed-frame');
+    if (!se || !sef) return;
+    se.classList.toggle('on', open);
+    document.querySelectorAll('.show-quick .qb-emulator')
+      .forEach(b => b.classList.toggle('dimmed', open));
+    if (open) {
+      const u = `http://${compHost()}:8000/emulator/${emulatorId}`;
+      if (sef.dataset.url !== u) { sef.dataset.url = u; sef.src = u; sef.dataset.at = Date.now(); }
+    } else if (sef.dataset.url) {
+      sef.dataset.url = ''; sef.removeAttribute('src');
+    }
+  }
+
+  // the inline My Buttons wall is an iframe too — hidden canvases purge,
+  // so reload it when Show Mode returns after a real absence
+  function reviveShowEmbed() {
+    const sef = document.getElementById('show-embed-frame');
+    if (sef && sef.dataset.url && Date.now() - (+sef.dataset.at || 0) > 30000) {
+      sef.src = sef.dataset.url;
+      sef.dataset.at = Date.now();
+    }
+  }
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') reviveVirtualPreviews();
+    if (document.visibilityState === 'visible') {
+      reviveVirtualPreviews();
+      if (document.body.classList.contains('show-mode')) reviveShowEmbed();
+      // an open tool panel was backgrounded with the whole browser tab —
+      // its canvases may be gone too
+      if (document.body.classList.contains('panel-open') && _activePanel && _panels[_activePanel]) {
+        _panels[_activePanel].visible = false;
+        renderPanelTabs();
+      }
+    } else if (_activePanel && _panels[_activePanel] && _panels[_activePanel].visible) {
+      _panels[_activePanel].hiddenAt = Date.now();
+    }
   });
 
   // Reload a virtual tile's iframe (it lives in THIS browser, so the kiosk's
@@ -4145,6 +4345,7 @@
   let hdmi1Rotate = "normal";
   let hdmi2Rotate = "normal";
   let watchdogOn  = true;
+  let wdFallback  = "holding";
 
   function initDisplaySettings() {
     document.getElementById('hdmi1-res').value    = hdmi1Res;
@@ -4153,11 +4354,29 @@
     document.getElementById('hdmi1-rotate').value = hdmi1Rotate;
     document.getElementById('hdmi2-rotate').value = hdmi2Rotate;
     document.getElementById('watchdog-toggle').className = 'toggle ' + (watchdogOn ? 'on' : '');
+    paintWdFallback();
+    paintWdSub();
   }
 
   function toggleWatchdog() {
     watchdogOn = !watchdogOn;
     document.getElementById('watchdog-toggle').className = 'toggle ' + (watchdogOn ? 'on' : '');
+    paintWdSub();
+    markDirty();
+  }
+  function paintWdSub() {
+    const s = document.getElementById('wd-sub');
+    if (s) s.classList.toggle('off', !watchdogOn);
+  }
+  function paintWdFallback() {
+    for (const k of ['holding', 'black']) {
+      const b = document.getElementById('wdfb-' + k);
+      if (b) b.classList.toggle('on', wdFallback === k);
+    }
+  }
+  function setWdFallback(v) {
+    wdFallback = v;
+    paintWdFallback();
     markDirty();
   }
 
@@ -4186,6 +4405,11 @@
   // browser that opens this UI. Takes effect immediately, no Apply needed.
   async function toggleVirtualPreviews() {
     const on = window._virtualPreviews === false;
+    if (on && !confirm('Virtual previews render an output\u2019s assigned source live in this ' +
+        'browser whenever no display is connected.\n\nA timing note: captured previews of real ' +
+        'displays trail the outputs by about a second, while virtual previews run live \u2014 so ' +
+        'the two kinds of tile can look slightly out of sync with each other. That\u2019s normal.' +
+        '\n\nTurn virtual previews on?')) return;
     window._virtualPreviews = on;
     window._virtprevTouched = true;
     document.getElementById('virtprev-toggle').className = 'toggle ' + (on ? 'on' : '');
@@ -4243,6 +4467,170 @@
     document.getElementById('power-bar').style.display = 'none';
     try { await fetch('/power/ack', { method: 'POST' }); }
     catch (e) { showToast('Could not save the dismissal.', 'error'); }
+  }
+  // Line tone: continuous 1kHz out the jack until switched off (or a cue fires)
+  function paintLineTone() {
+    const b = document.getElementById('linetone-btn');
+    if (!b) return;
+    b.textContent = window._lineTone ? 'Tone On' : 'Line Tone';
+    b.style.borderColor = window._lineTone ? 'var(--amber-bd)' : '';
+    b.style.color = window._lineTone ? 'var(--amber)' : '';
+  }
+  async function toggleLineTone() {
+    const on = !window._lineTone;
+    window._lineTone = on;
+    window._toneTouched = true;
+    paintLineTone();
+    try {
+      const d = await (await fetch('/audio-cues/line-tone', { method: 'POST',
+        headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ on }) })).json();
+      window._lineTone = !!d.on;
+      paintLineTone();
+      window._toneTouched = false;
+      if (on && !d.ok) showToast(d.error || 'Could not start the tone.', 'error');
+    } catch (e) { showToast('Could not reach the unit.', 'error'); }
+  }
+  // ── Companion Satellite ──
+  function renderSatellite(s) {
+    const badge = document.getElementById('sat-badge');
+    const note  = document.getElementById('sat-note');
+    const act   = document.getElementById('sat-actions');
+    if (!badge || !s) return;
+    if (window._satBusy) return;   // an action is in flight — don't repaint under it
+    if (s.install_state === 'installing') {
+      badge.className = 'status-badge checking'; badge.textContent = 'Installing…';
+      note.textContent = 'Downloading from Bitfocus — takes a few minutes';
+      act.innerHTML = '';
+      return;
+    }
+    if (!s.installed) {
+      badge.className = 'status-badge missing'; badge.textContent = 'Not installed';
+      note.textContent = '';
+      act.innerHTML = `<button class="btn-sm success" onclick="installSatellite()">
+        <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zm-14 9h14v2H5z"/></svg>
+        Install Satellite</button>
+        <span style="font-size:11px;color:var(--muted)">Downloads from Bitfocus — needs internet</span>`;
+      return;
+    }
+    if (s.enabled && s.running) {
+      badge.className = 'status-badge running'; badge.textContent = 'Serving ' + (s.ip || 'remote');
+      note.textContent = (s.version ? 'v' + s.version + ' — ' : '') +
+        'Decks belong to the remote Companion — onboard Companion is stood down';
+      act.innerHTML = `
+        <button class="btn-sm danger" onclick="setSatellite(false)">Disable — restore onboard Companion</button>
+        <button class="btn-sm" onclick="restartSatellite()" title="Restarts Satellite — it re-detects USB Stream Decks on startup">Rescan USB</button>
+        <button class="btn-sm" onclick="updateSatellite()" title="Re-runs the official Bitfocus installer, which fetches the current stable build — decks drop for a few minutes, then Satellite resumes serving its remote">Update</button>`;
+      return;
+    }
+    if (s.enabled && !s.running) {
+      badge.className = 'status-badge stopped'; badge.textContent = 'Enabled, not running';
+      note.textContent = 'Service starting or failed — give it a moment';
+      act.innerHTML = `<button class="btn-sm danger" onclick="setSatellite(false)">Disable</button>`;
+      return;
+    }
+    badge.className = 'status-badge stopped'; badge.textContent = 'Off';
+    note.textContent = s.version ? 'v' + s.version + ' installed' : '';
+    act.innerHTML = `
+      <input id="sat-ip" placeholder="Remote Companion IP — e.g. 192.168.1.50"
+             autocomplete="off" spellcheck="false" value="${s.ip || ''}"
+             style="flex:1; min-width:200px; background:var(--surface2); border:1px solid var(--border2);
+                    border-radius:8px; color:var(--text); padding:8px 12px; font:inherit; font-size:13.5px">
+      <button class="btn-sm success" onclick="setSatellite(true)">Enable Satellite</button>
+      <button class="btn-sm" onclick="updateSatellite()" title="Re-runs the official Bitfocus installer — fetches the current stable build">Update</button>`;
+  }
+  async function restartSatellite() {
+    showToast('Restarting Satellite — decks re-detect in a few seconds…', 'info');
+    try { await fetch('/satellite/restart', { method: 'POST' }); }
+    catch (e) { showToast('Could not reach the unit.', 'error'); }
+  }
+  async function updateSatellite() {
+    showToast('Updating Satellite from Bitfocus — decks drop until it finishes…', 'info');
+    try { await fetch('/satellite/install', { method: 'POST' }); } catch (e) {}
+  }
+  async function installSatellite() {
+    showToast('Installing Companion Satellite…', 'info');
+    try { await fetch('/satellite/install', { method: 'POST' }); } catch (e) {}
+  }
+  async function setSatellite(on) {
+    const ip = on ? (document.getElementById('sat-ip')?.value || '').trim() : '';
+    window._satBusy = true;
+    try {
+      const d = await (await fetch('/satellite/mode', { method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ on, ip }) })).json();
+      if (!d.ok) { showToast(d.error || 'Could not switch Satellite.', 'error'); return; }
+      showToast(on ? `Satellite serving ${ip} — onboard Companion stood down.`
+                   : 'Satellite off — onboard Companion restored.', 'success');
+    } catch (e) { showToast('Could not reach the unit.', 'error'); }
+    finally { window._satBusy = false; }
+  }
+  // Pop Out: a REAL OS window (the /wall wrapper) you can drag to any
+  // display. Standalone web apps can't spawn OS windows, so there the
+  // in-page floating panel steps in instead.
+  function popOutButtons() {
+    const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+    // iOS can't make real windows — everyone else can, and for this page a
+    // chrome-less web-app window is exactly right (it's all deck, no nav)
+    const iOS = /iP(hone|ad|od)/.test(navigator.userAgent) ||
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (!(standalone && iOS)) {
+      window.open('/virtual-deck', 'ds-wall',
+        'width=960,height=560,menubar=no,toolbar=no,location=no,status=no');
+      return;
+    }
+    const u = `http://${compHost()}:8000/emulator/${emulatorId}`;
+    const fw = document.getElementById('float-wall');
+    const f = document.getElementById('float-wall-frame');
+    if (f.dataset.url !== u) { f.dataset.url = u; f.src = u; }
+    if (!fw.style.height) fw.style.height =
+      Math.round(Math.min(window.innerWidth * 0.92, 880) / 2 + 34) + 'px';
+    fw.style.display = 'flex';
+  }
+  function closeFloatWall() {
+    document.getElementById('float-wall').style.display = 'none';
+  }
+  (function () {
+    const fw = document.getElementById('float-wall');
+    const head = document.getElementById('fw-head');
+    const grip = document.getElementById('fw-size');
+    let drag = null, size = null;
+    head.addEventListener('pointerdown', e => {
+      if (e.target.closest('button')) return;
+      const r = fw.getBoundingClientRect();
+      drag = { dx: e.clientX - r.left, dy: e.clientY - r.top };
+      head.setPointerCapture(e.pointerId);
+    });
+    head.addEventListener('pointermove', e => {
+      if (!drag) return;
+      fw.style.left = Math.max(0, Math.min(innerWidth - 90, e.clientX - drag.dx)) + 'px';
+      fw.style.top  = Math.max(0, Math.min(innerHeight - 40, e.clientY - drag.dy)) + 'px';
+    });
+    head.addEventListener('pointerup', () => { drag = null; });
+    grip.addEventListener('pointerdown', e => {
+      const r = fw.getBoundingClientRect();
+      size = { w: r.width - e.clientX, h: r.height - e.clientY };
+      grip.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+    grip.addEventListener('pointermove', e => {
+      if (!size) return;
+      fw.style.width  = Math.max(320, e.clientX + size.w) + 'px';
+      fw.style.height = Math.max(200, e.clientY + size.h) + 'px';
+    });
+    grip.addEventListener('pointerup', () => { size = null; });
+  })();
+  function copyWallLink(btn) {
+    const u = `http://${window.location.host}/virtual-deck`;
+    const done = () => showToast('Virtual Deck link copied — paste it on the console device.', 'success');
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(u).then(done, () => fallbackCopyWall(u, done));
+    } else fallbackCopyWall(u, done);
+  }
+  function fallbackCopyWall(u, done) {
+    const ta = document.createElement('textarea');
+    ta.value = u; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); done(); } catch (e) {}
+    ta.remove();
   }
   async function testAudioCues() {
     try {
@@ -4323,7 +4711,7 @@
   }
 
   // ── Blackout ──────────────────────────────────────────────────────────────────
-  const BLACKOUT_ICON = `<svg viewBox="0 0 24 24"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/></svg>`;
+  const BLACKOUT_ICON = `<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="13" rx="2" stroke="currentColor" stroke-width="2"/><line x1="5.5" y1="7.5" x2="18.5" y2="15.5" stroke="currentColor" stroke-width="2"/></svg>`;
   let blackoutActive = false;
 
   function renderBlackoutBtn() {
