@@ -3966,6 +3966,7 @@
       let u = (d.url || '')
         .replace('//localhost', '//' + location.hostname)
         .replace('//127.0.0.1', '//' + location.hostname);
+      u += (u.includes('?') ? '&' : '?') + 'preview=1';
       if (box.dataset.url !== u) { box.dataset.url = u; frame.src = u; }
       // never scale against a hidden (0-width) pane - that paints scale(0)
       const w = box.parentElement.getBoundingClientRect().width;
