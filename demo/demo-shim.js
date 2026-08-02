@@ -60,7 +60,7 @@
       hdmi_names: { 1: 'SAMSUNG Q60B', 2: '' },
       wifi: { up: false, drops_10m: 0, concern: null },
       primary_kind: 'Ethernet', primary_ip: '192.168.1.20',
-      name: S.unitName || '', now_showing: '1: Stage Timer \u00b7 2: -',
+      name: S.unitName || '', now_showing: '1: Stage Timer \u00b7 2: —',
       virtual_previews: S.virtPrev !== false,
       audio_cues: S.audioCues || 'off',
       line_tone: !!S.lineTone,
@@ -81,7 +81,7 @@
         serial: 'DSV-A-2607-0002', version: '1.5.4', showing: 'Stage Timer',
         health_ok: true, health_why: '', upd: false },
       { product: 'One', name: 'Monitor World', ip: '192.168.1.22', kind: 'WiFi',
-        serial: 'DS1-A-2607-0003', version: '1.5.1', showing: '1: Countdown \u00b7 2: -',
+        serial: 'DS1-A-2607-0003', version: '1.5.1', showing: '1: Countdown \u00b7 2: —',
         health_ok: false, health_why: 'HDMI 2 no display', upd: true },
     ]};
   }
