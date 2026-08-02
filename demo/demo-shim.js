@@ -47,6 +47,7 @@
       local_ip: '192.168.1.20', net_iface: 'eth0', displays: 2,
       ontime_installed: true, ontime_running: S.ontime_running,
       companion_installed: true, companion_running: true,
+      companion_emulator_id: 'demo',
       blackout: S.blackout || S.blackoutOut[1] || S.blackoutOut[2],
       blackout_outputs: [1, 2].filter(n => S.blackout || S.blackoutOut[n]),
       testcard_outputs: [1, 2].filter(n => S.testcard[n]),
@@ -338,6 +339,13 @@
     if (bq) bq.dataset.demoOk = '1';
     // the blackout banner's Resume button must work in the demo too
     document.querySelectorAll('.alert-bar').forEach(b => { b.dataset.demoOk = '1'; });
+    // Virtual Deck is fully mocked in the demo — quick action, inline
+    // embed, pop-out window, and Copy Link all work
+    document.querySelectorAll('.qb-emulator').forEach(b => { b.dataset.demoOk = '1'; });
+    const se = document.getElementById('show-embed');
+    if (se) se.dataset.demoOk = '1';
+    document.querySelectorAll('button[onclick^="popOutButtons"], button[onclick^="copyWallLink"]')
+      .forEach(b => { b.dataset.demoOk = '1'; });
     const ctx = document.getElementById('ctx-menu');
     if (ctx) ctx.dataset.demoOk = '1';
     // Virtual Previews toggle is fully simulated — let visitors flip it

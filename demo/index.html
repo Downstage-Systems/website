@@ -1233,7 +1233,7 @@
 </head>
 <body>
 <style>.addr-box{display:none!important}</style>
-<script src="demo-shim.js?v=1785559773"></script>
+<script src="demo-shim.js?v=1785699439"></script>
 <div id="ptr-spin"><svg viewBox="0 0 24 24"><path d="M12 4l-6 6h4v6h4v-6h4l-6-6z"/></svg></div>
 
 <div id="job-ribbon">
@@ -3556,10 +3556,10 @@
   function closeEmulator() { hidePanel(); }
   function openEmulator() {
     if (!emulatorId) return;
-    openPanel(`http://${compHost()}:8000/emulator/${emulatorId}`, 'Virtual Deck');
+    openPanel('deck.html', 'Virtual Deck');
   }
   function openCompanionButtons() {
-    openPanel(`http://${compHost()}:8000/tablet`, 'Buttons');
+    openPanel('deck.html', 'Buttons');
   }
 
   // ── OnTime Editor ─────────────────────────────────────────────────────────────
@@ -3862,6 +3862,20 @@
       reloadVirtualPreview(n);
     }
   }
+  // Rotation (and any window resize) changes the pane width, but the iframe's
+  // transform was baked at arm time — re-scale in place, no reload needed.
+  let _pvResizeT = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(_pvResizeT);
+    _pvResizeT = setTimeout(() => {
+      for (const n of [1, 2]) {
+        const box = document.getElementById('preview-virt-' + n);
+        if (!box || box.style.display === 'none' || !box.dataset.url) continue;
+        const w = box.parentElement.getBoundingClientRect().width;
+        if (w > 0) box.querySelector('iframe').style.transform = 'scale(' + (w / 1280) + ')';
+      }
+    }, 200);
+  });
   // …and after the whole browser tab/app was backgrounded (iOS evicts there too)
   // Inline My Buttons wall: toggled by its quick action (which dims while
   // the wall is open); choice persists per browser
@@ -3881,7 +3895,7 @@
     document.querySelectorAll('.show-quick .qb-emulator')
       .forEach(b => b.classList.toggle('dimmed', open));
     if (open) {
-      const u = `http://${compHost()}:8000/emulator/${emulatorId}`;
+      const u = 'deck.html';
       if (sef.dataset.url !== u) { sef.dataset.url = u; sef.src = u; sef.dataset.at = Date.now(); }
     } else if (sef.dataset.url) {
       sef.dataset.url = ''; sef.removeAttribute('src');
@@ -4574,11 +4588,11 @@
     const iOS = /iP(hone|ad|od)/.test(navigator.userAgent) ||
                 (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     if (!(standalone && iOS)) {
-      window.open('/virtual-deck', 'ds-wall',
+      window.open('virtual-deck.html', 'ds-wall',
         'width=960,height=560,menubar=no,toolbar=no,location=no,status=no');
       return;
     }
-    const u = `http://${compHost()}:8000/emulator/${emulatorId}`;
+    const u = 'deck.html';
     const fw = document.getElementById('float-wall');
     const f = document.getElementById('float-wall-frame');
     if (f.dataset.url !== u) { f.dataset.url = u; f.src = u; }
@@ -4620,7 +4634,7 @@
     grip.addEventListener('pointerup', () => { size = null; });
   })();
   function copyWallLink(btn) {
-    const u = `http://${window.location.host}/virtual-deck`;
+    const u = new URL('virtual-deck.html', location.href).href;
     const done = () => showToast('Virtual Deck link copied — paste it on the console device.', 'success');
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(u).then(done, () => fallbackCopyWall(u, done));

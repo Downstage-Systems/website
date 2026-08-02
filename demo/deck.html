@@ -1,0 +1,162 @@
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<title>Virtual Deck — Demo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Interactive mockup of the Downstage 32-key Companion page. Looks and
+     feels like the real emulator; the timer engine behind it is simulated. -->
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html, body { height:100%; background:#000; overflow:hidden; }
+body { display:flex; align-items:center; justify-content:center;
+  font-family:Arial, Helvetica, sans-serif; user-select:none; -webkit-user-select:none; }
+.board { display:grid; grid-template-columns:repeat(8, 1fr); gap:0.7cqw;
+  container-type:inline-size;
+  width:min(100vw - 14px, (100vh - 14px) * 2.04); padding:0; }
+.k { aspect-ratio:1/1; background:#0d0e10; border:0.32cqw solid transparent;
+  border-radius:0.9cqw; position:relative; cursor:pointer; overflow:hidden;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:0.3cqw; color:#fff; text-align:center; }
+.k.pressed { filter:brightness(1.55); border-color:#F5A524 !important; }
+.bd-amber  { border-color:#E8A33D; }
+.bd-red    { border-color:#DE5348; }
+.bd-purple { border-color:#8E7BE8; }
+.bd-gray   { border-color:#3A4048; }
+.big   { font-size:2.6cqw; font-weight:700; line-height:1.05; }
+.mid   { font-size:1.9cqw; line-height:1.15; }
+.sub   { font-size:1.1cqw; font-weight:700; letter-spacing:0.04em; }
+.corner { position:absolute; top:0.6cqw; left:0; right:0; font-size:1.05cqw; }
+.green { color:#43D17C; } .amber { color:#E8A33D; } .red { color:#E25C50; }
+.blue { color:#2E90D9; } .purple { color:#C9A6F0; } .gray { color:#8A939C; }
+.digit { background:#000; border-radius:0; font-size:9.4cqw; font-weight:400;
+  font-variant-numeric:tabular-nums; letter-spacing:-0.4cqw; }
+.k.digit.dark { color:#1c1e22; }
+.blinking .digit { animation:blinkA 0.9s steps(1) infinite; }
+@keyframes blinkA { 50% { color:#E8A33D; } }
+.k svg { width:3.4cqw; height:3.4cqw; }
+.startk { background:#57C874; color:#0B0D10; }
+.stopk  { background:#DE5348; color:#fff; }
+.preset { color:#8A939C; }
+.preset .sub { font-size:1.15cqw; letter-spacing:0.14em; }
+.preset .big { font-size:2.8cqw; font-weight:400; }
+.bo-on { background:#DE5348 !important; }
+.bo-on * { filter:brightness(4); }
+.blink-on { background:#E8A33D22; }
+.dim { opacity:0.35; }
+</style></head><body>
+<div class="board" id="board">
+  <div class="k" data-k="logo">
+    <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="13" rx="2" stroke="#E8ECEF" stroke-width="1.6"/><rect x="6" y="11" width="8" height="1.7" rx="0.85" fill="#43D17C"/><rect x="6" y="14" width="5" height="1.7" rx="0.85" fill="#43D17C"/></svg>
+    <div class="sub">DOWNSTAGE</div>
+  </div>
+  <div class="k bd-amber" data-k="blink" id="k-blink"><div class="big amber" style="font-size:2.2cqw">BLINK</div></div>
+  <div class="k bd-red" data-k="blackout" id="k-bo">
+    <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="13" rx="2" stroke="#E25C50" stroke-width="1.8"/><line x1="5.5" y1="7.5" x2="18.5" y2="15.5" stroke="#E25C50" stroke-width="1.8"/></svg>
+    <div class="sub red">BLACKOUT</div>
+  </div>
+  <div class="k" data-k="add" data-n="1"><div class="big green">+1</div><div class="sub green">MIN</div></div>
+  <div class="k" data-k="add" data-n="5"><div class="big green">+5</div><div class="sub green">MIN</div></div>
+  <div class="k digit" id="dh">00</div>
+  <div class="k digit" id="dm">00</div>
+  <div class="k digit" id="ds">00</div>
+
+  <div class="k bd-red" data-k="tod"><div class="mid">ToD<br><span id="tod">12:00:00</span></div></div>
+  <div class="k bd-amber" data-k="t10"><div class="mid">10 Min</div></div>
+  <div class="k bd-amber" data-k="t30"><div class="mid">30 Min</div></div>
+  <div class="k" data-k="add" data-n="-1"><div class="big amber">-1</div><div class="sub amber">MIN</div></div>
+  <div class="k" data-k="add" data-n="-5"><div class="big amber">-5</div><div class="sub amber">MIN</div></div>
+  <div class="k bd-gray preset" data-k="preset"><div class="sub">PRESET</div><div class="big">1</div></div>
+  <div class="k bd-gray preset" data-k="preset"><div class="sub">PRESET</div><div class="big">2</div></div>
+  <div class="k bd-gray" data-k="tadd"><div class="mid" style="font-size:1.6cqw">Total added<br><span id="tadd">00:00:00</span></div></div>
+
+  <div class="k bd-purple" data-k="prevt"><div class="corner purple">Prev Timer</div><div class="mid" id="prevt"></div></div>
+  <div class="k bd-purple" data-k="curt"><div class="corner purple">Current Timer</div><div class="mid" id="curt1">Time Of Day</div></div>
+  <div class="k bd-purple" data-k="nextt"><div class="corner purple">Next Timer</div><div class="mid" id="nextt">10 Mins</div></div>
+  <div class="k" data-k="roll">
+    <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" fill="#2E90D9"/><path d="M12 7v5l3.4 2" stroke="#0B0D10" stroke-width="2" stroke-linecap="round"/></svg>
+    <div class="sub blue">ROLL</div>
+  </div>
+  <div class="k" data-k="reload">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M19 12a7 7 0 1 1-2.05-4.95" stroke="#E8ECEF" stroke-width="2.2" stroke-linecap="round"/><path d="M17 3v4.2h-4.2" stroke="#E8ECEF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="sub">RELOAD</div>
+  </div>
+  <div class="k bd-gray preset" data-k="preset"><div class="sub">PRESET</div><div class="big">3</div></div>
+  <div class="k bd-gray preset" data-k="preset"><div class="sub">PRESET</div><div class="big">4</div></div>
+  <div class="k bd-purple" data-k="tend"><div class="corner purple">Timer End</div><div class="mid dim" id="tend">12:00 AM</div></div>
+
+  <div class="k" data-k="prev">
+    <svg viewBox="0 0 24 24" fill="#E8ECEF"><path d="M6 5h2.6v14H6zM19 5v14L9.5 12z"/></svg>
+  </div>
+  <div class="k startk" data-k="start" id="k-start">
+    <svg viewBox="0 0 24 24" fill="#0B0D10"><path d="M7 4l13 8-13 8z"/></svg>
+    <div class="sub">START</div>
+  </div>
+  <div class="k" data-k="next">
+    <svg viewBox="0 0 24 24" fill="#E8ECEF"><path d="M15.4 5H18v14h-2.6zM5 5v14l9.5-7z"/></svg>
+  </div>
+  <div class="k" data-k="pause" id="k-pause">
+    <svg viewBox="0 0 24 24" fill="#E8A33D"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+    <div class="sub amber">PAUSE</div>
+  </div>
+  <div class="k stopk" data-k="stop">
+    <svg viewBox="0 0 24 24" fill="#fff"><rect x="6" y="6" width="12" height="12" rx="3"/></svg>
+    <div class="sub">STOP</div>
+  </div>
+  <div class="k bd-gray preset" data-k="preset"><div class="sub">PRESET</div><div class="big">5</div></div>
+  <div class="k bd-gray preset" data-k="preset"><div class="sub">PRESET</div><div class="big">6</div></div>
+  <div class="k bd-purple" data-k="curt2"><div class="corner purple">Current Timer</div><div class="mid" id="curt2">Time Of Day</div></div>
+</div>
+<script>
+// Simulated show timer: START runs the loaded 10-minute timer, the ± keys
+// adjust it, everything else gives honest button feedback.
+let active = false, running = false, remain = 600, added = 0, blink = false, bo = false;
+const $ = id => document.getElementById(id);
+const p2 = n => String(n).padStart(2, '0');
+function hms(s) { s = Math.max(0, Math.round(s)); return [p2(Math.floor(s/3600)), p2(Math.floor(s%3600/60)), p2(s%60)]; }
+function clk12(dt, secs) {
+  let h = dt.getHours() % 12; if (h === 0) h = 12;
+  const ap = dt.getHours() < 12 ? 'AM' : 'PM';
+  return secs ? `${p2(h)}:${p2(dt.getMinutes())}:${p2(dt.getSeconds())}`
+              : `${h}:${p2(dt.getMinutes())} ${ap}`;
+}
+function paint() {
+  const [h, m, s] = active ? hms(remain) : ['00', '00', '00'];
+  $('dh').textContent = h; $('dm').textContent = m; $('ds').textContent = s;
+  const sign = added < 0 ? '-' : '';
+  $('tadd').textContent = sign + hms(Math.abs(added)).join(':');
+  const te = $('tend');
+  if (active) { te.textContent = clk12(new Date(Date.now() + remain * 1000)); te.classList.remove('dim'); }
+  else { te.textContent = '12:00 AM'; te.classList.add('dim'); }
+  $('curt1').textContent = $('curt2').textContent = active ? '10 Mins' : 'Time Of Day';
+  $('nextt').textContent = active ? '—' : '10 Mins';
+  $('prevt').textContent = active ? 'Time Of Day' : '';
+  $('k-pause').classList.toggle('blink-on', active && !running);
+}
+let last = Date.now();
+setInterval(() => {
+  const now = Date.now();
+  if (active && running) {
+    remain -= (now - last) / 1000;
+    if (remain <= 0) { remain = 0; running = false; }
+  }
+  last = now;
+  $('tod').textContent = clk12(new Date(), true);
+  paint();
+}, 200);
+
+const acts = {
+  start:  () => { if (!active) { active = true; remain = 600 + added; } running = true; },
+  pause:  () => { if (active) running = !running; },
+  stop:   () => { active = running = false; remain = 600; added = 0; },
+  reload: () => { added = 0; remain = 600; },
+  add:    el => { const n = +el.dataset.n * 60; added += n; if (active) remain = Math.max(0, remain + n); },
+  blink:  () => { blink = !blink; document.body.classList.toggle('blinking', blink); $('k-blink').classList.toggle('blink-on', blink); },
+  blackout: () => { bo = !bo; $('k-bo').classList.toggle('bo-on', bo);
+    for (const id of ['dh','dm','ds']) $(id).classList.toggle('dark', bo); },
+};
+for (const k of document.querySelectorAll('.k')) {
+  k.addEventListener('pointerdown', () => k.classList.add('pressed'));
+  for (const ev of ['pointerup', 'pointerleave', 'pointercancel'])
+    k.addEventListener(ev, () => k.classList.remove('pressed'));
+  k.addEventListener('click', () => { const a = acts[k.dataset.k]; if (a) { a(k); paint(); } });
+}
+paint();
+</script></body></html>
