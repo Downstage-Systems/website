@@ -131,12 +131,20 @@
     '/presets': () => ({ presets: S.presets }),
     '/presets/save': (b) => {
       S.presets = S.presets.filter(p => p.name !== b.name);
-      S.presets.push({ name: b.name, hdmi1_source: S.hdmi1_source, hdmi2_source: S.hdmi2_source });
+      S.presets.push({ name: b.name, hdmi1_source: S.hdmi1_source, hdmi2_source: S.hdmi2_source,
+                       hdmi1_external_url: S.hdmi1_external_url, hdmi2_external_url: S.hdmi2_external_url,
+                       ct: JSON.parse(JSON.stringify(S.ct)) });
       return { ok: true, presets: S.presets };
     },
     '/presets/apply': (b) => {
       const p = S.presets.find(x => x.name === b.name);
-      if (p) { S.hdmi1_source = p.hdmi1_source; S.hdmi2_source = p.hdmi2_source; S.blackout = false; syncScreens(); }
+      if (p) {
+        S.hdmi1_source = p.hdmi1_source; S.hdmi2_source = p.hdmi2_source;
+        if (p.ct) S.ct = JSON.parse(JSON.stringify(p.ct));
+        if (p.hdmi1_external_url !== undefined) S.hdmi1_external_url = p.hdmi1_external_url;
+        if (p.hdmi2_external_url !== undefined) S.hdmi2_external_url = p.hdmi2_external_url;
+        S.blackout = false; syncScreens();
+      }
       return { ok: !!p, hdmi1_source: S.hdmi1_source, hdmi2_source: S.hdmi2_source };
     },
     '/presets/delete': (b) => { S.presets = S.presets.filter(p => p.name !== b.name); return { ok: true, presets: S.presets }; },
