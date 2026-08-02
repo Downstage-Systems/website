@@ -1,4 +1,4 @@
-// Downstage View demo shim — replaces the display node's REST API with an
+// Downstage View demo shim - replaces the display node's REST API with an
 // in-browser simulator so the real setup page runs with no hardware behind it.
 (function () {
   const S = {
@@ -37,12 +37,12 @@
   function fleet() {
     return { ok: true, ts: Date.now() / 1000 - 240, units: [
       { product: 'One', name: 'FOH Rack', ip: '192.168.1.20', kind: 'Ethernet',
-        serial: 'DS1-A-2607-0001', version: '1.5.4', showing: '1: Stage Timer \u00b7 2: \u2014',
+        serial: 'DS1-A-2607-0001', version: '1.5.4', showing: '1: Stage Timer \u00b7 2: -',
         health_ok: true, health_why: '', upd: false },
     ]};
   }
 
-  const NO = () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' });
+  const NO = () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' });
 
   const routes = {
     '/status': () => status(),
@@ -104,12 +104,12 @@
 
   // ── demo click guard: everything outside Display Source gets a quip ──
   const SILLY = [
-    'Disabled in demo mode — this button is wired to hardware you have not bought yet.',
+    'Disabled in demo mode - this button is wired to hardware you have not bought yet.',
     'On a real unit, that does the thing. In the demo, it does this message.',
     'Demo unit says no. Politely, but no.',
     'That control moves actual electrons. The demo has none to spare.',
     'Nice try. The demo unit is imaginary and cannot be shut down.',
-    'This works great at 192.168.your.venue — less so in a browser tab.',
+    'This works great at 192.168.your.venue - less so in a browser tab.',
     'Settings like this one ship with the real thing. Doors.',
     'Disabled in demo mode. Unlike show bacon, which is always enabled.',
     'This button is off duty. Kind of like the one guy who forgot to hit record.',
@@ -133,10 +133,10 @@
       if (l && /display source/i.test(l.textContent)) f.dataset.demoOk = '1';
     });
     document.querySelectorAll('.view-toggle').forEach(b => { b.dataset.demoOk = '1'; });
-    // the setup tabs are pure navigation — the whole point is seeing each pane
+    // the setup tabs are pure navigation - the whole point is seeing each pane
     const stabs = document.getElementById('setup-tabs');
     if (stabs) stabs.dataset.demoOk = '1';
-    // Quick Status Bar cells just jump to tabs — navigation, demo-safe
+    // Quick Status Bar cells just jump to tabs - navigation, demo-safe
     document.querySelectorAll('.status-strip').forEach(b => { b.dataset.demoOk = '1'; });
     // Show Mode quick-action tiles work in the demo (Test Patterns rides the
     // stubbed /save; OnTime links open the real getontime demo pages)
@@ -181,7 +181,7 @@
     const d = document.createElement('div');
     d.id = 'demo-ribbon';
     d.innerHTML = 'DEMO'
-      + '<span class="note">This is a simulated unit — click around, nothing real can break.</span>'
+      + '<span class="note">This is a simulated unit - click around, nothing real can break.</span>'
       + '<span class="seg"><a href="../">One</a><b>View</b></span>'
       + '<a href="#" onclick="location.reload();return false" style="text-decoration:underline">reset</a>'
       + '<a href="/" style="text-decoration:underline">exit demo</a>';

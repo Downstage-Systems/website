@@ -1,7 +1,7 @@
-// Downstage demo shim — replaces the unit's REST API with an in-browser
+// Downstage demo shim - replaces the unit's REST API with an in-browser
 // simulator so the real setup page runs with no hardware behind it.
 (function () {
-  // the previews are simulated iframes, never real MJPEG streams — kill the
+  // the previews are simulated iframes, never real MJPEG streams - kill the
   // "No signal" overlay hard so a failed /stream request can never paint it
   const _s = document.createElement('style');
   _s.textContent = '.preview-offline{display:none!important}';
@@ -60,7 +60,7 @@
       hdmi_names: { 1: 'SAMSUNG Q60B', 2: '' },
       wifi: { up: false, drops_10m: 0, concern: null },
       primary_kind: 'Ethernet', primary_ip: '192.168.1.20',
-      name: S.unitName || '', now_showing: '1: Stage Timer \u00b7 2: \u2014',
+      name: S.unitName || '', now_showing: '1: Stage Timer \u00b7 2: -',
       virtual_previews: S.virtPrev !== false,
       audio_cues: S.audioCues || 'off',
       line_tone: !!S.lineTone,
@@ -81,7 +81,7 @@
         serial: 'DSV-A-2607-0002', version: '1.5.4', showing: 'Stage Timer',
         health_ok: true, health_why: '', upd: false },
       { product: 'One', name: 'Monitor World', ip: '192.168.1.22', kind: 'WiFi',
-        serial: 'DS1-A-2607-0003', version: '1.5.1', showing: '1: Countdown \u00b7 2: \u2014',
+        serial: 'DS1-A-2607-0003', version: '1.5.1', showing: '1: Countdown \u00b7 2: -',
         health_ok: false, health_why: 'HDMI 2 no display', upd: true },
     ]};
   }
@@ -170,12 +170,12 @@
     },
     '/refresh': () => { syncScreens(true); return { ok: true }; },
     '/displays/identify': () => { identify(); return { ok: true, displays: 2 }; },
-    '/displays/power': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),
+    '/displays/power': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
     '/displays/power-status': () => ({ outputs: [{ index: 1, on: S.outputPower[1] }, { index: 2, on: S.outputPower[2] }] }),
-    '/ontime/start': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),
-    '/ontime/stop': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),
-    '/ontime/install': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),
-    '/ontime/update': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),
+    '/ontime/start': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
+    '/ontime/stop': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
+    '/ontime/install': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
+    '/ontime/update': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
     '/update-status': () => ({
       ontime:    { installed: '4.10.0', latest: '4.10.0', update_available: false, checked: true },
       companion: { installed: '5.0.1', latest: '5.0.1', update_available: false, checked: true, channel: 'stable' },
@@ -185,33 +185,33 @@
     '/jobs': () => ({ name: '', label: '', state: 'idle', started: 0, detail: '' }),
     '/updates/recheck': () => ({ ok: true }),
     '/companion/status': () => ({ installed: true, running: true, install_state: 'done' }),
-    '/companion/restart': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),
-    '/companion/update': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),
-    '/companion/rescan-usb': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),
-    '/companion/set-channel': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),
-    '/companion/install': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),
+    '/companion/restart': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
+    '/companion/update': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
+    '/companion/rescan-usb': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
+    '/companion/set-channel': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
+    '/companion/install': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
     '/network/info': () => ({ ok: true, iface: 'eth0', method: 'auto', current_ip: '192.168.1.20', address: '' }),
-    '/network/apply': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),
+    '/network/apply': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
     '/wifi/status': () => wifi(),
     '/wifi/scan': () => wifi(),
-    '/wifi/connect': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),
+    '/wifi/connect': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
     '/hotspot/status': () => ({ active: S.hotspot, ssid: 'Downstage-0001', pass: 'demo-pass-01', auto: true }),
-    '/hotspot/start': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),
-    '/hotspot/stop': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),
+    '/hotspot/start': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
+    '/hotspot/stop': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
     '/system/timezone': () => ({ timezone: S.tz || 'America/Denver' }),
     '/system/timezones': () => ({ timezones: ['UTC', 'America/Los_Angeles', 'America/Denver', 'America/Chicago', 'America/New_York', 'Europe/London', 'Europe/Paris', 'Asia/Tokyo', 'Australia/Sydney'] }),
-    '/system/timezone/detect': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),
-    '/system/set-time': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),
+    '/system/timezone/detect': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
+    '/system/set-time': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
     '/logs': () => ({ log: '[demo] Downstage One demo unit\n[demo] All systems nominal\n[epaper] this is a simulated log view' }),
-    '/system/restart': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),
-    '/system/shutdown': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),
-    '/system/factory-reset': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),
-    '/os/update': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),
-    '/os/update-file': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),
-    '/config/upload': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),
-    '/reset': () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' }),
+    '/system/restart': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
+    '/system/shutdown': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
+    '/system/factory-reset': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
+    '/os/update': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
+    '/os/update-file': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
+    '/config/upload': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
+    '/reset': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
   };
-  routes['/system/timezone_post'] = () => ({ ok: false, message: 'Demo — this control is disabled', error: 'Demo — this control is disabled' });
+  routes['/system/timezone_post'] = () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' });
 
   function wifi() {
     return {
@@ -294,12 +294,12 @@
 
   // ── demo click guard: everything outside Display Sources gets a quip ──
   const SILLY = [
-    'Disabled in demo mode — this button is wired to hardware you have not bought yet.',
+    'Disabled in demo mode - this button is wired to hardware you have not bought yet.',
     'On a real unit, that does the thing. In the demo, it does this message.',
     'Demo unit says no. Politely, but no.',
     'That control moves actual electrons. The demo has none to spare.',
     'Nice try. The demo unit is imaginary and cannot be shut down.',
-    'This works great at 192.168.your.venue — less so in a browser tab.',
+    'This works great at 192.168.your.venue - less so in a browser tab.',
     'Settings like this one ship with the real thing. Doors.',
     'Disabled in demo mode. Unlike show bacon, which is always enabled.',
     'This button is off duty. Kind of like the one guy who forgot to hit record.',
@@ -309,14 +309,14 @@
     const now = Date.now();
     if (now - lastToast < 700) return;
     lastToast = now;
-    // cancel any pending re-assert from the previous quip — otherwise old
+    // cancel any pending re-assert from the previous quip - otherwise old
     // jokes resurface on top of the new one, a few at a time
     sillyTimers.forEach(clearTimeout);
     sillyTimers = [];
     const msg = SILLY[Math.floor(Math.random() * SILLY.length)];
     if (typeof window.showToast === 'function') {
       // the page hides info toasts after 3.5s; its timer is private, so
-      // re-assert once — jokes get ~6.5 seconds to land
+      // re-assert once - jokes get ~6.5 seconds to land
       window.showToast(msg, 'info');
       sillyTimers.push(setTimeout(() => window.showToast(msg, 'info'), 3000));
     } else console.log(msg);
@@ -329,17 +329,17 @@
     document.querySelectorAll('.save-bar').forEach(b => { b.dataset.demoOk = '1'; });
     // Show/Full tabs and the preview right-click menu are demo-safe
     document.querySelectorAll('.view-toggle').forEach(b => { b.dataset.demoOk = '1'; });
-    // the setup tabs are pure navigation — the whole point is seeing each pane
+    // the setup tabs are pure navigation - the whole point is seeing each pane
     const stabs = document.getElementById('setup-tabs');
     if (stabs) stabs.dataset.demoOk = '1';
-    // Quick Status Bar cells just jump to tabs — navigation, demo-safe
+    // Quick Status Bar cells just jump to tabs - navigation, demo-safe
     document.querySelectorAll('.status-strip').forEach(b => { b.dataset.demoOk = '1'; });
     // Show Mode's blackout tile is fully simulated, let it play
     const bq = document.getElementById('blackout-btn-quick');
     if (bq) bq.dataset.demoOk = '1';
     // the blackout banner's Resume button must work in the demo too
     document.querySelectorAll('.alert-bar').forEach(b => { b.dataset.demoOk = '1'; });
-    // Virtual Deck is fully mocked in the demo — quick action, inline
+    // Virtual Deck is fully mocked in the demo - quick action, inline
     // embed, pop-out window, and Copy Link all work
     document.querySelectorAll('.qb-emulator').forEach(b => { b.dataset.demoOk = '1'; });
     const se = document.getElementById('show-embed');
@@ -348,10 +348,10 @@
       .forEach(b => { b.dataset.demoOk = '1'; });
     const ctx = document.getElementById('ctx-menu');
     if (ctx) ctx.dataset.demoOk = '1';
-    // Virtual Previews toggle is fully simulated — let visitors flip it
+    // Virtual Previews toggle is fully simulated - let visitors flip it
     const vp = document.getElementById('virtprev-toggle');
     if (vp) vp.dataset.demoOk = '1';
-    // Audio Cues panel is fully simulated — selector, marks, and Test
+    // Audio Cues panel is fully simulated - selector, marks, and Test
     const cm = document.getElementById('cue-marks');
     if (cm) { const f = cm.closest('.field'); if (f) f.dataset.demoOk = '1'; }
     document.querySelectorAll('button').forEach(b => {
@@ -396,12 +396,12 @@
     const d = document.createElement('div');
     d.id = 'demo-ribbon';
     d.innerHTML = 'DEMO'
-      + '<span class="note">This is a simulated unit — click around, nothing real can break.</span>'
+      + '<span class="note">This is a simulated unit - click around, nothing real can break.</span>'
       + '<span class="seg"><b>One</b><a href="view/">View</a></span>'
       + '<a href="#" onclick="location.reload();return false" style="text-decoration:underline">reset</a>'
       + '<a href="/" style="text-decoration:underline">exit demo</a>';
     document.body.appendChild(d);
-    // the ribbon wraps differently per width — measure it so the sticky
+    // the ribbon wraps differently per width - measure it so the sticky
     // header tucks exactly beneath, no gap, no overlap
     const setH = () => document.documentElement.style.setProperty('--demo-ribbon-h', (d.offsetHeight + 14) + 'px');
     setH();

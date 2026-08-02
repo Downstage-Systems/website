@@ -1,5 +1,5 @@
 <!DOCTYPE html><html><head><meta charset="utf-8">
-<title>Virtual Deck — Demo</title>
+<title>Virtual Deck - Demo</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Interactive mockup of the Downstage 32-key Companion page. Looks and
      feels like the real emulator; the timer engine behind it is simulated. -->
@@ -126,7 +126,7 @@ function paint() {
   if (active) { te.textContent = clk12(new Date(Date.now() + remain * 1000)); te.classList.remove('dim'); }
   else { te.textContent = '12:00 AM'; te.classList.add('dim'); }
   $('curt1').textContent = $('curt2').textContent = active ? '10 Mins' : 'Time Of Day';
-  $('nextt').textContent = active ? '—' : '10 Mins';
+  $('nextt').textContent = active ? '-' : '10 Mins';
   $('prevt').textContent = active ? 'Time Of Day' : '';
   $('k-pause').classList.toggle('blink-on', active && !running);
 }
