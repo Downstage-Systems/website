@@ -43,7 +43,7 @@
       hdmi1_rotate: S.hdmi1_rotate, hdmi2_rotate: S.hdmi2_rotate,
       hdmi1_external_url: S.hdmi1_external_url, hdmi2_external_url: S.hdmi2_external_url,
       connected: S.ontime_running && (S.mode === 'local' || !!S.ip),
-      os_version: '1.6.3', serial: 'Serial #',
+      os_version: '1.6.4', serial: 'Serial #',
       local_ip: '192.168.1.20', net_iface: 'eth0', displays: 2,
       ontime_installed: true, ontime_running: S.ontime_running,
       companion_installed: true, companion_running: true,
@@ -78,7 +78,7 @@
   function fleet() {
     return { ok: true, ts: Date.now() / 1000 - 240, units: [
       { product: 'View', name: 'Stage Left', ip: '192.168.1.31', kind: 'Ethernet',
-        serial: 'DSV-A-2607-0002', version: '1.6.3', showing: 'Stage Timer',
+        serial: 'DSV-A-2607-0002', version: '1.6.4', showing: 'Stage Timer',
         health_ok: true, health_why: '', upd: false },
       { product: 'One', name: 'Monitor World', ip: '192.168.1.22', kind: 'WiFi',
         serial: 'DS1-A-2607-0003', version: '1.5.1', showing: '1: Countdown \u00b7 2: —',
