@@ -405,7 +405,8 @@
     d.id = 'demo-ribbon';
     d.innerHTML = 'DEMO'
       + '<span class="note">This is a simulated unit - click around, nothing real can break.</span>'
-      + '<span class="seg"><b>One</b><a href="view/">View</a></span>'
+      // View demo hidden while the View is teaser-only - restore the toggle at
+      // its launch: <span class="seg"><b>One</b><a href="view/">View</a></span>
       + '<a href="#" onclick="location.reload();return false" style="text-decoration:underline">reset</a>'
       + '<a href="/" style="text-decoration:underline">exit demo</a>';
     document.body.appendChild(d);
