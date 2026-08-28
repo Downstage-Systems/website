@@ -1248,7 +1248,7 @@
 </head>
 <body>
 <style>.addr-box{display:none!important}</style>
-<script src="demo-shim.js?v=1787841747"></script>
+<script src="demo-shim.js?v=1787938769"></script>
 <div id="ptr-spin"><svg viewBox="0 0 24 24"><path d="M12 4l-6 6h4v6h4v-6h4l-6-6z"/></svg></div>
 
 <div id="job-ribbon">
@@ -1321,8 +1321,8 @@
   <button id="conn-hostname-btn" style="display:none; margin-left:auto; background:none;
           border:1px solid var(--border2); border-radius:7px; color:var(--text);
           font:600 12px var(--font-body); padding:6px 12px; cursor:pointer"
-          onclick="window.location.href='http://downstage-0001.local:8080/'">
-    Find it at downstage-0001.local &rarr;</button>
+          onclick="window.location.href='http://downstage-0000.local:8080/'">
+    Find it at downstage-0000.local &rarr;</button>
 </div>
 <div class="wrap">
 
@@ -1341,7 +1341,7 @@
     </div>
     <div class="addr-right">
       <div class="addr-box">
-      <span class="addr-main" onclick="copyAddr()" title="Click to copy this unit's address">downstage-0001.local:8080
+      <span class="addr-main" onclick="copyAddr()" title="Click to copy this unit's address">downstage-0000.local:8080
         <svg viewBox="0 0 24 24" class="addr-copy-ic"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></span>
       <div id="qr-pop" style="display:none">
         <img id="qr-img" alt="QR code for this unit's address">
@@ -1450,7 +1450,7 @@
         <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:22px; margin-bottom:10px">
           <div class="section-label" style="margin:0">Virtual Deck</div>
           <div style="display:flex; gap:8px">
-            <!-- demo: Open in Viewer hidden - the mock deck lives inline and in the pop-out -->
+            <button class="btn-sm" onclick="openEmulator()" title="Open the Virtual Deck in the tool viewer - tabbed, full-height, survives page switches">Open in Viewer</button>
             <button class="btn-sm" onclick="popOutButtons()" title="Float the Virtual Deck in its own movable window, sized to the deck layout">Pop Out &#8599;</button>
             <button class="btn-sm" onclick="toggleShowEmbed()" title="Close - the quick action brings it back">&times;</button>
           </div>
@@ -1586,14 +1586,14 @@
           <div class="preview-box active" id="preview-box-1" onclick="selectHdmiTab(1)" oncontextmenu="openPreviewMenu(event, 1)">
             <img id="preview-img-1" alt="">
             <div class="preview-offline" id="preview-off-1" style="display:none">No signal</div>
-            <div class="preview-virtual" id="preview-virt-1" style="display:none"><iframe title="Virtual preview 1"></iframe></div>
+            <div class="preview-virtual" id="preview-virt-1" style="display:none"><iframe title="Virtual preview 1" allow="autoplay 'none'"></iframe></div>
             <div class="preview-badge">HDMI 1</div>
             <div class="pv-shield"></div><div class="preview-nodisp" id="preview-nodisp-1" style="display:none"><svg viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/><line x1="4" y1="4" x2="20" y2="16.5" stroke="currentColor" stroke-width="1.8"/></svg><div>No display connected</div></div>
           </div>
           <div class="preview-box" id="preview-box-2" onclick="selectHdmiTab(2)" oncontextmenu="openPreviewMenu(event, 2)">
             <img id="preview-img-2" alt="">
             <div class="preview-offline" id="preview-off-2" style="display:none">No signal</div>
-            <div class="preview-virtual" id="preview-virt-2" style="display:none"><iframe title="Virtual preview 2"></iframe></div>
+            <div class="preview-virtual" id="preview-virt-2" style="display:none"><iframe title="Virtual preview 2" allow="autoplay 'none'"></iframe></div>
             <div class="preview-badge">HDMI 2</div>
             <div class="pv-shield"></div><div class="preview-nodisp" id="preview-nodisp-2" style="display:none"><svg viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/><line x1="4" y1="4" x2="20" y2="16.5" stroke="currentColor" stroke-width="1.8"/></svg><div>No display connected</div></div>
           </div>
@@ -3088,7 +3088,7 @@
       // dropped request during a service restart shouldn't alarm anyone)
       _connFails++;
       const hb = document.getElementById('conn-hostname-btn');
-      if (hb && _connFails >= 6 && window.location.hostname !== 'downstage-0001.local') hb.style.display = '';
+      if (hb && _connFails >= 6 && window.location.hostname !== 'downstage-0000.local') hb.style.display = '';
       // if we triggered it, its ribbon is already up; otherwise wait for a
       // couple of misses before alarming (a single dropped poll during a
       // service restart shouldn't cry wolf)
@@ -3625,10 +3625,10 @@
   function closeEmulator() { hidePanel(); }
   function openEmulator() {
     if (!emulatorId) return;
-    openPanel('deck.html', 'Virtual Deck');
+    openPanel(`http://${compHost()}:8000/emulator/${emulatorId}`, 'Virtual Deck');
   }
   function openCompanionButtons() {
-    openPanel('deck.html', 'Buttons');
+    openPanel(`http://${compHost()}:8000/tablet`, 'Buttons');
   }
 
   // ── OnTime Editor ─────────────────────────────────────────────────────────────
@@ -3964,7 +3964,7 @@
     document.querySelectorAll('.show-quick .qb-emulator')
       .forEach(b => b.classList.toggle('dimmed', open));
     if (open) {
-      const u = 'deck.html';
+      const u = `http://${compHost()}:8000/emulator/${emulatorId}`;
       if (sef.dataset.url !== u) { sef.dataset.url = u; sef.src = u; sef.dataset.at = Date.now(); }
     } else if (sef.dataset.url) {
       sef.dataset.url = ''; sef.removeAttribute('src');
@@ -4658,11 +4658,11 @@
     const iOS = /iP(hone|ad|od)/.test(navigator.userAgent) ||
                 (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     if (!(standalone && iOS)) {
-      window.open('virtual-deck.html', 'ds-wall',
+      window.open('/virtual-deck', 'ds-wall',
         'width=960,height=560,menubar=no,toolbar=no,location=no,status=no');
       return;
     }
-    const u = 'deck.html';
+    const u = `http://${compHost()}:8000/emulator/${emulatorId}`;
     const fw = document.getElementById('float-wall');
     const f = document.getElementById('float-wall-frame');
     if (f.dataset.url !== u) { f.dataset.url = u; f.src = u; }
@@ -4704,7 +4704,7 @@
     grip.addEventListener('pointerup', () => { size = null; });
   })();
   function copyWallLink(btn) {
-    const u = new URL('virtual-deck.html', location.href).href;
+    const u = `http://${window.location.host}/virtual-deck`;
     const done = () => showToast('Virtual Deck link copied - paste it on the console device.', 'success');
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(u).then(done, () => fallbackCopyWall(u, done));
@@ -4752,7 +4752,15 @@
     try {
       const r = await fetch('/presets/save', {
         method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ name: name.trim(), hdmi1_source: hdmi1Source, hdmi2_source: hdmi2Source }),
+        body: JSON.stringify((() => {
+          // the preset is the whole look as currently set in the UI -
+          // sources, custom-timer options, and External Viewer URLs
+          const b = { name: name.trim(), hdmi1_source: hdmi1Source, hdmi2_source: hdmi2Source,
+                      hdmi1_external_url: hdmi1ExternalUrl, hdmi2_external_url: hdmi2ExternalUrl };
+          for (const n of [1, 2])
+            for (const [k, v] of Object.entries(ctOpts[n])) b[`hdmi${n}_ct_${k}`] = v;
+          return b;
+        })()),
       });
       const d = await r.json();
       if (d.ok) { renderPresets(d.presets); showToast(`Preset "${name.trim()}" saved.`, 'success'); }
@@ -4770,9 +4778,15 @@
       const d = await r.json();
       if (d.ok) {
         showToast(`Preset "${name}" applied.`, 'success');
-        // reflect the recalled sources in the selector immediately
+        // reflect the recalled look in the controls immediately
         hdmi1Source = d.hdmi1_source;
         hdmi2Source = d.hdmi2_source;
+        for (const [k, v] of Object.entries(d.applied || {})) {
+          let m = k.match(/^hdmi([12])_ct_(.+)$/);
+          if (m) { ctOpts[+m[1]][m[2]] = v; continue; }
+          if (k === 'hdmi1_external_url') hdmi1ExternalUrl = v;
+          if (k === 'hdmi2_external_url') hdmi2ExternalUrl = v;
+        }
         refreshSourceGrid();
         updateHdmiLabels();
         setTimeout(fetchStatus, 2000);

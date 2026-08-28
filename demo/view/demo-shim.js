@@ -37,7 +37,7 @@
   function fleet() {
     return { ok: true, ts: Date.now() / 1000 - 240, units: [
       { product: 'One', name: 'FOH Rack', ip: '192.168.1.20', kind: 'Ethernet',
-        serial: 'DS1-A-2607-0001', version: '1.6.4', showing: '1: Stage Timer \u00b7 2: —',
+        serial: 'DS1-A-2607-0000', version: '1.6.4', showing: '1: Stage Timer \u00b7 2: —',
         health_ok: true, health_why: '', upd: false },
     ]};
   }
@@ -62,7 +62,7 @@
     '/wifi/connect': NO,
     '/network/info': () => ({ ok: true, iface: 'wlan0', method: 'auto', current_ip: '192.168.1.31', address: '' }),
     '/network/apply': NO,
-    '/hotspot/status': () => ({ active: false, ssid: 'DownstageView-0001', pass: 'demo-pass-01', auto: true }),
+    '/hotspot/status': () => ({ active: false, ssid: 'DownstageView-0000', pass: 'demo-pass-01', auto: true }),
     '/system/timezone': () => ({ timezone: 'America/Denver' }),
     '/system/timezones': () => ({ timezones: ['UTC', 'America/Los_Angeles', 'America/Denver', 'America/Chicago', 'America/New_York', 'Europe/London', 'Europe/Paris', 'Asia/Tokyo', 'Australia/Sydney'] }),
     '/system/timezone/detect': NO,

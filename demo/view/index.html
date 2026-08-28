@@ -876,7 +876,7 @@
 </head>
 <body>
 <style>.addr-box{display:none!important}</style>
-<script src="demo-shim.js?v=1787841747"></script>
+<script src="demo-shim.js?v=1787938769"></script>
 <div id="ptr-spin"><svg viewBox="0 0 24 24"><path d="M12 4l-6 6h4v6h4v-6h4l-6-6z"/></svg></div>
 
 <div id="conn-ribbon">
@@ -886,8 +886,8 @@
   <button id="conn-hostname-btn" style="display:none; margin-left:auto; background:none;
           border:1px solid var(--border2); border-radius:7px; color:var(--text);
           font:600 12px var(--font-body); padding:6px 12px; cursor:pointer"
-          onclick="window.location.href='http://downstage-v001.local:8080/'">
-    Find it at downstage-v001.local &rarr;</button>
+          onclick="window.location.href='http://downstage-v000.local:8080/'">
+    Find it at downstage-v000.local &rarr;</button>
 </div>
 <div id="emu-overlay">
   <div class="emu-head">
@@ -921,7 +921,7 @@
     </div>
     <div class="addr-right">
       <div class="addr-box">
-      <span class="addr-main" onclick="copyAddr()" title="Click to copy this unit's address">downstage-v001.local:8080
+      <span class="addr-main" onclick="copyAddr()" title="Click to copy this unit's address">downstage-v000.local:8080
         <svg viewBox="0 0 24 24" class="addr-copy-ic"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></span>
       <div id="qr-pop" style="display:none">
         <img id="qr-img" alt="QR code for this unit's address">
@@ -1360,7 +1360,7 @@
 
       <div id="tpane-system" class="tpane">
       <!-- Timezone -->
-      <div class="field" style="margin-top:0; margin-bottom:0">
+      <div class="field" style="margin-top:0">
         <div class="section-label">Pi Timezone</div>
         <div class="local-panel">
           <div class="tz-current">Current: <span id="tz-current">Loading…</span></div>
@@ -1379,19 +1379,21 @@
         </div>
       </div>
 
-      <!-- Downstage OS -->
       <div class="field full-only">
         <div class="section-label">Unit Name</div>
-        <div style="display:flex; gap:8px">
-          <input id="unit-name-input" maxlength="24" placeholder="e.g. FOH, Stage Left, Green Room"
-                 style="flex:1; background:var(--surface2); border:1px solid var(--border2);
-                        border-radius:8px; color:var(--text); padding:9px 12px; font:inherit">
-          <button class="btn-sm" onclick="saveUnitName()">Save</button>
+        <div class="local-panel">
+          <div style="display:flex; gap:8px">
+            <input id="unit-name-input" maxlength="24" placeholder="e.g. FOH, Stage Left, Green Room"
+                   style="flex:1; min-width:0; background:var(--surface2); border:1px solid var(--border2);
+                          border-radius:8px; color:var(--text); padding:9px 12px; font:inherit">
+            <button class="btn-sm" onclick="saveUnitName()">Save</button>
+          </div>
+          <div class="external-url-hint">Shown in other units' fleet lists and on Identify flashes.</div>
         </div>
-        <div class="external-url-hint">Shown in other units' fleet lists and on Identify flashes.</div>
       </div>
 
-      <div class="field full-only" style="margin-top:22px; margin-bottom:0">
+      <!-- Downstage OS -->
+      <div class="field full-only" style="margin-bottom:0">
         <div class="section-label">Downstage OS</div>
         <div class="local-panel">
           <div class="version-row" style="margin-top:0; padding-top:0; border-top:none">
@@ -2040,7 +2042,7 @@
       document.getElementById('status-text').textContent = 'Error checking status';
       _connFails++;
       const hb = document.getElementById('conn-hostname-btn');
-      if (hb && _connFails >= 6 && window.location.hostname !== 'downstage-v001.local') hb.style.display = '';
+      if (hb && _connFails >= 6 && window.location.hostname !== 'downstage-v000.local') hb.style.display = '';
       if (!_expectDown && _connFails >= 2) showConnRibbon('offline');
       clearTimeout(_connRetry);
       _connRetry = setTimeout(() => { if (!document.hidden) fetchStatus(true); }, 2500);

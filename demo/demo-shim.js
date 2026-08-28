@@ -52,7 +52,7 @@
       blackout_outputs: [1, 2].filter(n => S.blackout || S.blackoutOut[n]),
       testcard_outputs: [1, 2].filter(n => S.testcard[n]),
       watchdog: S.watchdog,
-      hotspot_active: S.hotspot, hotspot_ssid: 'Downstage-0001',
+      hotspot_active: S.hotspot, hotspot_ssid: 'Downstage-0000',
       cpu_temp: jig(51, 3) + '°C', cpu_percent: jig(7, 5),
       gpu_clock_mhz: 500, ram_used: Math.round(jig(1450, 60)), ram_total: 4045,
       uptime: uptime(), undervolt_now: false, undervolt_boot: false,
@@ -78,7 +78,7 @@
   function fleet() {
     return { ok: true, ts: Date.now() / 1000 - 240, units: [
       { product: 'View', name: 'Stage Left', ip: '192.168.1.31', kind: 'Ethernet',
-        serial: 'DSV-A-2607-0002', version: '1.6.4', showing: 'Stage Timer',
+        serial: 'DSV-A-2607-0000', version: '1.6.4', showing: 'Stage Timer',
         health_ok: true, health_why: '', upd: false },
       { product: 'One', name: 'Monitor World', ip: '192.168.1.22', kind: 'WiFi',
         serial: 'DS1-A-2607-0003', version: '1.5.1', showing: '1: Countdown \u00b7 2: —',
@@ -203,7 +203,7 @@
     '/wifi/status': () => wifi(),
     '/wifi/scan': () => wifi(),
     '/wifi/connect': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
-    '/hotspot/status': () => ({ active: S.hotspot, ssid: 'Downstage-0001', pass: 'demo-pass-01', auto: true }),
+    '/hotspot/status': () => ({ active: S.hotspot, ssid: 'Downstage-0000', pass: 'demo-pass-01', auto: true }),
     '/hotspot/start': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
     '/hotspot/stop': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
     '/system/timezone': () => ({ timezone: S.tz || 'America/Denver' }),
