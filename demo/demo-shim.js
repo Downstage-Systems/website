@@ -416,8 +416,32 @@
     window.addEventListener('resize', setH);
   }
 
+  // Every Companion surface in the real UI points at the unit's :8000 or its
+  // /virtual-deck route - neither exists on the static demo. Route them all
+  // to the canned mockup: deck.html inline, virtual-deck.html for pop-outs.
+  function deckRoutes() {
+    const isEmu = u => typeof u === 'string' &&
+      (u.includes(':8000/emulator') || u.includes(':8000/tablet') || u.includes('/virtual-deck'));
+    const _open = window.open ? window.open.bind(window) : null;
+    if (_open) window.open = (u, ...rest) => _open(isEmu(u) ? 'virtual-deck.html' : u, ...rest);
+    if (typeof window.openPanel === 'function') {
+      const _op = window.openPanel;
+      window.openPanel = (u, ...rest) => _op(isEmu(u) ? 'deck.html' : u, ...rest);
+    }
+    if (typeof window.paintShowEmbed === 'function') {
+      const _pse = window.paintShowEmbed;
+      window.paintShowEmbed = function () {
+        _pse.apply(this, arguments);
+        const sef = document.getElementById('show-embed-frame');
+        if (sef && isEmu(sef.dataset.url)) {
+          sef.dataset.url = 'deck.html'; sef.src = 'deck.html';
+        }
+      };
+    }
+  }
+
   function arm() {
-    makeFrames(); ribbon(); markAllowed();
+    makeFrames(); ribbon(); markAllowed(); deckRoutes();
     document.addEventListener('pointerdown', guard, true);
     document.addEventListener('click', guard, true);
   }
