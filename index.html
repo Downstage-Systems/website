@@ -111,6 +111,14 @@
       transition: border-color 0.2s;
     }
     .product:hover { border-color: var(--green); }
+    .product.soon { position: relative; overflow: hidden; }
+    .product.soon .ribbon {
+      position: absolute; top: 24px; right: -46px; transform: rotate(45deg);
+      background: var(--amber, #F5A524); color: #0B0D10;
+      font-family: var(--mono); font-size: 11px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      padding: 7px 52px; pointer-events: none;
+    }
     .product .mark { width: 64px; height: 64px; }
     .product h3 { font-size: 26px; }
     .product h3 .g { color: var(--green); }
@@ -274,7 +282,8 @@
            style="margin-top:16px; text-align:center">Coming soon - get launch updates</a>
       </div>
 
-      <div class="product">
+      <div class="product soon">
+        <div class="ribbon">Coming soon</div>
         <svg class="mark" viewBox="0 0 96 96" aria-label="Downstage View mark">
           <rect x="6" y="10" width="84" height="66" rx="10" fill="none" stroke="#e8ecef" stroke-width="7"/>
           <rect x="20" y="54" width="30" height="9" rx="4.5" fill="#2fd97b"/>
@@ -304,7 +313,7 @@
       <thead><tr>
         <th style="text-align:left; padding:10px 12px; color:var(--dim); font-weight:600; border-bottom:1px solid var(--panel)"></th>
         <th style="text-align:left; padding:10px 12px; color:var(--green); font-weight:600; border-bottom:1px solid var(--panel)">Downstage One</th>
-        <th style="text-align:left; padding:10px 12px; color:var(--green); font-weight:600; border-bottom:1px solid var(--panel)">Downstage View</th>
+        <th style="text-align:left; padding:10px 12px; color:var(--green); font-weight:600; border-bottom:1px solid var(--panel)">Downstage View <span style="color:var(--dim); font-weight:400; font-size:12px">(coming soon)</span></th>
       </tr></thead>
       <tbody>
         <tr>
