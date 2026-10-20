@@ -12,7 +12,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="preload" href="/static/fonts/inter-600.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/static/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/static/site.css">
+  <link rel="stylesheet" href="/static/site.css?v=8">
 </head>
 <body>
 
@@ -132,6 +132,10 @@
       <summary>I moved to a new venue</summary>
       <div class="ans">When a light cannot find its saved WiFi, it opens its setup network by itself after about a minute. Join it and pick the new network. It keeps its name and number.</div>
     </details>
+    <details name="help" id="shift">
+      <summary>Why does my screen shift around?</summary>
+      <div class="ans">On purpose. The Downstage Cue and the Cue Lite have AMOLED screens, and a picture that never moves, like a camera number left up all day, can burn into an OLED screen. To prevent that, the light moves its picture a few pixels every few minutes. It is too small to notice from where you stand, and it protects the screen.</div>
+    </details>
     <details name="help">
       <summary>How do I reset a light?</summary>
       <div class="ans">Open the light's page and choose Factory reset. It wipes every saved network, the name and all settings, and the light comes back as new.</div>
@@ -165,7 +169,7 @@
       <div><strong>Cue lights</strong><a href="/#compare">Downstage Cue</a><a href="/#compare">Cue Lite</a><a href="/#compare">Cue 360</a></div>
       <div><strong>Show timer</strong><a href="/one/">Downstage One</a><a href="/one/#specs">Tech specs</a><a href="/demo/">Try the interface</a></div>
       <div><strong>Open source</strong><a href="https://github.com/Downstage-Systems/downstage-os" rel="noopener">Downstage OS</a><a href="https://www.getontime.no" rel="noopener">Ontime</a><a href="https://bitfocus.io/companion" rel="noopener">Companion</a></div>
-      <div><strong>Talk to us</strong><a href="/support/">Support</a><a href="mailto:hello@downstage.systems">hello@downstage.systems</a><a href="/#questions">Questions</a></div>
+      <div><strong>Talk to us</strong><a href="/support/">Support</a><a href="/warranty/">Warranty</a><a href="mailto:hello@downstage.systems">hello@downstage.systems</a><a href="/#questions">Questions</a></div>
     </div>
     <div class="last">
       <span>Copyright &copy; 2026 Downstage Systems LLC. All rights reserved. Built by hand in Littleton, Colorado.</span>
@@ -174,8 +178,8 @@
   </div>
 </footer>
 
-<script src="/static/faces.js"></script>
-<script src="/static/nav.js"></script>
+<script src="/static/faces.js?v=8"></script>
+<script src="/static/nav.js?v=8"></script>
 <script>
   document.documentElement.classList.add('js');
 

@@ -12,7 +12,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="preload" href="/static/fonts/inter-600.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/static/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/static/site.css">
+  <link rel="stylesheet" href="/static/site.css?v=8">
 </head>
 <body>
 
@@ -252,6 +252,10 @@
       <summary>How do they mount?</summary>
       <div class="ans">The Downstage Cue and the Cue 360 have magnets in their backs for steel and a 1/4-20 for an arm or a shoe. The Cue Lite takes a 1/4-20, and a hot shoe adapter comes in the box with both screens.</div>
     </details>
+    <details name="faq" id="shift">
+      <summary>Why does my screen shift around?</summary>
+      <div class="ans">On purpose. The Downstage Cue and the Cue Lite have AMOLED screens, and a picture that never moves, like a camera number left up all day, can burn into an OLED screen. To prevent that, the light moves its picture a few pixels every few minutes. It is too small to notice from where you stand, and it protects the screen.</div>
+    </details>
     <details name="faq">
       <summary>What powers them?</summary>
       <div class="ans">USB-C, on all three: a USB-C charger or a power bank. Some camera USB ports cannot supply enough power, so check yours before the show. The first Downstage Cue has no battery and runs while it has power; a battery version comes later.</div>
@@ -262,7 +266,7 @@
     </details>
     <details name="faq" id="returns">
       <summary>What if it isn't right for my show?</summary>
-      <div class="ans">Cancel a pre-order any time before it ships for a full refund. Once it arrives, you have 30 days to send it back in working condition for a refund. Every light is covered for one year against defects in parts and workmanship; if one fails, we repair or replace it. Email <a href="mailto:hello@downstage.systems">hello@downstage.systems</a>.</div>
+      <div class="ans">Cancel a pre-order any time before it ships for a full refund. Once it arrives, you have 30 days to send it back in working condition for a refund. Every light is covered by our <a href="/warranty/">one-year limited warranty</a> against defects in materials and workmanship; if one fails, we repair or replace it. Email <a href="mailto:hello@downstage.systems">hello@downstage.systems</a>.</div>
     </details>
     <details name="faq">
       <summary>Is the software open?</summary>
@@ -303,7 +307,7 @@
         <li id="fn-4">On WiFi, each light needs a 2.4 GHz network that lets devices see each other. Networks with a sign-in page, or guest networks that keep devices apart, are not supported.</li>
         <li id="fn-5">Power cable not included. Power draw rises with brightness; use a USB-C charger or power bank rated 5 V, 1 A or more for each light. Some camera USB ports cannot supply enough power. The first release of the Downstage Cue has no battery.</li>
         <li id="fn-6">Requires Bitfocus Companion, free from Bitfocus, with its Satellite service on. Companion runs on a Mac, Windows or Linux computer, or onboard a Downstage One.</li>
-        <li id="fn-7">See <a href="#returns">returns and warranty</a>. This device has not been authorized as required by the rules of the Federal Communications Commission. Pre-orders are conditional sales: no light ships until it is authorized, and you can cancel for a full refund at any time before it ships.</li>
+        <li id="fn-7">See <a href="#returns">returns</a> and the <a href="/warranty/">one-year limited warranty</a>. This device has not been authorized as required by the rules of the Federal Communications Commission. Pre-orders are conditional sales: no light ships until it is authorized, and you can cancel for a full refund at any time before it ships.</li>
       </ol>
       <p>Screens shown are illustrations. Finished lights are 3D printed, and finish and color may vary slightly. Specifications are subject to change.</p>
       <p>Bitfocus Companion, Stream Deck, Ontime, Blackmagic ATEM, OBS and vMix are trademarks of their respective owners. Downstage Systems is not affiliated with or endorsed by them.</p>
@@ -318,7 +322,7 @@
       <div><strong>Cue lights</strong><a href="#compare">Downstage Cue</a><a href="#compare">Cue Lite</a><a href="#compare">Cue 360</a></div>
       <div><strong>Show timer</strong><a href="/one/">Downstage One</a><a href="#one">Downstage View</a><a href="/demo/">Try the interface</a></div>
       <div><strong>Open source</strong><a href="https://github.com/Downstage-Systems/downstage-os" rel="noopener">Downstage OS</a><a href="https://www.getontime.no" rel="noopener">Ontime</a><a href="https://bitfocus.io/companion" rel="noopener">Companion</a></div>
-      <div><strong>Talk to us</strong><a href="/support/">Support</a><a href="mailto:hello@downstage.systems">hello@downstage.systems</a><a href="#questions">Questions</a></div>
+      <div><strong>Talk to us</strong><a href="/support/">Support</a><a href="/warranty/">Warranty</a><a href="mailto:hello@downstage.systems">hello@downstage.systems</a><a href="#questions">Questions</a></div>
     </div>
     <div class="last">
       <span>Copyright &copy; 2026 Downstage Systems LLC. All rights reserved. Built by hand in Littleton, Colorado.</span>
@@ -327,8 +331,8 @@
   </div>
 </footer>
 
-<script src="/static/faces.js"></script>
-<script src="/static/nav.js"></script>
+<script src="/static/faces.js?v=8"></script>
+<script src="/static/nav.js?v=8"></script>
 <script>
   document.documentElement.classList.add('js');
 
