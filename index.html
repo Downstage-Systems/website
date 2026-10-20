@@ -235,6 +235,13 @@
   </div>
 </section>
 
+<section class="sec dark built" aria-labelledby="built-h">
+  <div class="head" data-rise>
+    <h2 id="built-h">Built by hand, one at a time.</h2>
+    <p>Every Downstage unit is assembled, flashed and tested by hand by Rob Spradling in Littleton, Colorado. Designed on shows across the country, and built in small batches so each one is checked before it ships.</p>
+  </div>
+</section>
+
 <section class="sec" id="signup" aria-labelledby="close-h">
   <div class="signup-card" data-rise>
     <h2 id="close-h">Pre-orders open December 1.</h2>
@@ -277,7 +284,7 @@
       <div><strong>Talk to us</strong><a href="mailto:hello@downstage.systems">hello@downstage.systems</a><a href="#questions">Questions</a></div>
     </div>
     <div class="last">
-      <span>Copyright &copy; 2026 Downstage Systems LLC. All rights reserved.</span>
+      <span>Copyright &copy; 2026 Downstage Systems LLC. All rights reserved. Built by hand in Littleton, Colorado.</span>
       <a href="#top">Back to the top</a>
     </div>
   </div>
@@ -350,6 +357,13 @@
       }));
     }
     new IntersectionObserver(([e]) => dock(!e.isIntersecting && e.boundingClientRect.top < 0)).observe(slot);
+    // It steps out of the way of the email form and the footer.
+    const inView = new Set();
+    const away = new IntersectionObserver(es => {
+      es.forEach(e => e.isIntersecting ? inView.add(e.target) : inView.delete(e.target));
+      seg.classList.toggle('away', inView.size > 0);
+    });
+    [document.getElementById('signup'), document.querySelector('footer')].forEach(el => away.observe(el));
 
     // Entrances: each part fades up once as it arrives. Anything already
     // scrolled past (a jump down the page, a link to #signup) shows at once.
