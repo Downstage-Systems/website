@@ -397,3 +397,38 @@ html[data-tally="off"] .face .num { transform: translateY(6px); }
 .legal ul { padding-left: 22px; }
 .legal a { color: var(--green-ink); text-decoration: underline; }
 @media (max-width: 734px) { .legal h1 { font-size: 34px; } .legal h2 { font-size: 21px; } }
+
+/* ---- not your ordinary tally light ---- */
+.uses { max-width: 1024px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.use { background: var(--night); border-radius: 28px; padding: 32px 28px 30px; }
+.use .lamp { color: var(--c, #FF2D2D); display: flex; flex-direction: column; align-items: center; padding: 8px 0 20px; }
+.use .tower { width: 120px; height: auto; }
+.use .word { font-family: 'Rajdhani', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 22px; letter-spacing: .14em; margin-top: 4px; min-height: 1.2em; position: relative; text-align: center; width: 100%; }
+.use h3 { font-size: 24px; }
+.use > p { color: var(--mist); margin-top: 6px; }
+.u-rec { --c: #FF2D2D; }
+.u-live { --c: #FF6A2D; }
+.u-mic { --c: #3B8BFF; }
+.u-door { --c: #F5F5F7; }
+.use .w1, .use .w2, .use .w3 { position: absolute; left: 0; right: 0; opacity: 0; }
+.u-timer .lamp { animation: timer 9s steps(1) infinite; }
+.u-timer .w1 { animation: w1 9s steps(1) infinite; }
+.u-timer .w2 { animation: w2 9s steps(1) infinite; }
+.u-timer .w3 { animation: w3 9s steps(1) infinite; }
+@keyframes timer { 0% { color: #2FD97B; } 33.3% { color: #F5A524; } 66.6% { color: #FF2D2D; } }
+@keyframes w1 { 0% { opacity: 1; } 33.3% { opacity: 0; } }
+@keyframes w2 { 0% { opacity: 0; } 33.3% { opacity: 1; } 66.6% { opacity: 0; } }
+@keyframes w3 { 0% { opacity: 0; } 66.6% { opacity: 1; } }
+.u-cue .lamp { animation: cue 6s steps(1) infinite; }
+.u-cue .w1 { animation: cw1 6s steps(1) infinite; }
+.u-cue .w2 { animation: cw2 6s steps(1) infinite; }
+@keyframes cue { 0% { color: #F5A524; } 60% { color: #2FD97B; } }
+@keyframes cw1 { 0% { opacity: 1; } 60% { opacity: 0; } }
+@keyframes cw2 { 0% { opacity: 0; } 60% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .u-timer .lamp, .u-cue .lamp, .use .w1, .use .w2, .use .w3 { animation: none; }
+  .u-timer .lamp { color: #F5A524; } .u-timer .w2 { opacity: 1; }
+  .u-cue .lamp { color: #F5A524; } .u-cue .w1 { opacity: 1; }
+}
+@media (max-width: 1068px) { .uses { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 734px) { .uses { grid-template-columns: 1fr; } .use { border-radius: 22px; } }
