@@ -5,15 +5,17 @@
 // Without script the plain device icons stay.
 (function () {
   const NS = 'http://www.w3.org/2000/svg';
+  // The Lite is landscape, with the outside lip as a thin rim and no chin
+  // (Rob, 2026-10-20; Cue repo docs/device-icons/README.md).
   const LITE = `
-    <rect x="26" y="14" width="68" height="92" rx="13" fill="#1c2229" stroke="#313a44" stroke-width="1.4"/>
-    <rect x="31" y="19" width="58" height="72" rx="8" fill="#050608"/>
-    <rect class="ring" x="35" y="23" width="50" height="64" rx="6" fill="none" stroke-width="4"/>
-    <text class="s-off cap" x="60" y="34" text-anchor="middle">CAMERA</text>
-    <text class="num" x="60" y="53" text-anchor="middle" dominant-baseline="central">2</text>
-    <g class="s-program"><rect class="chip" x="40" y="69" width="40" height="11" rx="3"/><text class="cap dark" x="60" y="77.4" text-anchor="middle">PROGRAM</text></g>
-    <text class="s-preview cap tint" x="60" y="77.4" text-anchor="middle">PREVIEW</text>
-    <rect x="52" y="96" width="16" height="3" rx="1.5" fill="#2a323b"/>`;
+    <rect x="12" y="21" width="96" height="80" rx="20" fill="#141920" stroke="#313a44" stroke-width="1.4"/>
+    <rect x="15" y="24" width="90" height="74" rx="17" fill="#1c2229" stroke="#262e37" stroke-width="1"/>
+    <rect x="22" y="30" width="76" height="62" rx="8" fill="#050608"/>
+    <rect class="ring" x="26" y="34" width="68" height="54" rx="6" fill="none" stroke-width="4"/>
+    <text class="s-off cap soft" x="60" y="42" text-anchor="middle">CAMERA</text>
+    <text class="num" x="60" y="56" text-anchor="middle" dominant-baseline="central">2</text>
+    <g class="s-program"><rect class="chip" x="41" y="72.5" width="38" height="10" rx="3"/><text class="cap chipcap dark" x="60" y="79.6" text-anchor="middle">PROGRAM</text></g>
+    <text class="s-preview cap chipcap tint" x="60" y="79.6" text-anchor="middle">PREVIEW</text>`;
   const CUE = `
     <circle cx="60" cy="60" r="52" fill="#1c2229" stroke="#313a44" stroke-width="1.4"/>
     <circle cx="60" cy="60" r="45" fill="#050608"/>

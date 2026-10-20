@@ -94,7 +94,7 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.015em; line-height: 1.07; }
 
 /* compare: which Cue */
 .compare { max-width: 1024px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 40px; }
-.col { display: grid; grid-template-rows: subgrid; grid-row: span 11; text-align: center; justify-items: center; }
+.col { display: grid; grid-template-rows: subgrid; grid-row: span 12; text-align: center; justify-items: center; }
 .col img { width: 150px; height: 150px; }
 .col h3 { font-size: 24px; margin-top: 16px; }
 .col .lead { color: var(--grey); margin-top: 4px; }
@@ -260,9 +260,10 @@ html[data-tally="preview"] { --t: #2FD97B; }
 html[data-tally="off"] { --t: #8b9299; }
 svg.face { display: block; width: 100%; height: auto; }
 .face text { font-family: 'Rajdhani', 'Arial Narrow', sans-serif; font-weight: 700; }
-.face .num { font-size: 34px; fill: var(--t); }
+.face .num { font-size: 38px; fill: var(--t); }
 .face .cd { font-size: 25px; fill: var(--t); letter-spacing: .5px; }
 .face .cap { font-size: 7.5px; letter-spacing: 1.4px; }
+.face .chipcap { font-size: 5.6px; letter-spacing: .8px; }
 .face .tint { fill: var(--t); }
 .face .soft { fill: #7d858d; }
 .face .dark { fill: #000; }
@@ -305,3 +306,24 @@ footer .notes li:target { color: var(--ink); }
 /* ---- built by hand ---- */
 .built .head { margin-bottom: 0; }
 .built .head p { color: var(--mist); }
+footer .notes a { text-decoration: underline; }
+
+/* ---- prices and kits ---- */
+.price { font-size: 17px; font-weight: 600; margin: 0 0 14px; }
+.col .price { margin: 10px 0 0; }
+.col .pill { margin-top: 12px; }
+.price span { font-weight: 400; color: var(--green-ink); margin-left: 6px; font-size: 14px; }
+.kits { max-width: 1024px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.kit { background: var(--tile); border-radius: 28px; padding: 40px 32px 36px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+.kit .pair { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 24px; }
+.kit .pair svg.face, .kit .pair img { width: 130px; height: auto; }
+.kit .plus { font-size: 28px; color: var(--grey); }
+.kit h3 { font-size: 28px; }
+.kit > p { color: var(--grey); margin-top: 4px; }
+.kit .price { color: var(--ink); margin: 14px 0 18px; font-size: 21px; }
+@media (max-width: 734px) {
+  .kits { grid-template-columns: 1fr; }
+  .kit { border-radius: 22px; padding: 32px 22px 28px; }
+  .kit .pair svg.face, .kit .pair img { width: 100px; }
+}
+html[data-tally="off"] .face .num { transform: translateY(6px); }
