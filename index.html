@@ -1,437 +1,292 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-tally="program">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Downstage Systems - Timers, made easy</title>
-  <meta name="description" content="Professional timer appliances for live events. Power it on. Point a browser at it. Doors.">
+  <title>Downstage Systems - Show timers and cue lights for live events</title>
+  <meta name="description" content="The Downstage One show timer and the Downstage Cue lights: tally and cue lights that follow Bitfocus Companion, link by touch and run in the room.">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
   <link rel="icon" href="/favicon.ico" sizes="48x48 32x32 16x16">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-  <meta name="theme-color" content="#0B0D10">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Share+Tech+Mono&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    /* ── Downstage Systems - House Lights Down ── */
-    :root {
-      --bg:      #0B0D10;   /* House Black */
-      --panel:   #14181D;   /* Panel */
-      --edge:    #242B33;   /* Edge */
-      --text:    #E8ECEF;
-      --dim:     #9AA4AD;
-      --dim2:    #5a646d;
-      --green:   #2FD97B;   /* Run Green */
-      --green-lo: rgba(47,217,123,0.1);
-      --amber:   #F5A524;
-      --violet:  #8E6FE6;   /* Cue Violet - control surfaces */
-      --blue:    #2E90D9;
-      --red:     #E5484D;
-      --display: 'Rajdhani', sans-serif;
-      --mono:    'Share Tech Mono', monospace;
-      --body:    'Inter', sans-serif;
-    }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: var(--body); background: var(--bg); color: var(--text);
-      line-height: 1.6; -webkit-font-smoothing: antialiased;
-    }
-    ::selection { background: var(--green); color: var(--bg); }
-
-    .wrap { max-width: 1060px; margin: 0 auto; padding: 0 24px; }
-
-    h1, h2, h3 { font-family: var(--display); text-transform: uppercase; letter-spacing: 0.04em; line-height: 1.1; }
-    .eyebrow {
-      font-family: var(--mono); font-size: 12px; color: var(--amber);
-      text-transform: uppercase; letter-spacing: 0.22em; margin-bottom: 14px;
-    }
-    .mono { font-family: var(--mono); }
-
-    /* ── Nav ── */
-    nav {
-      position: sticky; top: 0; z-index: 50;
-      background: rgba(11,13,16,0.92); backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--edge);
-    }
-    .nav-inner { display: flex; align-items: center; gap: 12px; padding: 16px 24px; max-width: 1060px; margin: 0 auto; }
-    .nav-mark { width: 30px; height: 30px; flex-shrink: 0; }
-    .nav-word { font-family: var(--display); font-weight: 700; font-size: 19px; letter-spacing: 0.06em; }
-    .nav-links { margin-left: auto; display: flex; gap: 26px; }
-    .nav-links a {
-      font-family: var(--display); font-weight: 600; font-size: 14px;
-      text-transform: uppercase; letter-spacing: 0.08em;
-      color: var(--dim); text-decoration: none; transition: color 0.15s;
-    }
-    .nav-links a:hover { color: var(--green); }
-
-    /* ── Hero ── */
-    .hero { padding: 110px 0 90px; position: relative; overflow: hidden; }
-    .hero::before {
-      content: ''; position: absolute; inset: 0;
-      background-image:
-        linear-gradient(var(--edge) 1px, transparent 1px),
-        linear-gradient(90deg, var(--edge) 1px, transparent 1px);
-      background-size: 44px 44px; opacity: 0.16; pointer-events: none;
-    }
-    .hero .wrap { position: relative; }
-    .hero h1 { font-size: clamp(44px, 8vw, 84px); font-weight: 700; }
-    .hero h1 .g { color: var(--green); }
-    .hero .tagline {
-      font-family: var(--display); font-weight: 600; font-size: clamp(19px, 3vw, 26px);
-      color: var(--dim); margin: 18px 0 14px; text-transform: uppercase; letter-spacing: 0.06em;
-    }
-    .hero p.position { max-width: 560px; color: var(--dim); font-size: 16px; }
-    .hero-edge {
-      height: 4px; background: var(--green); width: 120px; border-radius: 2px;
-      margin-top: 42px;
-    }
-    .hero-ctas { margin-top: 34px; display: flex; gap: 14px; flex-wrap: wrap; }
-    .btn {
-      font-family: var(--display); font-weight: 700; font-size: 15px;
-      text-transform: uppercase; letter-spacing: 0.06em; text-decoration: none;
-      padding: 13px 26px; border-radius: 9px; transition: all 0.15s;
-    }
-    .btn-solid { background: var(--green); color: var(--bg); }
-    .btn-solid:hover { filter: brightness(1.1); }
-    .btn-ghost { border: 1px solid var(--edge); color: var(--dim); }
-    .btn-ghost:hover { border-color: var(--green); color: var(--green); }
-
-    /* ── Sections ── */
-    section { padding: 84px 0; border-top: 1px solid var(--edge); }
-    section h2 { font-size: clamp(28px, 4.5vw, 40px); margin-bottom: 10px; }
-    .section-lede { color: var(--dim); max-width: 620px; margin-bottom: 48px; }
-
-    /* ── Products ── */
-    .products { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 22px; }
-    .product {
-      background: var(--panel); border: 1px solid var(--edge); border-radius: 16px;
-      padding: 34px 30px; display: flex; flex-direction: column; gap: 14px;
-      transition: border-color 0.2s;
-    }
-    .product:hover { border-color: var(--green); }
-    .product.soon { position: relative; overflow: hidden; }
-    .product.soon .ribbon {
-      position: absolute; top: 24px; right: -46px; transform: rotate(45deg);
-      background: var(--amber, #F5A524); color: #0B0D10;
-      font-family: var(--mono); font-size: 11px; font-weight: 700;
-      letter-spacing: 0.14em; text-transform: uppercase;
-      padding: 7px 52px; pointer-events: none;
-    }
-    .product.soon .ribbon.pre { background: var(--green); }
-    .product .mark { width: 64px; height: 64px; }
-    .product h3 { font-size: 26px; }
-    .product h3 .g { color: var(--green); }
-    .product .kicker { font-family: var(--mono); font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.18em; }
-    .product p { color: var(--dim); font-size: 15px; }
-    .product ul { list-style: none; margin-top: 4px; display: flex; flex-direction: column; gap: 8px; }
-    .product li { color: var(--dim); font-size: 14px; padding-left: 20px; position: relative; }
-    .product li::before { content: '▸'; color: var(--green); position: absolute; left: 0; }
-    .product .price-row { margin-top: auto; padding-top: 18px; font-family: var(--mono); font-size: 13px; color: var(--dim2); }
-
-    /* ── How it works ── */
-    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 22px; }
-    .step { background: var(--panel); border: 1px solid var(--edge); border-radius: 14px; padding: 28px 26px; }
-    .step .n {
-      font-family: var(--display); font-weight: 700; font-size: 30px; color: var(--green);
-      line-height: 1; margin-bottom: 12px;
-    }
-    .step h3 { font-size: 18px; margin-bottom: 8px; }
-    .step p { color: var(--dim); font-size: 14px; }
-    .step code {
-      font-family: var(--mono); font-size: 12.5px; color: var(--green);
-      background: var(--bg); border: 1px solid var(--edge);
-      padding: 2px 7px; border-radius: 5px; white-space: nowrap;
-    }
-
-    /* ── Features ── */
-    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
-    .feature {
-      border: 1px solid var(--edge); border-radius: 12px; padding: 20px 22px;
-      display: flex; gap: 14px; align-items: flex-start;
-    }
-    .feature .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; margin-top: 7px; }
-    .feature h4 { font-family: var(--display); font-size: 16px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
-    .feature p { color: var(--dim); font-size: 13.5px; }
-    /* semantic accents - same doctrine as the setup UI: green run, violet
-       control surfaces, amber attention/test, red emergency, blue network */
-    .feature.fg h4 { color: var(--green); }
-    .feature.fv .dot { background: var(--violet); } .feature.fv h4 { color: var(--violet); }
-    .feature.fb .dot { background: var(--blue); }   .feature.fb h4 { color: var(--blue); }
-    .feature.fa .dot { background: var(--amber); }  .feature.fa h4 { color: var(--amber); }
-    .feature.fr .dot { background: var(--red); }    .feature.fr h4 { color: var(--red); }
-
-    /* ── Open source ── */
-    .oss {
-      background: var(--panel); border: 1px solid var(--edge); border-radius: 16px;
-      padding: 34px; display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap;
-    }
-    .oss p { color: var(--dim); font-size: 15px; max-width: 640px; }
-    .oss a { color: var(--green); text-decoration: none; }
-    .oss a:hover { text-decoration: underline; }
-
-    /* ── Footer ── */
-    footer { border-top: 1px solid var(--edge); padding: 44px 0 54px; }
-    .foot-inner { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-    .foot-inner .mark { width: 26px; height: 26px; }
-    .foot-brand { font-family: var(--mono); font-size: 11px; color: var(--dim2); letter-spacing: 0.18em; }
-    .foot-right { margin-left: auto; font-size: 13px; color: var(--dim2); }
-    .foot-right a { color: var(--dim); text-decoration: none; }
-    .foot-right a:hover { color: var(--green); }
-
-    @media (max-width: 640px) {
-      .nav-inner { padding: 14px 16px; }
-      /* section anchors are redundant on mobile (hero CTAs + scroll do the job);
-         keep only Contact - the conversion action */
-      .nav-links a:not(:last-child) { display: none; }
-      .hero { padding: 72px 0 60px; }
-      .hero-ctas .btn { width: 100%; text-align: center; }
-    }
-
-    /* ── Signup ── */
-    .signup-band { text-align: center; }
-    .signup-form { display: flex; gap: 10px; max-width: 480px; margin: 26px auto 0; flex-wrap: wrap; justify-content: center; }
-    .signup-form input[type=email] {
-      flex: 1 1 260px; min-width: 0; font-family: var(--body); font-size: 15px;
-      padding: 13px 16px; border-radius: 9px; background: var(--panel);
-      border: 1px solid var(--edge); color: var(--text); outline: none;
-    }
-    .signup-form input[type=email]::placeholder { color: var(--dim2); }
-    .signup-form input[type=email]:focus { border-color: var(--green); }
-    .signup-form button { border: none; cursor: pointer; }
-    .signup-note { color: var(--dim2); font-size: 13px; margin-top: 14px; }
-    .signup-ok { color: var(--green); font-size: 15px; margin-top: 20px; min-height: 20px; }
-  </style>
+  <meta name="theme-color" content="#000000">
+  <link rel="preload" href="/static/fonts/inter-600.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/static/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/static/site.css">
 </head>
 <body>
 
-<nav>
-  <div class="nav-inner">
-    <svg class="nav-mark" viewBox="0 0 96 96" aria-hidden="true">
-      <rect x="6" y="10" width="84" height="66" rx="10" fill="none" stroke="#e8ecef" stroke-width="7"/>
-      <rect x="20" y="54" width="40" height="9" rx="4.5" fill="#2fd97b"/>
-      <rect x="64" y="54" width="12" height="9" rx="4.5" fill="#e8ecef" opacity="0.28"/>
-      <rect x="20" y="83" width="56" height="7" rx="3.5" fill="#2fd97b"/>
-    </svg>
-    <span class="nav-word">DOWNSTAGE</span>
-    <div class="nav-links">
-      <a href="#products">Products</a>
-      <a href="#how">How it works</a>
-      <a href="#features">Inside</a>
-      <a href="mailto:hello@downstage.systems">Contact</a>
-    </div>
-  </div>
-</nav>
-
-<header class="hero">
-  <div class="wrap">
-    <div class="eyebrow">Show timers · Stage displays · Live events</div>
-    <h1>Timers,<br>made <span class="g">easy.</span></h1>
-    <p class="tagline">Power it on. Point a browser at it. Doors.</p>
-    <p class="position">
-      Professional timer appliances for live events - hardware outputs, offline
-      reliability, built like broadcast gear by crew who actually run the show.
-      And under the timer: a Stream&nbsp;Deck control computer, a signage player,
-      and a test generator in the same rack-ready box.
-    </p>
-    <div class="hero-edge"></div>
-    <div class="hero-ctas">
-      <a class="btn btn-solid" href="/demo/">Try the interface</a>
-      <a class="btn btn-ghost" href="#products">See the hardware</a>
-      <a class="btn btn-ghost" href="#how">How it works</a>
-      <a class="btn btn-ghost" href="#signup">Sign up for updates</a>
-    </div>
+<header class="nav">
+  <div class="in">
+    <a href="#top" aria-label="Downstage, back to the top">
+      <svg class="logo" viewBox="0 0 376.76 108" role="img" aria-label="Downstage"><g transform="translate(8,6)">
+    <rect x="6" y="10" width="84" height="66" rx="10" fill="none" stroke="currentColor" stroke-width="7"/>
+    <rect x="20" y="54" width="40" height="9" rx="4.5" fill="var(--run, #2fd97b)"/>
+    <rect x="64" y="54" width="12" height="9" rx="4.5" fill="currentColor" opacity="0.28"/>
+    <rect x="20" y="83" width="56" height="7" rx="3.5" fill="var(--run, #2fd97b)"/>
+  </g><g transform="translate(118,66)"><path d="M9.338 -5.06H14.352Q15.824 -5.06 16.445 -5.680999999999999Q17.066 -6.302 17.066 -7.774V-21.804Q17.066 -23.276 16.445 -23.897Q15.824 -24.518 14.352 -24.518H9.338Q8.832 -24.518 8.832 -24.012V-5.566Q8.832 -5.06 9.338 -5.06ZM2.9899999999999998 -0.966V-28.612Q2.9899999999999998 -29.578 3.956 -29.578H15.318Q18.906 -29.578 20.907 -27.622999999999998Q22.908 -25.668 22.908 -22.08V-7.498Q22.908 -3.91 20.907 -1.955Q18.906 0.0 15.318 0.0H3.956Q2.9899999999999998 0.0 2.9899999999999998 -0.966Z M37.977999999999994 -5.06H41.244Q42.716 -5.06 43.337 -5.680999999999999Q43.958 -6.302 43.958 -7.774V-21.804Q43.958 -23.276 43.337 -23.897Q42.716 -24.518 41.244 -24.518H37.977999999999994Q36.506 -24.518 35.908 -23.897Q35.31 -23.276 35.31 -21.804V-7.774Q35.31 -6.302 35.908 -5.680999999999999Q36.506 -5.06 37.977999999999994 -5.06ZM42.21 0.0H37.058Q33.424 0.0 31.445999999999998 -1.932Q29.468 -3.864 29.468 -7.498V-22.08Q29.468 -25.714 31.445999999999998 -27.646Q33.424 -29.578 37.058 -29.578H42.21Q45.843999999999994 -29.578 47.821999999999996 -27.646Q49.8 -25.714 49.8 -22.08V-7.498Q49.8 -3.864 47.821999999999996 -1.932Q45.843999999999994 0.0 42.21 0.0Z M67.032 0.0H60.592Q59.58 0.0 59.442 -0.966L54.519999999999996 -28.612Q54.382 -29.578 55.486 -29.578H60.269999999999996Q61.327999999999996 -29.578 61.373999999999995 -28.612L64.042 -5.934H64.364L68.78 -28.75Q68.91799999999999 -29.578 69.746 -29.578H74.898Q75.77199999999999 -29.578 75.91 -28.796L80.418 -5.934H80.786L83.408 -28.566Q83.454 -29.578 84.512 -29.578H89.29599999999999Q90.4 -29.578 90.262 -28.566L85.294 -0.966Q85.156 0.0 84.23599999999999 0.0H77.75Q76.78399999999999 0.0 76.646 -0.966L72.506 -22.54H72.322L68.136 -0.966Q67.952 0.0 67.032 0.0Z M100.226 0.0H96.408Q95.442 0.0 95.442 -0.966V-28.612Q95.442 -29.578 96.408 -29.578H99.858Q100.824 -29.578 101.146 -28.934L110.438 -11.5H110.622V-28.612Q110.622 -29.578 111.588 -29.578H115.406Q116.372 -29.578 116.372 -28.612V-0.966Q116.372 0.0 115.406 0.0H112.048Q111.036 0.0 110.576 -0.9199999999999999L101.376 -18.032H101.192V-0.966Q101.192 0.0 100.226 0.0Z M123.116 -7.544V-8.464Q123.116 -9.43 124.082 -9.43H127.99199999999999Q128.958 -9.43 128.958 -8.464V-8.096Q128.958 -6.348 129.648 -5.704Q130.338 -5.06 132.178 -5.06H134.34Q136.134 -5.06 136.84699999999998 -5.75Q137.56 -6.4399999999999995 137.56 -8.326V-8.878Q137.56 -10.212 136.47899999999998 -10.925Q135.398 -11.638 133.788 -11.776Q132.178 -11.914 130.315 -12.305Q128.452 -12.696 126.842 -13.317Q125.232 -13.938 124.151 -15.754999999999999Q123.07 -17.572 123.07 -20.424V-22.034Q123.07 -25.622 125.094 -27.6Q127.118 -29.578 130.706 -29.578H135.30599999999998Q138.94 -29.578 140.964 -27.6Q142.988 -25.622 142.988 -22.034V-21.16Q142.988 -20.194 142.022 -20.194H138.112Q137.146 -20.194 137.146 -21.16V-21.436Q137.146 -23.23 136.456 -23.874000000000002Q135.766 -24.518 133.926 -24.518H132.132Q130.24599999999998 -24.518 129.579 -23.805Q128.912 -23.092 128.912 -21.022V-20.148Q128.912 -17.986 132.684 -17.664Q136.594 -17.342 139.63 -16.1Q141.24 -15.41 142.321 -13.639Q143.402 -11.868 143.402 -9.108V-7.544Q143.402 -3.956 141.378 -1.978Q139.35399999999998 0.0 135.766 0.0H130.752Q127.16399999999999 0.0 125.13999999999999 -1.978Q123.116 -3.956 123.116 -7.544Z M159.3 0.0H155.436Q154.424 0.0 154.424 -0.966V-24.012Q154.424 -24.518 153.918 -24.518H148.674Q147.708 -24.518 147.708 -25.483999999999998V-28.612Q147.708 -29.578 148.674 -29.578H166.062Q167.02800000000002 -29.578 167.02800000000002 -28.612V-25.483999999999998Q167.02800000000002 -24.518 166.062 -24.518H160.818Q160.26600000000002 -24.518 160.26600000000002 -24.012V-0.966Q160.26600000000002 0.0 159.3 0.0Z M175.106 0.0H170.69Q169.862 0.0 170.138 -0.966L177.406 -28.612Q177.72799999999998 -29.578 178.786 -29.578H184.904Q186.054 -29.578 186.284 -28.612L193.552 -0.966Q193.828 0.0 193.0 0.0H188.584Q188.078 0.0 187.894 -0.207Q187.70999999999998 -0.414 187.618 -0.966L186.32999999999998 -6.026H177.35999999999999L176.072 -0.966Q175.98 -0.414 175.773 -0.207Q175.566 0.0 175.106 0.0ZM181.77599999999998 -24.012 178.464 -10.718H185.272L181.95999999999998 -24.012Z M211.15200000000002 0.0H206.276Q202.642 0.0 200.664 -1.932Q198.686 -3.864 198.686 -7.498V-22.08Q198.686 -25.714 200.664 -27.646Q202.642 -29.578 206.276 -29.578H211.15200000000002Q214.74 -29.578 216.71800000000002 -27.622999999999998Q218.696 -25.668 218.696 -22.08V-20.7Q218.696 -19.688 217.73000000000002 -19.688H213.82Q212.854 -19.688 212.854 -20.7V-21.804Q212.854 -23.276 212.25600000000003 -23.897Q211.65800000000002 -24.518 210.186 -24.518H207.196Q205.77 -24.518 205.149 -23.897Q204.52800000000002 -23.276 204.52800000000002 -21.804V-7.774Q204.52800000000002 -6.302 205.149 -5.680999999999999Q205.77 -5.06 207.196 -5.06H210.186Q211.65800000000002 -5.06 212.25600000000003 -5.680999999999999Q212.854 -6.302 212.854 -7.774V-10.672Q212.854 -11.177999999999999 212.348 -11.177999999999999H209.588Q208.622 -11.177999999999999 208.622 -12.144V-15.272Q208.622 -16.238 209.588 -16.238H217.638Q218.696 -16.238 218.696 -15.18V-7.498Q218.696 -3.91 216.71800000000002 -1.955Q214.74 0.0 211.15200000000002 0.0Z M241.724 0.0H226.682Q225.716 0.0 225.716 -0.966V-28.612Q225.716 -29.578 226.682 -29.578H241.724Q242.644 -29.578 242.644 -28.612V-25.483999999999998Q242.644 -24.518 241.724 -24.518H232.11Q231.558 -24.518 231.558 -24.012V-18.032Q231.558 -17.526 232.11 -17.526H239.976Q240.942 -17.526 240.942 -16.56V-13.432Q240.942 -12.466 239.976 -12.466H232.11Q231.558 -12.466 231.558 -11.959999999999999V-5.566Q231.558 -5.06 232.11 -5.06H241.724Q242.644 -5.06 242.644 -4.094V-0.966Q242.644 0.0 241.724 0.0Z" fill="currentColor"/></g></svg>
+    </a>
+    <nav aria-label="Sections">
+      <a href="#compare">Cue lights</a>
+      <a href="/one/">Downstage One</a>
+      <a href="#rig">Rigs</a>
+      <a href="#questions">Questions</a>
+    </nav>
+    <a class="pill" href="#signup">Get updates</a>
   </div>
 </header>
 
-<section id="products">
-  <div class="wrap">
-    <div class="eyebrow">The Lineup</div>
-    <h2>Two HDMI outputs on stage. A browser everywhere else.</h2>
-    <p class="section-lede">
-      The show timer gets its own box, and your laptop's ports get to do their actual job.
-    </p>
-    <div class="products">
+<main id="top">
 
-      <!-- Pre-order launch day: change the div below to class="product soon"
-           and uncomment the green ribbon. -->
-      <div class="product">
-        <!-- <div class="ribbon pre">Pre-order</div> -->
-        <svg class="mark" viewBox="0 0 96 96" aria-label="Downstage One mark">
-          <rect x="6" y="10" width="84" height="66" rx="10" fill="none" stroke="#e8ecef" stroke-width="7"/>
-          <rect x="20" y="54" width="40" height="9" rx="4.5" fill="#2fd97b"/>
-          <rect x="64" y="54" width="12" height="9" rx="4.5" fill="#e8ecef" opacity="0.28"/>
-          <rect x="20" y="83" width="26" height="7" rx="3.5" fill="#2fd97b"/>
-          <rect x="50" y="83" width="26" height="7" rx="3.5" fill="#2fd97b"/>
-        </svg>
-        <span class="kicker">Timer Server</span>
-        <h3>Downstage <span class="g">One</span></h3>
-        <p>
-          The heart of the system. Runs the show clock, serves timer views to every
-          browser in the building, and drives two displays straight from its own HDMI outputs.
-        </p>
-        <ul>
-          <li>Two HDMI outputs - confidence monitor and backstage, zero config</li>
-          <li>Every tablet, TV, and laptop becomes a display - just a browser</li>
-          <li>Stream Deck control for the whole rig - Companion runs onboard</li>
-          <li>Front-panel display shows its address - no hunting for IPs</li>
-          <li>Battery-backed clock, works with no internet at all</li>
-        </ul>
-        <div class="price-row">DS1 · aluminum enclosure · USB-C powered</div>
-        <!-- Launch day: set href to the Stripe payment link, change the text to
-             "Buy the Downstage One", swap btn-ghost for btn-solid. -->
-        <a class="btn btn-ghost" id="buy-one" href="#signup"
-           style="margin-top:16px; text-align:center">Coming soon - get launch updates</a>
-      </div>
-
-      <div class="product soon">
-        <div class="ribbon">Coming soon</div>
-        <svg class="mark" viewBox="0 0 96 96" aria-label="Downstage View mark">
-          <rect x="6" y="10" width="84" height="66" rx="10" fill="none" stroke="#e8ecef" stroke-width="7"/>
-          <rect x="20" y="54" width="30" height="9" rx="4.5" fill="#2fd97b"/>
-          <circle cx="64" cy="58" r="4" fill="#2fd97b"/>
-          <path d="M 64 46 A 12 12 0 0 1 76 58" fill="none" stroke="#2fd97b" stroke-width="5.5" stroke-linecap="round"/>
-          <path d="M 64 33 A 25 25 0 0 1 82 40" fill="none" stroke="#e8ecef" stroke-width="5.5" stroke-linecap="round" opacity="0.4"/>
-          <rect x="20" y="83" width="56" height="7" rx="3.5" fill="#2fd97b"/>
-        </svg>
-        <span class="kicker">Network Display Node</span>
-        <h3>Downstage <span class="g">View</span></h3>
-        <p>
-          A small box that turns any screen into a show display. Point it at your
-          Downstage One, mount it behind the TV, and forget it exists.
-        </p>
-        <div class="price-row">DSV · details at launch</div>
-      </div>
-
-    </div>
-
+<section class="hero dark" aria-labelledby="call">
+  <h1 id="call" data-rise>Standby. <span class="go">Go.</span></h1>
+  <p class="sub" data-rise style="--i:1"><strong>Downstage makes the show timer and the cue lights for live events.</strong> They follow Bitfocus Companion and run in the room.</p>
+  <div class="pills" data-rise style="--i:2">
+    <a class="pill" href="#signup">Pre-order December 1</a>
+    <a class="pill ghost" href="#compare">Meet the lights</a>
+  </div>
+  <div class="trio" data-rise style="--i:3">
+    <img data-dev="lite" src="/static/devices/lite-program.svg" alt="Cue Lite" width="120" height="120">
+    <img class="mid" data-dev="cue" src="/static/devices/cue-program.svg" alt="Downstage Cue" width="120" height="120">
+    <img data-dev="360" src="/static/devices/360-program.svg" alt="Cue 360" width="64" height="64">
+  </div>
+  <div data-rise style="--i:4">
+    <div class="seg-slot"><div class="seg" role="group" aria-label="Tally">
+      <button class="key" type="button" data-state="program" aria-pressed="true">On air</button>
+      <button class="key" type="button" data-state="preview" aria-pressed="false">Preview</button>
+      <button class="key" type="button" data-state="off" aria-pressed="false">Off</button>
+    </div></div>
+    <p class="seg-note" id="seg-note">Press one. Every light on this page follows it, the way every Cue follows its Companion button.</p>
   </div>
 </section>
 
-<section id="how">
-  <div class="wrap">
-    <div class="eyebrow">Setup</div>
-    <h2>Three steps, then doors</h2>
-    <p class="section-lede">
-      No app to install, no account to make, no cloud to depend on.
-      Everything runs in the room, on your network - or on no network at all.
-    </p>
-    <div class="steps">
-      <div class="step">
-        <div class="n">1</div>
-        <h3>Power it on</h3>
-        <p>Plug into the venue network - or don't. With no network around, the unit
-        broadcasts its own WiFi and the front panel shows you where to connect.</p>
-      </div>
-      <div class="step">
-        <div class="n">2</div>
-        <h3>Point a browser at it</h3>
-        <p>The front panel shows the unit's address - like
-        <code>downstage-0000.local:8080</code>. Open it from anything with a screen.
-        Build your rundown, route your displays, set your views.</p>
-      </div>
-      <div class="step">
-        <div class="n">3</div>
-        <h3>Doors</h3>
-        <p>Confidence monitor at the podium, clock backstage, schedule in the lobby.
-        Add five minutes of delay and every screen in the building updates at once.</p>
-      </div>
+<section class="tiles" aria-label="The products">
+  <article class="t wide light" data-rise>
+    <h2>Downstage Cue</h2>
+    <p class="tag">The operator's light. The hub of the rig.</p>
+    <div class="links"><a class="more" href="#compare">Learn more</a><a class="more" href="#signup">Pre-order Dec 1</a></div>
+    <div class="art"><img data-dev="cue" src="/static/devices/cue-program.svg" alt="Downstage Cue" width="120" height="120"></div>
+  </article>
+  <article class="t light" data-rise>
+    <h2>Cue Lite</h2>
+    <p class="tag">The camera's light.</p>
+    <div class="links"><a class="more" href="#compare">Learn more</a><a class="more" href="#signup">Pre-order Dec 1</a></div>
+    <div class="art"><img data-dev="lite" src="/static/devices/lite-program.svg" alt="Cue Lite" width="120" height="120"></div>
+  </article>
+  <article class="t dark" data-rise style="--i:1">
+    <h2>Cue 360</h2>
+    <p class="tag">The talent's light. Reads from anywhere.</p>
+    <div class="links"><a class="more" href="#compare">Learn more</a><a class="more" href="#signup">Pre-order Dec 1</a></div>
+    <div class="art"><img data-dev="360" src="/static/devices/360-program.svg" alt="Cue 360" width="64" height="64"></div>
+  </article>
+</section>
+
+<section class="sec" id="compare" aria-labelledby="compare-h">
+  <div class="head" data-rise>
+    <h2 id="compare-h">Which Cue is which?</h2>
+    <p>One for the operator, one for the camera, one for the talent. Pre-orders open December 1; first units ship January 2027.<sup class="fn"><a href="#fn-1" aria-label="Note 1">1</a></sup></p>
+  </div>
+  <div class="compare">
+    <div class="col" data-rise>
+      <img data-dev="cue" src="/static/devices/cue-program.svg" alt="" width="120" height="120">
+      <h3>Downstage Cue</h3>
+      <p class="lead">The operator's light.</p>
+      <a class="pill" href="#signup">Pre-order Dec 1</a>
+      <p class="spec"><b>1.75-inch round AMOLED</b>Touch face. Tally ring and camera number.</p>
+      <p class="spec"><b>Follows the One's timer<sup class="fn"><a href="#fn-2" aria-label="Note 2">2</a></sup></b>With a Downstage One, the show's countdown runs in its tally ring.</p>
+      <p class="spec"><b>Integrated timer</b>Its own countdown, no server needed. Made for a breakout room or a podium.</p>
+      <p class="spec"><b>Podium and clock mode</b>A full-face countdown with the time of day, for the speaker.</p>
+      <p class="spec"><b>Carries four<sup class="fn"><a href="#fn-3" aria-label="Note 3">3</a></sup></b>Up to four other lights over CueLink.</p>
+      <p class="spec"><b>Mounts anywhere</b>Magnets, 1/4-20, hot shoe adapter in the box.</p>
+      <p class="spec"><b>USB-C power<sup class="fn"><a href="#fn-5" aria-label="Note 5">5</a></sup></b>A USB-C charger or power bank.</p>
     </div>
+    <div class="col" data-rise style="--i:1">
+      <img data-dev="lite" src="/static/devices/lite-program.svg" alt="" width="120" height="120">
+      <h3>Cue Lite</h3>
+      <p class="lead">The camera's light.</p>
+      <a class="pill" href="#signup">Pre-order Dec 1</a>
+      <p class="spec"><b>1.8-inch AMOLED</b>Touch screen. Tally and camera number.</p>
+      <p class="spec"><b>Carries one<sup class="fn"><a href="#fn-3" aria-label="Note 3">3</a></sup></b>Usually the talent's light.</p>
+      <p class="spec"><b>On the camera</b>1/4-20, hot shoe adapter in the box.</p>
+      <p class="spec"><b>USB-C power<sup class="fn"><a href="#fn-5" aria-label="Note 5">5</a></sup></b>A USB-C charger or power bank.</p>
+    </div>
+    <div class="col" data-rise style="--i:2">
+      <img data-dev="360" src="/static/devices/360-program.svg" alt="" width="64" height="64">
+      <h3>Cue 360</h3>
+      <p class="lead">The talent's light.</p>
+      <a class="pill" href="#signup">Pre-order Dec 1</a>
+      <p class="spec"><b>64 LEDs, one glow</b>Under a tower that reads from anywhere.</p>
+      <p class="spec"><b>Linked or on WiFi<sup class="fn"><a href="#fn-4" aria-label="Note 4">4</a></sup></b>Hold it to a Cue and it follows.</p>
+      <p class="spec"><b>Sticks to steel</b>Four magnets, and a 1/4-20 for an arm.</p>
+      <p class="spec"><b>USB-C power<sup class="fn"><a href="#fn-5" aria-label="Note 5">5</a></sup></b>A USB-C charger or power bank.</p>
+    </div>
+  </div>
+  <p class="acc" data-rise>Also for the Downstage Cue: the Cue Dock, a desk cradle, sold alongside.</p>
+</section>
+
+<section class="sec light" id="rig" aria-labelledby="rig-h">
+  <div class="head" data-rise>
+    <h2 id="rig-h">Five ways to rig it.</h2>
+  </div>
+  <div class="rigs">
+    <article class="rig" data-rise>
+      <h3>On the camera.</h3>
+      <p>A Cue Lite for the operator, a Cue 360 for the talent.</p>
+      <div class="flow"><figure class="dev"><img data-dev="lite" src="/static/devices/lite-program.svg" alt="" width="120" height="120"><figcaption>Operator</figcaption></figure><span class="wire"><b>CueLink</b></span><figure class="dev"><img data-dev="360" src="/static/devices/360-program.svg" alt="" width="64" height="64"><figcaption>Talent</figcaption></figure></div>
+    </article>
+    <article class="rig" data-rise style="--i:1">
+      <h3>At the desk.</h3>
+      <p>The Cue on its Dock, the talent's 360 linked to it.</p>
+      <div class="flow"><figure class="dev"><img data-dev="cue" src="/static/devices/cue-program.svg" alt="" width="120" height="120"><figcaption>Desk</figcaption></figure><span class="wire"><b>CueLink</b></span><figure class="dev"><img data-dev="360" src="/static/devices/360-program.svg" alt="" width="64" height="64"><figcaption>Talent</figcaption></figure></div>
+    </article>
+    <article class="rig" data-rise>
+      <h3>One Cue, four lights.</h3>
+      <p>A Downstage Cue carries up to four over CueLink.</p>
+      <div class="flow"><figure class="dev"><img data-dev="cue" src="/static/devices/cue-program.svg" alt="" width="120" height="120"><figcaption>Hub</figcaption></figure><span class="wire"><b>CueLink</b></span><div class="stack"><figure class="dev"><img data-dev="360" src="/static/devices/360-program.svg" alt="" width="64" height="64"></figure><figure class="dev"><img data-dev="360" src="/static/devices/360-program.svg" alt="" width="64" height="64"></figure><figure class="dev"><img data-dev="360" src="/static/devices/360-program.svg" alt="" width="64" height="64"></figure><figure class="dev"><img data-dev="360" src="/static/devices/360-program.svg" alt="" width="64" height="64"></figure></div></div>
+    </article>
+    <article class="rig" data-rise style="--i:1">
+      <h3>Any Companion.<sup class="fn"><a href="#fn-6" aria-label="Note 6">6</a></sup></h3>
+      <p>Every light is its own Companion surface on WiFi.</p>
+      <div class="flow"><figure class="dev"><span class="deck" aria-hidden="true"><i></i><i class="on"></i><i></i><i></i><i></i><i></i></span><figcaption>Companion</figcaption></figure><span class="wire wifi"><b>WiFi</b></span><div class="fleet"><figure class="dev"><img data-dev="cue" src="/static/devices/cue-program.svg" alt="" width="120" height="120"></figure><figure class="dev"><img data-dev="lite" src="/static/devices/lite-program.svg" alt="" width="120" height="120"></figure><figure class="dev"><img data-dev="360" src="/static/devices/360-program.svg" alt="" width="64" height="64"></figure></div></div>
+    </article>
+    <article class="rig wide" data-rise>
+      <h3>With a Downstage One.<sup class="fn"><a href="#fn-2" aria-label="Note 2">2</a></sup></h3>
+      <p>Companion and the show clock in one box. Every Cue shows the countdown.</p>
+      <div class="flow"><figure class="dev"><img class="unit" src="/static/devices/one.svg" alt="" width="120" height="70"><figcaption>Downstage One</figcaption></figure><span class="wire wifi"><b>WiFi</b></span><div class="fleet"><figure class="dev"><img data-dev="cue" src="/static/devices/cue-program.svg" alt="" width="120" height="120"><figcaption>Cue</figcaption></figure><figure class="dev"><img data-dev="cue" src="/static/devices/cue-program.svg" alt="" width="120" height="120"><figcaption>Cue</figcaption></figure><figure class="dev"><img data-dev="lite" src="/static/devices/lite-program.svg" alt="" width="120" height="120"><figcaption>Lite</figcaption></figure><figure class="dev"><img data-dev="360" src="/static/devices/360-program.svg" alt="" width="64" height="64"><figcaption>360</figcaption></figure></div></div>
+    </article>
   </div>
 </section>
 
-<section id="beyond">
-  <div class="wrap">
-    <div class="eyebrow">More than a timer</div>
-    <h2>One box. Four jobs.</h2>
-    <p class="section-lede">The timer is the headline act - but the same box earns its rack space all day.</p>
-    <div class="features">
-      <div class="feature fg"><div class="dot"></div><div>
-        <h4>Show timer server</h4>
-        <p>The main gig: rock-solid countdowns and cues on two hardware outputs and every browser in the building, with spoken time calls and cue tones from the audio jack.</p>
-      </div></div>
-      <div class="feature fv"><div class="dot"></div><div>
-        <h4>Stream Deck control room</h4>
-        <p>Bitfocus Companion runs onboard - and Companion speaks to hundreds of devices. A Stream&nbsp;Deck plugged into the One can drive your switcher, PTZ cameras, OBS, projectors, and the timer, all at once. No Stream&nbsp;Deck? No problem - the Virtual&nbsp;Deck puts the same buttons in any browser, right on the Show&nbsp;Mode page, on the phone you already have. Already run Companion at FOH? Flip on Satellite mode and the One hands its decks to your rig instead - and machines running Bitfocus Satellite can join the One's Companion with no setup at all.</p>
-      </div></div>
-      <div class="feature fb"><div class="dot"></div><div>
-        <h4>Signage &amp; dashboards</h4>
-        <p>External Viewer puts any web page on either output - the day's schedule, slides, a stagetimer.io room, a dashboard. Two independent 1080p pages per One, managed from your phone.</p>
-      </div></div>
-      <div class="feature fa"><div class="dot"></div><div>
-        <h4>Signal check</h4>
-        <p>Test card, SMPTE bars, grid, gray ramp, and an AV-sync bounce pattern - drawn on-device at native resolution, working before any server is configured. A line-check generator that lives in the rack.</p>
-      </div></div>
-    </div>
+<section class="sec" id="how" aria-labelledby="how-h">
+  <div class="head" data-rise>
+    <h2 id="how-h">Linked before doors.</h2>
+    <p>No app, no account and no cloud. A light that can't connect tells you why, in a sentence.</p>
+  </div>
+  <div class="steps">
+    <div data-rise><h3>Seconds</h3><p>Plug in USB-C. The light opens its own setup network.</p></div>
+    <div data-rise style="--i:1"><h3>A minute</h3><p>Join it from a phone, pick your WiFi, point it at Companion.</p></div>
+    <div data-rise style="--i:2"><h3>Two seconds</h3><p>Hold a Cue 360 to your Cue. They link over CueLink.</p></div>
+    <div data-rise style="--i:3"><h3>All show long</h3><p>Every light follows its Companion key.</p></div>
   </div>
 </section>
 
-<section id="features">
-  <div class="wrap">
-    <div class="eyebrow">Inside the box</div>
-    <h2>Built for the way shows actually go</h2>
-    <p class="section-lede">Everything here exists because something went wrong at a real gig once.</p>
-    <div class="features">
-      <div class="feature"><div class="dot"></div><div>
-        <h4>Watchdog failover</h4>
-        <p>If the timer server ever drops, displays switch to a clean holding screen - and restore themselves when it returns. The audience never sees an error page.</p>
-      </div></div>
-      <div class="feature fa"><div class="dot"></div><div>
-        <h4>Setup hotspot</h4>
-        <p>No venue WiFi? Each unit broadcasts its own network with per-unit credentials printed on the quick-start card.</p>
-      </div></div>
-      <div class="feature"><div class="dot"></div><div>
-        <h4>Self-updating</h4>
-        <p>One button checks for and installs Downstage OS updates - with an automatic rollback if anything goes wrong. A bad update can't brick a unit.</p>
-      </div></div>
-      <div class="feature"><div class="dot"></div><div>
-        <h4>Pre-loaded show profile</h4>
-        <p>Install Ontime and Companion with one click and they come up pre-loaded with the Downstage show profile - timers, views, and Stream&nbsp;Deck layout ready for doors, not a blank slate.</p>
-      </div></div>
-      <div class="feature fv"><div class="dot"></div><div>
-        <h4>Stream Deck control</h4>
-        <p>Start, pause, next, add time, send messages - from hardware buttons via Bitfocus Companion.</p>
-      </div></div>
-      <div class="feature fr"><div class="dot"></div><div>
-        <h4>Blackout button</h4>
-        <p>Every output to black, one press, from any phone on the network. Resume just as fast.</p>
-      </div></div>
-      <div class="feature"><div class="dot"></div><div>
-        <h4>No internet required</h4>
-        <p>The One's battery-backed clock keeps real time through power cuts; the View picks its clock up from the network. Timers, views, and control all run locally. The internet is optional equipment.</p>
-      </div></div>
-      <div class="feature fg"><div class="dot"></div><div>
-        <h4>Failsafe boot media</h4>
-        <p>A second boot card rides inside every One, kept in sync automatically. If the main drive ever fails, pull it and the unit boots from the failsafe - the show goes on from the backup.</p>
-      </div></div>
-      <div class="feature fv"><div class="dot"></div><div>
-        <h4>One-button front panel</h4>
-        <p>The front display is the button: tap it to flip between status, a big clock, and the setup code - hold it three seconds for a clean shutdown, with a countdown on the panel and no keyboard in sight.</p>
-      </div></div>
-    </div>
+<section class="tiles" id="one" aria-label="The show timer">
+  <article class="t dark" data-rise>
+    <h2>Downstage One</h2>
+    <p class="tag">The show clock.</p>
+    <div class="pills"><a class="pill" href="/one/">Learn more</a><a class="pill ghost" href="/demo/">Try the interface</a></div>
+    <p class="fine">Two HDMI outputs, and every browser on the network becomes a timer view, so your laptop's HDMI is free for slides and playback.</p>
+    <!-- Launch day: point #buy-one at the Stripe payment link and change its words (and .buy-one on /one/). -->
+    <p class="fine"><a class="more" id="buy-one" href="#signup">Coming soon. Get updates</a></p>
+    <div class="art"><a href="/one/" aria-label="More about the Downstage One"><img class="unit" src="/static/devices/one.svg" alt="The Downstage One" width="120" height="70"></a></div>
+  </article>
+  <article class="t light" data-rise style="--i:1">
+    <h2>Downstage View</h2>
+    <p class="tag">Turns any screen into a display.</p>
+    <div class="links"><a class="more" href="#signup">Coming soon</a></div>
+    <p class="fine">Plugs in behind the screen and shows the One's timer, full screen.</p>
+    <div class="art"><img class="unit" src="/static/unit-view.png" alt="The Downstage View" width="260" height="150"></div>
+  </article>
+</section>
+
+<section class="sec with" aria-labelledby="with-h">
+  <div class="head" data-rise>
+    <h2 id="with-h">Works with what you run.</h2>
+    <p>Every Downstage light is a Bitfocus Companion surface, so it follows whatever Companion controls.</p>
+  </div>
+  <div class="names" data-rise style="--i:1">
+    <span>Bitfocus Companion</span><span>Stream Deck</span><span>Ontime</span><span>Blackmagic ATEM</span><span>OBS</span><span>vMix</span>
   </div>
 </section>
 
-<section id="signup">
-  <div class="wrap signup-band">
-    <div class="eyebrow">Stay connected</div>
-    <h2>Be first through the doors</h2>
-    <p class="section-lede" style="margin: 16px auto 0;">
-      Downstage is heading toward launch. Leave your email and we'll tell you when units are
-      available, when the founder's batch opens, and when the build videos drop. No spam - just
-      the launch, and the occasional useful thing.
-    </p>
-    <form class="signup-form" id="signup-form" onsubmit="return joinList(event)">
+<section class="sec light" id="questions" aria-labelledby="faq-h">
+  <div class="head" data-rise>
+    <h2 id="faq-h">Questions.</h2>
+  </div>
+  <div class="faq">
+    <details name="faq" open>
+      <summary>Do I need a Downstage One to use the Cue lights?</summary>
+      <div class="ans">No. Every Cue light works with any Bitfocus Companion over WiFi, on its own. A Downstage One adds the show clock and gives Companion a home on the rig.</div>
+    </details>
+    <details name="faq">
+      <summary>Will it work on hotel or venue WiFi?</summary>
+      <div class="ans">Often, but a sign-in page or a guest network that keeps devices apart will stop tally. The light tells you which one it hit, in a sentence. Your own router avoids both.</div>
+    </details>
+    <details name="faq">
+      <summary>How many lights can one Cue carry?</summary>
+      <div class="ans">A Downstage Cue carries up to four other lights over CueLink and a Cue Lite carries one. On WiFi, every light is its own Companion surface.</div>
+    </details>
+    <details name="faq">
+      <summary>How do they mount?</summary>
+      <div class="ans">The Downstage Cue and the Cue 360 have magnets in their backs for steel and a 1/4-20 for an arm or a shoe. The Cue Lite takes a 1/4-20, and a hot shoe adapter comes in the box with both screens.</div>
+    </details>
+    <details name="faq">
+      <summary>What powers them?</summary>
+      <div class="ans">USB-C, on all three: a USB-C charger or a power bank. Some camera USB ports cannot supply enough power, so check yours before the show. The first Downstage Cue has no battery and runs while it has power; a battery version comes later.</div>
+    </details>
+    <details name="faq">
+      <summary>When can I buy one?</summary>
+      <div class="ans">Pre-orders open December 1, and the first units ship in January 2027. <a href="#signup">Leave your email</a> and you will hear the moment pre-orders open, with the price.</div>
+    </details>
+    <details name="faq">
+      <summary>Is the software open?</summary>
+      <div class="ans">Downstage OS, which runs the One, is <a href="https://github.com/Downstage-Systems/downstage-os" rel="noopener">public on GitHub</a>. It stands on <a href="https://www.getontime.no" rel="noopener">Ontime</a>, free and open source under GPL v3 (<a href="https://github.com/cpvalente/ontime" rel="noopener">source</a>), and <a href="https://bitfocus.io/companion" rel="noopener">Bitfocus Companion</a>. We publish our manuals before you buy.</div>
+    </details>
+  </div>
+</section>
+
+<section class="sec" id="signup" aria-labelledby="close-h">
+  <div class="signup-card" data-rise>
+    <h2 id="close-h">Pre-orders open December 1.</h2>
+    <p>First units ship January 2027. Leave your email and you will hear the moment pre-orders open.</p>
+    <form class="signup" id="signup-form" onsubmit="return joinList(event)">
       <input type="email" id="signup-email" placeholder="you@yourcompany.com" required autocomplete="email" aria-label="Email address">
-      <button type="submit" class="btn btn-solid">Notify me</button>
+      <button type="submit" class="pill">Notify me</button>
     </form>
-    <div class="signup-ok" id="signup-ok"></div>
-    <p class="signup-note">We'll only email about Downstage. Unsubscribe anytime.</p>
+    <div class="signup-ok" id="signup-ok" role="status"></div>
+    <p class="small">Only about Downstage. Unsubscribe any time.</p>
   </div>
 </section>
 
+</main>
+
+<footer>
+  <div class="in">
+    <div class="notes">
+      <ol>
+        <li id="fn-1">Pre-orders open December 1, 2026. First units are expected to ship in January 2027; ship dates are estimates and may change. Pre-orders are limited to what we can build.</li>
+        <li id="fn-2">Requires a Downstage One on the same network, sold separately. The Downstage One is coming soon.</li>
+        <li id="fn-3">Linked lights use CueLink, the lights' own 2.4 GHz radio, and must stay within range of the light that carries them. Range depends on the room.</li>
+        <li id="fn-4">On WiFi, each light needs a 2.4 GHz network that lets devices see each other. Networks with a sign-in page, or guest networks that keep devices apart, are not supported.</li>
+        <li id="fn-5">Power cable not included. Power draw rises with brightness; use a USB-C charger or power bank rated 5 V, 1 A or more for each light. Some camera USB ports cannot supply enough power. The first release of the Downstage Cue has no battery.</li>
+        <li id="fn-6">Requires Bitfocus Companion, free from Bitfocus, with its Satellite service on. Companion runs on a Mac, Windows or Linux computer, or onboard a Downstage One.</li>
+      </ol>
+      <p>Screens shown are illustrations. Finished lights are 3D printed, and finish and color may vary slightly. Specifications are subject to change.</p>
+      <p>Bitfocus Companion, Stream Deck, Ontime, Blackmagic ATEM, OBS and vMix are trademarks of their respective owners. Downstage Systems is not affiliated with or endorsed by them.</p>
+    </div>
+    <svg class="logo-foot" viewBox="0 0 376.76 108" role="img" aria-label="Downstage Systems"><g transform="translate(8,6)">
+    <rect x="6" y="10" width="84" height="66" rx="10" fill="none" stroke="currentColor" stroke-width="7"/>
+    <rect x="20" y="54" width="40" height="9" rx="4.5" fill="#2fd97b"/>
+    <rect x="64" y="54" width="12" height="9" rx="4.5" fill="currentColor" opacity="0.28"/>
+    <rect x="20" y="83" width="56" height="7" rx="3.5" fill="#2fd97b"/>
+  </g><g transform="translate(118,66)"><path d="M9.338 -5.06H14.352Q15.824 -5.06 16.445 -5.680999999999999Q17.066 -6.302 17.066 -7.774V-21.804Q17.066 -23.276 16.445 -23.897Q15.824 -24.518 14.352 -24.518H9.338Q8.832 -24.518 8.832 -24.012V-5.566Q8.832 -5.06 9.338 -5.06ZM2.9899999999999998 -0.966V-28.612Q2.9899999999999998 -29.578 3.956 -29.578H15.318Q18.906 -29.578 20.907 -27.622999999999998Q22.908 -25.668 22.908 -22.08V-7.498Q22.908 -3.91 20.907 -1.955Q18.906 0.0 15.318 0.0H3.956Q2.9899999999999998 0.0 2.9899999999999998 -0.966Z M37.977999999999994 -5.06H41.244Q42.716 -5.06 43.337 -5.680999999999999Q43.958 -6.302 43.958 -7.774V-21.804Q43.958 -23.276 43.337 -23.897Q42.716 -24.518 41.244 -24.518H37.977999999999994Q36.506 -24.518 35.908 -23.897Q35.31 -23.276 35.31 -21.804V-7.774Q35.31 -6.302 35.908 -5.680999999999999Q36.506 -5.06 37.977999999999994 -5.06ZM42.21 0.0H37.058Q33.424 0.0 31.445999999999998 -1.932Q29.468 -3.864 29.468 -7.498V-22.08Q29.468 -25.714 31.445999999999998 -27.646Q33.424 -29.578 37.058 -29.578H42.21Q45.843999999999994 -29.578 47.821999999999996 -27.646Q49.8 -25.714 49.8 -22.08V-7.498Q49.8 -3.864 47.821999999999996 -1.932Q45.843999999999994 0.0 42.21 0.0Z M67.032 0.0H60.592Q59.58 0.0 59.442 -0.966L54.519999999999996 -28.612Q54.382 -29.578 55.486 -29.578H60.269999999999996Q61.327999999999996 -29.578 61.373999999999995 -28.612L64.042 -5.934H64.364L68.78 -28.75Q68.91799999999999 -29.578 69.746 -29.578H74.898Q75.77199999999999 -29.578 75.91 -28.796L80.418 -5.934H80.786L83.408 -28.566Q83.454 -29.578 84.512 -29.578H89.29599999999999Q90.4 -29.578 90.262 -28.566L85.294 -0.966Q85.156 0.0 84.23599999999999 0.0H77.75Q76.78399999999999 0.0 76.646 -0.966L72.506 -22.54H72.322L68.136 -0.966Q67.952 0.0 67.032 0.0Z M100.226 0.0H96.408Q95.442 0.0 95.442 -0.966V-28.612Q95.442 -29.578 96.408 -29.578H99.858Q100.824 -29.578 101.146 -28.934L110.438 -11.5H110.622V-28.612Q110.622 -29.578 111.588 -29.578H115.406Q116.372 -29.578 116.372 -28.612V-0.966Q116.372 0.0 115.406 0.0H112.048Q111.036 0.0 110.576 -0.9199999999999999L101.376 -18.032H101.192V-0.966Q101.192 0.0 100.226 0.0Z M123.116 -7.544V-8.464Q123.116 -9.43 124.082 -9.43H127.99199999999999Q128.958 -9.43 128.958 -8.464V-8.096Q128.958 -6.348 129.648 -5.704Q130.338 -5.06 132.178 -5.06H134.34Q136.134 -5.06 136.84699999999998 -5.75Q137.56 -6.4399999999999995 137.56 -8.326V-8.878Q137.56 -10.212 136.47899999999998 -10.925Q135.398 -11.638 133.788 -11.776Q132.178 -11.914 130.315 -12.305Q128.452 -12.696 126.842 -13.317Q125.232 -13.938 124.151 -15.754999999999999Q123.07 -17.572 123.07 -20.424V-22.034Q123.07 -25.622 125.094 -27.6Q127.118 -29.578 130.706 -29.578H135.30599999999998Q138.94 -29.578 140.964 -27.6Q142.988 -25.622 142.988 -22.034V-21.16Q142.988 -20.194 142.022 -20.194H138.112Q137.146 -20.194 137.146 -21.16V-21.436Q137.146 -23.23 136.456 -23.874000000000002Q135.766 -24.518 133.926 -24.518H132.132Q130.24599999999998 -24.518 129.579 -23.805Q128.912 -23.092 128.912 -21.022V-20.148Q128.912 -17.986 132.684 -17.664Q136.594 -17.342 139.63 -16.1Q141.24 -15.41 142.321 -13.639Q143.402 -11.868 143.402 -9.108V-7.544Q143.402 -3.956 141.378 -1.978Q139.35399999999998 0.0 135.766 0.0H130.752Q127.16399999999999 0.0 125.13999999999999 -1.978Q123.116 -3.956 123.116 -7.544Z M159.3 0.0H155.436Q154.424 0.0 154.424 -0.966V-24.012Q154.424 -24.518 153.918 -24.518H148.674Q147.708 -24.518 147.708 -25.483999999999998V-28.612Q147.708 -29.578 148.674 -29.578H166.062Q167.02800000000002 -29.578 167.02800000000002 -28.612V-25.483999999999998Q167.02800000000002 -24.518 166.062 -24.518H160.818Q160.26600000000002 -24.518 160.26600000000002 -24.012V-0.966Q160.26600000000002 0.0 159.3 0.0Z M175.106 0.0H170.69Q169.862 0.0 170.138 -0.966L177.406 -28.612Q177.72799999999998 -29.578 178.786 -29.578H184.904Q186.054 -29.578 186.284 -28.612L193.552 -0.966Q193.828 0.0 193.0 0.0H188.584Q188.078 0.0 187.894 -0.207Q187.70999999999998 -0.414 187.618 -0.966L186.32999999999998 -6.026H177.35999999999999L176.072 -0.966Q175.98 -0.414 175.773 -0.207Q175.566 0.0 175.106 0.0ZM181.77599999999998 -24.012 178.464 -10.718H185.272L181.95999999999998 -24.012Z M211.15200000000002 0.0H206.276Q202.642 0.0 200.664 -1.932Q198.686 -3.864 198.686 -7.498V-22.08Q198.686 -25.714 200.664 -27.646Q202.642 -29.578 206.276 -29.578H211.15200000000002Q214.74 -29.578 216.71800000000002 -27.622999999999998Q218.696 -25.668 218.696 -22.08V-20.7Q218.696 -19.688 217.73000000000002 -19.688H213.82Q212.854 -19.688 212.854 -20.7V-21.804Q212.854 -23.276 212.25600000000003 -23.897Q211.65800000000002 -24.518 210.186 -24.518H207.196Q205.77 -24.518 205.149 -23.897Q204.52800000000002 -23.276 204.52800000000002 -21.804V-7.774Q204.52800000000002 -6.302 205.149 -5.680999999999999Q205.77 -5.06 207.196 -5.06H210.186Q211.65800000000002 -5.06 212.25600000000003 -5.680999999999999Q212.854 -6.302 212.854 -7.774V-10.672Q212.854 -11.177999999999999 212.348 -11.177999999999999H209.588Q208.622 -11.177999999999999 208.622 -12.144V-15.272Q208.622 -16.238 209.588 -16.238H217.638Q218.696 -16.238 218.696 -15.18V-7.498Q218.696 -3.91 216.71800000000002 -1.955Q214.74 0.0 211.15200000000002 0.0Z M241.724 0.0H226.682Q225.716 0.0 225.716 -0.966V-28.612Q225.716 -29.578 226.682 -29.578H241.724Q242.644 -29.578 242.644 -28.612V-25.483999999999998Q242.644 -24.518 241.724 -24.518H232.11Q231.558 -24.518 231.558 -24.012V-18.032Q231.558 -17.526 232.11 -17.526H239.976Q240.942 -17.526 240.942 -16.56V-13.432Q240.942 -12.466 239.976 -12.466H232.11Q231.558 -12.466 231.558 -11.959999999999999V-5.566Q231.558 -5.06 232.11 -5.06H241.724Q242.644 -5.06 242.644 -4.094V-0.966Q242.644 0.0 241.724 0.0Z" fill="currentColor"/></g><g transform="translate(120,92)"><path d="M1.2240000000000002 -2.516V-3.06Q1.2240000000000002 -3.298 1.4620000000000002 -3.298H2.2270000000000003Q2.4650000000000003 -3.298 2.4650000000000003 -3.06V-2.6180000000000003Q2.4650000000000003 -1.088 3.978 -1.088H5.474Q6.987 -1.088 6.987 -2.652V-3.2300000000000004Q6.987 -4.454000000000001 4.964 -4.828Q4.114 -4.981000000000001 3.2640000000000002 -5.1850000000000005Q2.414 -5.389 1.8190000000000002 -5.9755Q1.2240000000000002 -6.562 1.2240000000000002 -7.582000000000001V-8.415000000000001Q1.2240000000000002 -9.588000000000001 1.8955000000000002 -10.259500000000001Q2.567 -10.931000000000001 3.74 -10.931000000000001H5.627000000000001Q6.783 -10.931000000000001 7.463000000000001 -10.259500000000001Q8.143 -9.588000000000001 8.143 -8.415000000000001V-7.99Q8.143 -7.735 7.922000000000001 -7.735H7.140000000000001Q6.9190000000000005 -7.735 6.9190000000000005 -7.99V-8.296000000000001Q6.9190000000000005 -9.843 5.406000000000001 -9.843H3.9610000000000003Q2.4480000000000004 -9.843 2.4480000000000004 -8.228V-7.548000000000001Q2.4480000000000004 -6.681 3.587 -6.3580000000000005Q4.097 -6.222 4.7090000000000005 -6.1115Q5.321000000000001 -6.001 5.9415000000000004 -5.8225Q6.562 -5.644 7.072000000000001 -5.3805Q7.582000000000001 -5.117 7.8965000000000005 -4.5815Q8.211 -4.046 8.211 -3.281V-2.516Q8.211 -1.3430000000000002 7.531000000000001 -0.6715000000000001Q6.851000000000001 0.0 5.695 0.0H3.74Q2.584 0.0 1.9040000000000001 -0.6715000000000001Q1.2240000000000002 -1.3430000000000002 1.2240000000000002 -2.516Z M21.559000000000005 0.0H20.794000000000004Q20.556000000000004 0.0 20.556000000000004 -0.23800000000000002V-4.097L17.326 -10.676Q17.275000000000002 -10.795 17.326 -10.863Q17.377000000000002 -10.931000000000001 17.479000000000003 -10.931000000000001H18.431Q18.618000000000002 -10.931000000000001 18.720000000000002 -10.693000000000001L21.151000000000003 -5.542000000000001H21.236000000000004L23.650000000000002 -10.693000000000001Q23.718000000000004 -10.931000000000001 23.922000000000004 -10.931000000000001H24.891000000000002Q25.180000000000003 -10.931000000000001 25.044000000000004 -10.676L21.797000000000004 -4.097V-0.23800000000000002Q21.797000000000004 0.0 21.559000000000005 0.0Z M34.159000000000006 -2.516V-3.06Q34.159000000000006 -3.298 34.397000000000006 -3.298H35.162000000000006Q35.400000000000006 -3.298 35.400000000000006 -3.06V-2.6180000000000003Q35.400000000000006 -1.088 36.913000000000004 -1.088H38.409000000000006Q39.922000000000004 -1.088 39.922000000000004 -2.652V-3.2300000000000004Q39.922000000000004 -4.454000000000001 37.899 -4.828Q37.049 -4.981000000000001 36.199 -5.1850000000000005Q35.349000000000004 -5.389 34.754000000000005 -5.9755Q34.159000000000006 -6.562 34.159000000000006 -7.582000000000001V-8.415000000000001Q34.159000000000006 -9.588000000000001 34.8305 -10.259500000000001Q35.502 -10.931000000000001 36.675000000000004 -10.931000000000001H38.562000000000005Q39.718 -10.931000000000001 40.398 -10.259500000000001Q41.078 -9.588000000000001 41.078 -8.415000000000001V-7.99Q41.078 -7.735 40.857 -7.735H40.075Q39.854 -7.735 39.854 -7.99V-8.296000000000001Q39.854 -9.843 38.341 -9.843H36.896Q35.383 -9.843 35.383 -8.228V-7.548000000000001Q35.383 -6.681 36.522000000000006 -6.3580000000000005Q37.032000000000004 -6.222 37.644000000000005 -6.1115Q38.256 -6.001 38.8765 -5.8225Q39.497 -5.644 40.007000000000005 -5.3805Q40.517 -5.117 40.831500000000005 -4.5815Q41.146 -4.046 41.146 -3.281V-2.516Q41.146 -1.3430000000000002 40.466 -0.6715000000000001Q39.786 0.0 38.63 0.0H36.675000000000004Q35.519000000000005 0.0 34.839000000000006 -0.6715000000000001Q34.159000000000006 -1.3430000000000002 34.159000000000006 -2.516Z M53.882000000000005 0.0H53.117000000000004Q52.879000000000005 0.0 52.879000000000005 -0.23800000000000002V-9.690000000000001Q52.879000000000005 -9.843 52.709 -9.843H50.397000000000006Q50.142 -9.843 50.142 -10.081000000000001V-10.693000000000001Q50.142 -10.931000000000001 50.397000000000006 -10.931000000000001H56.602000000000004Q56.857000000000006 -10.931000000000001 56.857000000000006 -10.693000000000001V-10.081000000000001Q56.857000000000006 -9.843 56.602000000000004 -9.843H54.290000000000006Q54.120000000000005 -9.843 54.120000000000005 -9.690000000000001V-0.23800000000000002Q54.120000000000005 0.0 53.882000000000005 0.0Z M71.548 0.0H66.21000000000001Q65.97200000000001 0.0 65.97200000000001 -0.23800000000000002V-10.693000000000001Q65.97200000000001 -10.931000000000001 66.21000000000001 -10.931000000000001H71.548Q71.786 -10.931000000000001 71.786 -10.693000000000001V-10.081000000000001Q71.786 -9.843 71.548 -9.843H67.38300000000001Q67.21300000000001 -9.843 67.21300000000001 -9.690000000000001V-6.256Q67.21300000000001 -6.103000000000001 67.38300000000001 -6.103000000000001H71.021Q71.259 -6.103000000000001 71.259 -5.865V-5.253Q71.259 -5.015000000000001 71.021 -5.015000000000001H67.38300000000001Q67.21300000000001 -5.015000000000001 67.21300000000001 -4.862V-1.241Q67.21300000000001 -1.088 67.38300000000001 -1.088H71.548Q71.786 -1.088 71.786 -0.8500000000000001V-0.23800000000000002Q71.786 0.0 71.548 0.0Z M89.316 -10.931000000000001H90.693Q90.931 -10.931000000000001 90.931 -10.693000000000001V-0.23800000000000002Q90.931 0.0 90.693 0.0H89.94500000000001Q89.70700000000001 0.0 89.70700000000001 -0.23800000000000002V-9.265H89.63900000000001L87.004 -2.601Q86.902 -2.3800000000000003 86.69800000000001 -2.3800000000000003H85.882Q85.661 -2.3800000000000003 85.593 -2.601L82.907 -9.282H82.839V-0.23800000000000002Q82.839 0.0 82.618 0.0H81.87Q81.632 0.0 81.632 -0.23800000000000002V-10.693000000000001Q81.632 -10.931000000000001 81.87 -10.931000000000001H83.247Q83.4 -10.931000000000001 83.45100000000001 -10.795L86.239 -3.757H86.324L89.112 -10.795Q89.146 -10.931000000000001 89.316 -10.931000000000001Z M100.998 -2.516V-3.06Q100.998 -3.298 101.236 -3.298H102.001Q102.239 -3.298 102.239 -3.06V-2.6180000000000003Q102.239 -1.088 103.752 -1.088H105.248Q106.761 -1.088 106.761 -2.652V-3.2300000000000004Q106.761 -4.454000000000001 104.738 -4.828Q103.888 -4.981000000000001 103.03800000000001 -5.1850000000000005Q102.188 -5.389 101.593 -5.9755Q100.998 -6.562 100.998 -7.582000000000001V-8.415000000000001Q100.998 -9.588000000000001 101.6695 -10.259500000000001Q102.34100000000001 -10.931000000000001 103.514 -10.931000000000001H105.401Q106.557 -10.931000000000001 107.237 -10.259500000000001Q107.917 -9.588000000000001 107.917 -8.415000000000001V-7.99Q107.917 -7.735 107.696 -7.735H106.914Q106.693 -7.735 106.693 -7.99V-8.296000000000001Q106.693 -9.843 105.18 -9.843H103.735Q102.22200000000001 -9.843 102.22200000000001 -8.228V-7.548000000000001Q102.22200000000001 -6.681 103.361 -6.3580000000000005Q103.871 -6.222 104.483 -6.1115Q105.095 -6.001 105.71549999999999 -5.8225Q106.336 -5.644 106.846 -5.3805Q107.356 -5.117 107.6705 -4.5815Q107.985 -4.046 107.985 -3.281V-2.516Q107.985 -1.3430000000000002 107.305 -0.6715000000000001Q106.625 0.0 105.469 0.0H103.514Q102.358 0.0 101.678 -0.6715000000000001Q100.998 -1.3430000000000002 100.998 -2.516Z" fill="#6e6e73"/></g></svg>
+    <div class="foot-links">
+      <div><strong>Cue lights</strong><a href="#compare">Downstage Cue</a><a href="#compare">Cue Lite</a><a href="#compare">Cue 360</a></div>
+      <div><strong>Show timer</strong><a href="/one/">Downstage One</a><a href="#one">Downstage View</a><a href="/demo/">Try the interface</a></div>
+      <div><strong>Open source</strong><a href="https://github.com/Downstage-Systems/downstage-os" rel="noopener">Downstage OS</a><a href="https://www.getontime.no" rel="noopener">Ontime</a><a href="https://bitfocus.io/companion" rel="noopener">Companion</a></div>
+      <div><strong>Talk to us</strong><a href="mailto:hello@downstage.systems">hello@downstage.systems</a><a href="#questions">Questions</a></div>
+    </div>
+    <div class="last">
+      <span>Copyright &copy; 2026 Downstage Systems LLC. All rights reserved.</span>
+      <a href="#top">Back to the top</a>
+    </div>
+  </div>
+</footer>
+
+<script src="/static/faces.js"></script>
 <script>
+  document.documentElement.classList.add('js');
+
   // MailerLite embedded-form endpoint (account 2501298, form 192577505529431556).
   // Posts the same fields MailerLite's own form does, so signups land in the list.
   const SIGNUP_ENDPOINT = 'https://assets.mailerlite.com/jsonp/2501298/forms/192577505529431556/subscribe';
@@ -444,7 +299,7 @@
     body.append('fields[email]', email);
     body.append('ml-submit', '1');
     body.append('anticsrf', 'true');
-    ok.textContent = 'Adding you\u2026';
+    ok.textContent = 'Adding you…';
     fetch(SIGNUP_ENDPOINT, {
       method: 'POST', mode: 'no-cors',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -453,46 +308,61 @@
       document.getElementById('signup-form').reset();
       ok.textContent = 'You\'re on the list. See you at doors.';
     }).catch(() => {
-      ok.textContent = 'Something went wrong \u2014 email hello@downstage.systems and we\'ll add you.';
+      ok.textContent = 'Something went wrong. Email hello@downstage.systems and we\'ll add you.';
     });
     return false;
   }
+
+  (function () {
+    // The live thing: one tally control, and every light drawn on the page follows it.
+    const keys = document.querySelectorAll('.key');
+    const note = document.getElementById('seg-note');
+    const words = { program: 'On air: every light is red.', preview: 'Preview: every light is green.', off: 'Off: every light is dark.' };
+    let state = 'program';
+    function paint() {
+      document.querySelectorAll('img[data-dev]').forEach(img => {
+        img.src = '/static/devices/' + img.dataset.dev + '-' + state + '.svg';
+      });
+      document.documentElement.dataset.tally = state;
+    }
+    keys.forEach(k => k.addEventListener('click', () => {
+      state = k.dataset.state;
+      keys.forEach(o => o.setAttribute('aria-pressed', String(o === k)));
+      note.textContent = words[state];
+      paint();
+    }));
+
+    // The tally pill starts in the hero and slides to the corner once the hero
+    // scrolls away, so the lights can be switched from anywhere on the page.
+    const seg = document.querySelector('.seg'), slot = seg.parentElement;
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function dock(on) {
+      if (seg.classList.contains('docked') === on) return;
+      const a = seg.getBoundingClientRect();
+      seg.classList.toggle('docked', on);
+      if (still) return;
+      const b = seg.getBoundingClientRect();
+      seg.style.transition = 'none';
+      seg.style.transform = 'translate(' + (a.left - b.left) + 'px,' + (a.top - b.top) + 'px)';
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        seg.style.transition = 'transform .55s cubic-bezier(.25,.1,.25,1)';
+        seg.style.transform = '';
+      }));
+    }
+    new IntersectionObserver(([e]) => dock(!e.isIntersecting && e.boundingClientRect.top < 0)).observe(slot);
+
+    // Entrances: each part fades up once as it arrives. Anything already
+    // scrolled past (a jump down the page, a link to #signup) shows at once.
+    let waiting = Array.from(document.querySelectorAll('[data-rise]'));
+    function rise() {
+      const line = innerHeight * 0.92;
+      waiting = waiting.filter(el => {
+        if (el.getBoundingClientRect().top < line) { el.classList.add('in'); return false; }
+        return true;
+      });
+    }
+    addEventListener('scroll', rise, { passive: true }); addEventListener('resize', rise); rise();
+  })();
 </script>
-
-<section id="opensource">
-  <div class="wrap">
-    <div class="oss">
-      <svg width="40" height="40" viewBox="0 0 96 96" aria-hidden="true" style="flex-shrink:0">
-        <rect x="6" y="10" width="84" height="66" rx="10" fill="none" stroke="#2fd97b" stroke-width="7"/>
-        <rect x="20" y="83" width="56" height="7" rx="3.5" fill="#2fd97b"/>
-      </svg>
-      <div>
-        <h3 style="font-size:20px;margin-bottom:8px">Standing on open source</h3>
-        <p>
-          Downstage appliances are built on <a href="https://www.getontime.no" rel="noopener">Ontime</a>,
-          free open-source software (GPL&nbsp;v3) - <a href="https://github.com/cpvalente/ontime" rel="noopener">source code here</a>.
-          Stream Deck support is powered by <a href="https://bitfocus.io/companion" rel="noopener">Bitfocus Companion</a>.
-          Our own operating system, Downstage&nbsp;OS, is public too -
-          <a href="https://github.com/Downstage-Systems/downstage-os" rel="noopener">see it on GitHub</a>.
-          We publish our manuals before you buy, and we credit the foundations we build on.
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <div class="wrap foot-inner">
-    <svg class="mark" viewBox="0 0 96 96" aria-hidden="true">
-      <rect x="6" y="10" width="84" height="66" rx="10" fill="none" stroke="#e8ecef" stroke-width="7"/>
-      <rect x="20" y="54" width="40" height="9" rx="4.5" fill="#2fd97b"/>
-      <rect x="64" y="54" width="12" height="9" rx="4.5" fill="#e8ecef" opacity="0.28"/>
-      <rect x="20" y="83" width="56" height="7" rx="3.5" fill="#2fd97b"/>
-    </svg>
-    <span class="foot-brand">DOWNSTAGE.SYSTEMS · © 2026 DOWNSTAGE SYSTEMS LLC</span>
-    <span class="foot-right"><a href="https://github.com/Downstage-Systems/downstage-os" rel="noopener">GitHub</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="mailto:hello@downstage.systems">hello@downstage.systems</a></span>
-  </div>
-</footer>
-
 </body>
 </html>
