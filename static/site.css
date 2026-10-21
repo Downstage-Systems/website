@@ -408,8 +408,6 @@ html[data-tally="off"] .face .num { transform: translateY(6px); }
 .use > p { color: var(--mist); margin-top: 6px; }
 .u-rec { --c: #FF2D2D; }
 .u-live { --c: #FF6A2D; }
-.u-mic { --c: #3B8BFF; }
-.u-door { --c: #F5F5F7; }
 .use .w1, .use .w2, .use .w3 { position: absolute; left: 0; right: 0; opacity: 0; }
 .u-timer .lamp { animation: timer 9s steps(1) infinite; }
 .u-timer .w1 { animation: w1 9s steps(1) infinite; }
@@ -432,3 +430,12 @@ html[data-tally="off"] .face .num { transform: translateY(6px); }
 }
 @media (max-width: 1068px) { .uses { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 734px) { .uses { grid-template-columns: 1fr; } .use { border-radius: 22px; } }
+
+.use .lamp { min-height: 160px; justify-content: center; }
+.use .screen { width: 150px; height: auto; }
+.use .screen .msg { font-family: 'Rajdhani', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: 1px; fill: #F5F5F7; }
+.use .lamp svg.face, .use .lamp > img, .use .tapper img { width: 130px; height: auto; }
+.tapper { position: relative; display: inline-block; }
+.tapper .ripple { position: absolute; left: 50%; top: 50%; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; border: 2px solid rgba(255,255,255,.75); animation: tap 2.4s ease-out infinite; }
+@keyframes tap { 0% { transform: scale(.4); opacity: 0; } 15% { opacity: 1; } 60%, 100% { transform: scale(2.4); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .tapper .ripple { animation: none; opacity: .8; } }
