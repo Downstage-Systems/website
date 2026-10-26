@@ -93,7 +93,7 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.015em; line-height: 1.07; }
 .sec .head p { font-size: 21px; line-height: 1.38; color: var(--grey); margin-top: 14px; max-width: 640px; margin-left: auto; margin-right: auto; }
 
 /* compare: which Cue */
-.compare { max-width: 1024px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 40px; }
+.compare { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0 32px; }
 .col { display: grid; grid-template-rows: subgrid; grid-row: span 12; text-align: center; justify-items: center; }
 .col img { width: 150px; height: 150px; }
 .col h3 { font-size: 24px; margin-top: 16px; }
@@ -439,3 +439,21 @@ html[data-tally="off"] .face .num { transform: translateY(6px); }
 .tapper .ripple { position: absolute; left: 50%; top: 50%; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; border: 2px solid rgba(255,255,255,.75); animation: tap 2.4s ease-out infinite; }
 @keyframes tap { 0% { transform: scale(.4); opacity: 0; } 15% { opacity: 1; } 60%, 100% { transform: scale(2.4); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .tapper .ripple { animation: none; opacity: .8; } }
+
+/* ---- coming later ---- */
+.later { display: inline-block; font-size: 13px; font-weight: 600; letter-spacing: .02em; color: var(--green-ink); }
+.dark .later, .rig .later { color: var(--green); }
+.rig .later { margin-bottom: 6px; }
+.later-one { padding-top: 40px; padding-bottom: 40px; }
+.later-card { max-width: 820px; margin: 0 auto; display: flex; align-items: center; gap: 40px; background: var(--tile); border-radius: 28px; padding: 36px 40px; }
+.later-card img.unit { width: 200px; flex: none; }
+.later-card h2 { font-size: 32px; margin: 4px 0 8px; }
+.later-card p { color: var(--grey); }
+.later-card .links { display: flex; gap: 28px; justify-content: flex-start; margin-top: 14px; }
+@media (max-width: 734px) { .later-card { flex-direction: column; text-align: center; gap: 20px; padding: 28px 22px; border-radius: 22px; } .later-card .links { justify-content: center; } .later-card img.unit { width: 150px; } }
+
+/* ---- the Cue Mini ---- */
+.mini-tile { min-height: 520px; }
+.mini-tile .art img { width: 320px; height: auto; }
+.col img[data-dev="mini"] { width: 150px; height: 150px; }
+@media (min-width: 735px) and (max-width: 1068px) { .compare { grid-template-columns: 1fr 1fr; row-gap: 56px; } }
