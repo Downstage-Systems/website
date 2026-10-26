@@ -75,7 +75,7 @@
     <p class="tag">The camera's light.</p>
     <p class="price">$99</p>
     <div class="links"><a class="more" href="#compare">Learn more</a><a class="more" data-buy="lite" href="#signup">Pre-order</a></div>
-    <div class="art photo"><img src="/static/photos/lite.webp" alt="A Cue Lite showing camera 2 in red with PROGRAM" width="733" height="739"></div>
+    <div class="art photo"><img data-photo="lite" src="/static/photos/lite-program.webp" alt="A Cue Lite showing camera 2 with its tally" width="733" height="739"></div>
   </article>
   <article class="t dark" data-rise style="--i:1">
     <h2>Cue 360</h2>
@@ -429,6 +429,8 @@
     const BUY = { cue: '', lite: '', '360': '', mini: '', camera: '', rig: '' };
     document.querySelectorAll('[data-buy]').forEach(a => { const u = BUY[a.dataset.buy]; if (u) a.href = u; });
 
+    ['preview', 'off'].forEach(st => { const i = new Image(); i.src = '/static/photos/lite-' + st + '.webp'; });
+
     // The live thing: one tally control, and every light drawn on the page follows it.
     const keys = document.querySelectorAll('.key');
     const note = document.getElementById('seg-note');
@@ -437,6 +439,10 @@
     function paint() {
       document.querySelectorAll('img[data-dev]').forEach(img => {
         img.src = '/static/devices/' + img.dataset.dev + '-' + state + '.svg';
+      });
+      // photos with a screen for each tally state (the Cue on its Dock stays on its clock)
+      document.querySelectorAll('img[data-photo]').forEach(img => {
+        img.src = '/static/photos/' + img.dataset.photo + '-' + state + '.webp';
       });
       document.documentElement.dataset.tally = state;
     }
