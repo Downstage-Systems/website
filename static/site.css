@@ -457,3 +457,9 @@ html[data-tally="off"] .face .num { transform: translateY(6px); }
 .mini-tile .art img { width: 320px; height: auto; }
 .col img[data-dev="mini"] { width: 150px; height: 150px; }
 @media (min-width: 735px) and (max-width: 1068px) { .compare { grid-template-columns: 1fr 1fr; row-gap: 56px; } }
+
+/* Video loops drawn from the lights' own firmware (Content/pipeline/webloops.py) */
+.how-video { max-width: 1024px; margin: 0 auto 56px; border-radius: 28px; overflow: hidden; background: #000; }
+.how-video video { display: block; width: 100%; height: auto; }
+.use .lamp video.loop { display: block; width: 240px; max-width: 100%; height: auto; margin: -24px 0 -12px; }
+@media (max-width: 734px) { .how-video { border-radius: 18px; margin-bottom: 40px; } }
