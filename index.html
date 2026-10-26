@@ -88,7 +88,7 @@
     <h2>Cue Mini</h2>
     <p class="tag">The entry-level light. Small, with a crisp pixel grid.</p>
     <p class="price">$39</p>
-    <div class="links"><a class="more" href="#compare">Learn more</a><a class="more" href="#signup">Coming soon</a></div>
+    <div class="links"><a class="more" href="#compare">Learn more</a><a class="more" data-buy="mini" href="#signup">Pre-order</a></div>
     <figure class="art render"><img src="/static/renders/cue-mini-front-3q.png" alt="The Cue Mini, lit red, on its hot shoe adapter" loading="lazy"><figcaption>Render. The finished light may differ slightly.</figcaption></figure>
   </article>
 </section>
@@ -120,7 +120,7 @@
 <section class="sec" id="compare" aria-labelledby="compare-h">
   <div class="head" data-rise>
     <h2 id="compare-h">Which Cue is which?</h2>
-    <p>One for the lectern, one for the camera, one for the talent, and the Cue Mini to start with. All four join your WiFi and follow Bitfocus Companion. Pre-orders are open now for the Downstage Cue, Cue Lite and Cue 360, and first units ship January 2027; the Cue Mini follows.<sup class="fn"><a href="#fn-1" aria-label="Note 1">1</a></sup></p>
+    <p>One for the lectern, one for the camera, one for the talent, and the Cue Mini to start with. All four join your WiFi and follow Bitfocus Companion. Pre-orders are open now for all four, and first units ship January 2027.<sup class="fn"><a href="#fn-1" aria-label="Note 1">1</a></sup></p>
   </div>
   <div class="compare">
     <div class="col" data-rise>
@@ -164,7 +164,7 @@
       <h3>Cue Mini</h3>
       <p class="lead">The entry-level light.</p>
       <p class="price">$39</p>
-      <a class="pill ghost" href="#signup">Coming soon</a>
+      <a class="pill" data-buy="mini" href="#signup">Pre-order</a>
       <p class="spec"><b>64 crisp pixels</b>A fine black grid gives each LED its own square, still readable off to the side.</p>
       <p class="spec"><b>On your WiFi<sup class="fn"><a href="#fn-4" aria-label="Note 4">4</a></sup></b>Or hold it to a Cue and it follows.</p>
       <p class="spec"><b>Small enough for anywhere</b>About 30 x 36 x 12 mm, for a lens hood, a monitor, a lectern or a door. A 1/4-20 in the bottom for the hot shoe adapter.</p>
@@ -426,7 +426,7 @@
   (function () {
     // Payment links, one per product. Paste each Stripe Payment Link here;
     // until a link is set, its buttons lead to the email form.
-    const BUY = { cue: '', lite: '', '360': '', camera: '', rig: '' };
+    const BUY = { cue: '', lite: '', '360': '', mini: '', camera: '', rig: '' };
     document.querySelectorAll('[data-buy]').forEach(a => { const u = BUY[a.dataset.buy]; if (u) a.href = u; });
 
     // The live thing: one tally control, and every light drawn on the page follows it.
