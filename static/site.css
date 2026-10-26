@@ -470,8 +470,9 @@ html[data-tally="off"] .face .num { transform: translateY(6px); }
 
 /* ---- real photos ---- */
 .t .art.photo { padding: 16px 0 0; align-items: flex-end; }
-.t .art.photo img { width: min(560px, 92%); height: auto; }
-.later-card img.unit.photo { width: 260px; border-radius: 12px; }
+.t .art.photo img { width: auto; max-width: 92%; max-height: 440px; height: auto; }
+.later-card img.unit.photo { width: 260px; }
 .one-photos { max-width: 980px; margin: 0 auto 48px; display: grid; gap: 16px; }
-.one-photos img { width: 100%; height: auto; border-radius: 18px; }
+.one-photos { grid-template-columns: 1fr; justify-items: center; }
+.one-photos img { width: min(100%, 820px); height: auto; }
 @media (max-width: 734px) { .later-card img.unit.photo { width: 220px; } }
