@@ -454,7 +454,7 @@ html[data-tally="off"] .face .num { transform: translateY(6px); }
 
 /* ---- the Cue Mini ---- */
 .mini-tile { min-height: 520px; }
-.mini-tile .art img { width: 320px; height: auto; }
+.mini-tile .art img { width: 300px; height: auto; }
 .col img[data-dev="mini"] { width: 150px; height: 150px; }
 @media (min-width: 735px) and (max-width: 1068px) { .compare { grid-template-columns: 1fr 1fr; row-gap: 56px; } }
 
