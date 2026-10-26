@@ -467,3 +467,11 @@ html[data-tally="off"] .face .num { transform: translateY(6px); }
 .mini-tile .art.render { flex-direction: column; gap: 10px; padding-bottom: 32px; }
 .mini-tile .art.render img { width: min(300px, 70%); height: auto; }
 .mini-tile .art.render figcaption { font-size: 13px; color: var(--grey); }
+
+/* ---- real photos ---- */
+.t .art.photo { padding: 16px 0 0; align-items: flex-end; }
+.t .art.photo img { width: min(560px, 92%); height: auto; }
+.later-card img.unit.photo { width: 260px; border-radius: 12px; }
+.one-photos { max-width: 980px; margin: 0 auto 48px; display: grid; gap: 16px; }
+.one-photos img { width: 100%; height: auto; border-radius: 18px; }
+@media (max-width: 734px) { .later-card img.unit.photo { width: 220px; } }
