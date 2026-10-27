@@ -17,7 +17,7 @@
     <g class="s-program"><rect class="chip" x="41" y="72.5" width="38" height="10" rx="3"/><text class="cap chipcap dark" x="60" y="79.6" text-anchor="middle">PROGRAM</text></g>
     <text class="s-preview cap chipcap tint" x="60" y="79.6" text-anchor="middle">PREVIEW</text>`;
   const CUE = `
-    <rect x="-2.2" y="-4.6" width="4.4" height="9.2" rx="1.6" fill="#1c2229" stroke="#313a44" stroke-width="1" transform="translate(15.56 32.23) rotate(212)"/><rect x="-2.2" y="-4.6" width="4.4" height="9.2" rx="1.6" fill="#1c2229" stroke="#313a44" stroke-width="1" transform="translate(15.56 87.77) rotate(148)"/><path d="M39 107.6 A52 52 0 1 1 81 107.6 V112 Q81 115 78 115 H42 Q39 115 39 112 Z" fill="#1c2229" stroke="#313a44" stroke-width="1.4" stroke-linejoin="round"/>
+    <rect x="-2.2" y="-4.6" width="4.4" height="9.2" rx="1.6" fill="#1c2229" stroke="#313a44" stroke-width="1" transform="translate(104.44 32.23) rotate(328)"/><rect x="-2.2" y="-4.6" width="4.4" height="9.2" rx="1.6" fill="#1c2229" stroke="#313a44" stroke-width="1" transform="translate(104.44 87.77) rotate(32)"/><path d="M39 107.6 A52 52 0 1 1 81 107.6 V112 Q81 115 78 115 H42 Q39 115 39 112 Z" fill="#1c2229" stroke="#313a44" stroke-width="1.4" stroke-linejoin="round"/>
     <circle cx="60" cy="60" r="45" fill="#050608"/>
     <circle cx="60" cy="60" r="39" fill="none" stroke="#1a2027" stroke-width="5"/>
     <circle class="arc" cx="60" cy="60" r="39" fill="none" stroke-width="5" stroke-linecap="round" pathLength="100" transform="rotate(-90 60 60)"/>

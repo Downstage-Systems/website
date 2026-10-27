@@ -12,7 +12,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="preload" href="/static/fonts/inter-600.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/static/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/static/site.css?v=20">
+  <link rel="stylesheet" href="/static/site.css?v=21">
 </head>
 <body>
 
@@ -48,9 +48,9 @@
     <a class="pill ghost" href="#lights">Meet the lights</a>
   </div>
   <div class="trio" data-rise style="--i:3">
-    <img data-dev="lite" src="/static/devices/lite-program.svg?v=3" alt="Cue Lite" width="120" height="120">
-    <img class="mid" data-dev="cue" src="/static/devices/cue-program.svg?v=3" alt="Downstage Cue" width="120" height="120">
-    <img data-dev="360" src="/static/devices/360-program.svg?v=3" alt="Cue 360" width="64" height="64">
+    <img data-dev="lite" src="/static/devices/lite-program.svg?v=4" alt="Cue Lite" width="120" height="120">
+    <img class="mid" data-dev="cue" src="/static/devices/cue-program.svg?v=4" alt="Downstage Cue" width="120" height="120">
+    <img data-dev="360" src="/static/devices/360-program.svg?v=4" alt="Cue 360" width="64" height="64">
   </div>
   <div data-rise style="--i:4">
     <div class="seg-slot"><div class="seg" role="group" aria-label="Tally">
@@ -68,25 +68,25 @@
     <h2>Downstage Cue</h2>
     <p class="tag">A timer for the lectern. Tally for the rig.</p>
     <div class="links"><a class="more" href="/shop/#compare">Learn more</a><a class="more" href="#signup">Join the waitlist</a></div>
-    <div class="art"><img data-dev="cue" src="/static/devices/cue-program.svg?v=3" alt="A Downstage Cue running its countdown in the tally ring" width="260" height="260"></div>
+    <div class="art"><img data-dev="cue" src="/static/devices/cue-program.svg?v=4" alt="A Downstage Cue running its countdown in the tally ring" width="260" height="260"></div>
   </article>
   <article class="t light" data-rise style="--i:1">
     <h2>Cue Lite</h2>
     <p class="tag">The camera's light.</p>
     <div class="links"><a class="more" href="/shop/#compare">Learn more</a><a class="more" href="/shop/">Pre-order</a></div>
-    <div class="art"><img data-dev="lite" src="/static/devices/lite-program.svg?v=3" alt="A Cue Lite showing camera 2 with its tally" width="260" height="260"></div>
+    <div class="art"><img data-dev="lite" src="/static/devices/lite-program.svg?v=4" alt="A Cue Lite showing camera 2 with its tally" width="260" height="260"></div>
   </article>
   <article class="t light" data-rise>
     <h2>Cue 360</h2>
     <p class="tag">The talent's light. Reads from anywhere.</p>
     <div class="links"><a class="more" href="/shop/#compare">Learn more</a><a class="more" href="/shop/">Pre-order</a></div>
-    <div class="art"><img data-dev="360" src="/static/devices/360-program.svg?v=3" alt="A Cue 360 with its tower lit for the tally" width="260" height="260"></div>
+    <div class="art"><img data-dev="360" src="/static/devices/360-program.svg?v=4" alt="A Cue 360 with its tower lit for the tally" width="260" height="260"></div>
   </article>
   <article class="t light" data-rise style="--i:1">
     <h2>Cue Mini</h2>
     <p class="tag">Small, with a crisp pixel grid.</p>
     <div class="links"><a class="more" href="/shop/#compare">Learn more</a><a class="more" href="/shop/">Pre-order</a></div>
-    <div class="art"><img data-dev="mini" src="/static/devices/mini-program.svg?v=3" alt="A Cue Mini with its pixel grid lit for the tally" width="260" height="260"></div>
+    <div class="art"><img data-dev="mini" src="/static/devices/mini-program.svg?v=4" alt="A Cue Mini with its pixel grid lit for the tally" width="260" height="260"></div>
   </article>
 </section>
 
@@ -206,7 +206,7 @@
   </div>
 </footer>
 
-<script src="/static/faces.js?v=10"></script>
+<script src="/static/faces.js?v=11"></script>
 <script src="/static/nav.js?v=9"></script>
 <script>
   document.documentElement.classList.add('js');
@@ -245,7 +245,7 @@
     let state = 'program';
     function paint() {
       document.querySelectorAll('img[data-dev]').forEach(img => {
-        img.src = '/static/devices/' + img.dataset.dev + '-' + state + '.svg?v=3';
+        img.src = '/static/devices/' + img.dataset.dev + '-' + state + '.svg?v=4';
       });
       document.documentElement.dataset.tally = state;
     }
