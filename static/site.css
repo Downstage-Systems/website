@@ -524,17 +524,19 @@ html[data-tally="off"] .face .num { transform: translateY(6px); }
 .v3d[data-glow="program"] { background: radial-gradient(42% 38% at 50% 46%, rgba(255,60,50,.20) 0%, rgba(255,60,50,0) 100%), radial-gradient(120% 90% at 50% 40%, #ffffff 0%, #eef0f3 70%, #e4e7eb 100%); }
 .v3d[data-glow="preview"] { background: radial-gradient(42% 38% at 50% 46%, rgba(47,217,123,.20) 0%, rgba(47,217,123,0) 100%), radial-gradient(120% 90% at 50% 40%, #ffffff 0%, #eef0f3 70%, #e4e7eb 100%); }
 .v3d::backdrop { background: rgba(0,0,0,.55); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
-.v3d model-viewer { flex: 1; width: 100%; min-height: 0; --poster-color: transparent; background: transparent; }
+.v3d model-viewer { touch-action: none; flex: 1; width: 100%; min-height: 0; --poster-color: transparent; background: transparent; }
 .v3d-top, .v3d-bottom { display: flex; align-items: center; justify-content: center; gap: 16px; padding: 18px 22px; position: relative; flex-wrap: wrap; }
 .v3d-bottom { flex-direction: column; gap: 10px; padding-bottom: 22px; }
 .v3d-bottom p { font-size: 13px; color: var(--grey); }
 .v3d-seg { display: inline-flex; padding: 4px; gap: 4px; border-radius: 980px; background: rgba(0,0,0,.06); }
 .v3d-seg button { min-height: 36px; padding: 0 16px; border: 0; border-radius: 980px; background: transparent; color: var(--ink); font: inherit; font-size: 14px; cursor: pointer; }
+.v3d-seg button:focus:not(:focus-visible), .v3d-x:focus:not(:focus-visible) { outline: none; box-shadow: none; }
 .v3d-seg button[aria-pressed="true"] { background: var(--white); box-shadow: 0 1px 4px rgba(0,0,0,.14); font-weight: 600; }
 .v3d-x { position: absolute; right: 16px; top: 14px; width: 40px; height: 40px; border: 0; border-radius: 50%; background: rgba(0,0,0,.07); color: var(--ink); font-size: 24px; line-height: 1; cursor: pointer; }
 .v3d-ar { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); }
 .v3d-fail { display: none; }
 .v3d-title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .v3d.failed .v3d-fail { display: block; color: var(--ink); }
-html.v3d-open { overflow: hidden; }
+html.v3d-open, html.v3d-open body { overflow: hidden; overscroll-behavior: none; }
+.v3d { overscroll-behavior: contain; touch-action: none; }
 @media (max-width: 734px) { .v3d { border-radius: 0; width: 100vw; height: 100dvh; } .v3d-x { top: 12px; right: 12px; } .v3d-top { justify-content: flex-start; } }
