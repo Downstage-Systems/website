@@ -7,9 +7,9 @@
   const mv = dlg.querySelector('model-viewer');
   const MV = 'https://unpkg.com/@google/model-viewer@3.5.0/dist/model-viewer.min.js';
   const DEV = {
-    lite: { src: '/static/3d/cue-lite.glb?v=9', orbit: '-28deg 78deg auto', alt: 'A Cue Lite in 3D' },
-    '360': { src: '/static/3d/cue-360.glb?v=4', orbit: '40deg 68deg auto', alt: 'A Cue 360 in 3D' },
-    mini: { src: '/static/3d/cue-mini.glb?v=4', orbit: '-24deg 80deg auto', alt: 'A Cue Mini in 3D' }
+    lite: { src: '/static/3d/cue-lite.glb?v=10', orbit: '-28deg 78deg auto', alt: 'A Cue Lite in 3D' },
+    '360': { src: '/static/3d/cue-360.glb?v=5', orbit: '40deg 68deg auto', alt: 'A Cue 360 in 3D' },
+    mini: { src: '/static/3d/cue-mini.glb?v=5', orbit: '-24deg 80deg auto', alt: 'A Cue Mini in 3D' }
   };
   // the 360's tower glow and the Lite's screen picture, per tally state
   const GLOW = { program: [1.0, 0.02, 0.015], preview: [0.01, 1.0, 0.09], off: [0, 0, 0] };
@@ -25,15 +25,14 @@
     const mats = mv.model.materials;
     if (dev === 'lite') {
       const m = mats.find(x => x.name === 'screen');
-      const slot = m && (m.pbrMetallicRoughness.baseColorTexture || m.emissiveTexture);
-      if (slot) slot.setTexture(await mv.createTexture(SCREEN(state)));
+      if (m && m.emissiveTexture) m.emissiveTexture.setTexture(await mv.createTexture(SCREEN(state)));
     } else {
-      // The glow is unlit, so it shows the button's colour at full strength: the 360's skin over its frosted tower
+      // The glow is emissive with no reflections, so it shows the button's colour at full strength: the 360's skin over its frosted tower
       // (faded out when off, leaving the real frosted white), and the Mini's LEDs (pale chips when off).
       const lit = state !== 'off';
       mats.forEach(m => {
-        if (m.name === 'glow') m.pbrMetallicRoughness.setBaseColorFactor(GLOW[state].concat(lit ? 0.94 : 0));
-        else if (m.name === 'leds') m.pbrMetallicRoughness.setBaseColorFactor(lit ? GLOW[state].concat(1) : [0.55, 0.55, 0.57, 1]);
+        if (m.name === 'glow') { m.setEmissiveFactor(GLOW[state]); m.pbrMetallicRoughness.setBaseColorFactor([0, 0, 0, lit ? 0.94 : 0]); }
+        else if (m.name === 'leds') { m.setEmissiveFactor(GLOW[state]); m.pbrMetallicRoughness.setBaseColorFactor(lit ? [0, 0, 0, 1] : [0.55, 0.55, 0.57, 1]); }
         else if (m.name === 'tower') { m.setEmissiveFactor([0, 0, 0]); m.pbrMetallicRoughness.setBaseColorFactor([0.82, 0.82, 0.84, 1]); }
       });
     }
