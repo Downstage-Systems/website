@@ -487,3 +487,8 @@ html[data-tally="off"] .face .num { transform: translateY(6px); }
 .hero.light .sub { color: var(--grey); }
 .hero.light .sub strong { color: var(--ink); }
 .one-hero .one-art.photo { width: min(560px, 82%); margin: 40px auto 0; }
+
+/* real photos in the Shop's kits and compare columns */
+.kit .pair img.photo { width: auto; height: 150px; }
+.col img.photo { width: auto; height: 170px; max-width: 100%; object-fit: contain; }
+@media (max-width: 734px) { .kit .pair img.photo { height: 110px; } }
