@@ -13,6 +13,7 @@
   <link rel="preload" href="/static/fonts/inter-600.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/static/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/static/site.css?v=19">
+  <link rel="stylesheet" href="/static/one-rig.css?v=2">
 </head>
 <body>
 
@@ -49,6 +50,36 @@
     <a class="pill ghost" href="/demo/">Try the interface</a>
   </div>
   <img class="one-art photo" data-rise style="--i:3" src="/static/photos/one-3q.webp" alt="The Downstage One, a black aluminum box with its front display" width="1400" height="1163">
+</section>
+
+<section class="sec outs" id="outputs" aria-labelledby="outs-h">
+  <div class="head" data-rise>
+    <h2 id="outs-h">Give your laptop its HDMI back.</h2>
+    <p>The show clock moves into a box of its own, with two HDMI outputs. Your laptop goes back to the slides, and stops being the one cable nobody is allowed to touch.</p>
+  </div>
+  <div class="hdmi" id="hdmi" data-rise>
+    <div class="mon" data-out="2">
+      <div class="scr" role="img" aria-label="HDMI 2"><div class="view"></div><div class="blackout"></div></div>
+      <span class="neck"></span><span class="foot"></span>
+      <p class="tag"><b>HDMI 2</b> &middot; <span></span></p>
+    </div>
+    <div class="mon" data-out="1">
+      <div class="scr" role="img" aria-label="HDMI 1"><div class="view"></div><div class="blackout"></div></div>
+      <span class="neck"></span><span class="foot"></span>
+      <p class="tag"><b>HDMI 1</b> &middot; <span></span></p>
+    </div>
+    <img class="hdmi-one" src="/static/photos/one-ports.webp" alt="" width="1600" height="529">
+    <svg class="cables" aria-hidden="true"></svg>
+  </div>
+  <div class="hdmi-ctl" data-rise>
+    <div class="out-ctl" data-out="2"><h3>HDMI 2 <span>Backstage TV</span></h3><div class="chips" role="group" aria-label="View on HDMI 2"><button class="chip" type="button" data-view="stage" aria-pressed="false">Stage timer</button><button class="chip" type="button" data-view="studio" aria-pressed="false">Studio clock</button><button class="chip" type="button" data-view="back" aria-pressed="false">Backstage</button><button class="chip" type="button" data-view="lobby" aria-pressed="false">Lobby</button><button class="chip" type="button" data-view="bars" aria-pressed="false">Test card</button><button class="chip" type="button" data-view="web" aria-pressed="false">Any web page</button></div></div>
+    <div class="out-ctl" data-out="1"><h3>HDMI 1 <span>Stage monitor</span></h3><div class="chips" role="group" aria-label="View on HDMI 1"><button class="chip" type="button" data-view="stage" aria-pressed="false">Stage timer</button><button class="chip" type="button" data-view="studio" aria-pressed="false">Studio clock</button><button class="chip" type="button" data-view="back" aria-pressed="false">Backstage</button><button class="chip" type="button" data-view="lobby" aria-pressed="false">Lobby</button><button class="chip" type="button" data-view="bars" aria-pressed="false">Test card</button><button class="chip" type="button" data-view="web" aria-pressed="false">Any web page</button></div></div>
+  </div>
+  <div class="pills hdmi-acts">
+    <button class="pill ghost" type="button" id="add-min">Add a minute</button>
+    <button class="pill ghost" type="button" id="blackout" aria-pressed="false">Blackout</button>
+  </div>
+  <p class="hdmi-note">Both screens follow one rundown. Add a minute, and every screen in the building knows before the presenter does.</p>
 </section>
 
 <section class="sec light" aria-labelledby="jobs-h">
@@ -189,6 +220,7 @@
 
 <script src="/static/faces.js?v=8"></script>
 <script src="/static/nav.js?v=8"></script>
+<script src="/static/one-rig.js?v=2"></script>
 <script>
   document.documentElement.classList.add('js');
 

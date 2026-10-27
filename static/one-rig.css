@@ -1,0 +1,117 @@
+/* The One page's live thing: two screens on two HDMI cables, each showing a view you pick. */
+.outs { background: var(--white); }
+.hdmi { position: relative; max-width: 1024px; margin: 40px auto 0; aspect-ratio: 1024 / 540; }
+.hdmi .mon { position: absolute; top: 0; width: 42%; z-index: 2; cursor: pointer; }
+.hdmi .mon[data-out="2"] { left: 0; }
+.hdmi .mon[data-out="1"] { right: 0; }
+.hdmi .scr { position: relative; aspect-ratio: 16 / 9; background: #000; border: clamp(4px, .8vw, 9px) solid #121214; border-radius: clamp(6px, 1vw, 12px);
+  overflow: hidden; container-type: inline-size; box-shadow: 0 18px 40px -18px rgba(0,0,0,.45); transition: box-shadow .25s var(--ease); }
+.hdmi .mon.sel .scr { box-shadow: 0 0 0 3px var(--green), 0 18px 40px -18px rgba(0,0,0,.45); }
+.hdmi .neck { display: block; width: 9%; height: clamp(10px, 2.6vw, 26px); margin: 0 auto; background: linear-gradient(90deg, #a9a9ae, #d6d6db 45%, #a1a1a6); }
+.hdmi .foot { display: block; width: 36%; height: clamp(4px, .7vw, 7px); margin: 0 auto; border-radius: 5px 5px 2px 2px; background: linear-gradient(#cfcfd4, #9d9da2); }
+.hdmi .tag { position: absolute; left: 0; right: 0; bottom: calc(100% + 10px); text-align: center; font-size: 13px; color: var(--grey); }
+.hdmi .tag b { font-weight: 600; color: var(--ink); }
+.hdmi .hdmi-one { position: absolute; left: 25%; width: 50%; top: 47%; z-index: 1; }
+.hdmi svg.cables { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 3; pointer-events: none; overflow: visible; }
+.cables .wire { fill: none; stroke: #232325; stroke-linecap: round; stroke-linejoin: round; }
+.cables .shine { fill: none; stroke: rgba(255,255,255,.16); stroke-linecap: round; }
+.cables .sig { fill: none; stroke: var(--green); stroke-linecap: round; stroke-dasharray: 3 30; animation: sig 1.4s linear infinite; transition: opacity .3s; }
+.cables .plug { fill: #2b2b2e; stroke: #3a3a3e; }
+@keyframes sig { from { stroke-dashoffset: 33; } to { stroke-dashoffset: 0; } }
+.hdmi.black .cables .sig { opacity: 0; }
+
+/* the controls under each screen */
+.hdmi-ctl { max-width: 1024px; margin: 18px auto 0; display: grid; grid-template-columns: 1fr 1fr; gap: 28px 8%; }
+.out-ctl h3 { font-size: 17px; margin-bottom: 12px; }
+.out-ctl h3 span { color: var(--grey); font-weight: 400; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { min-height: 36px; padding: 0 15px; border-radius: 980px; border: 1px solid var(--line); background: var(--white); color: var(--ink);
+  font: inherit; font-size: 14px; cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
+.chip:hover { border-color: var(--ink); }
+.chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--white); }
+.hdmi-acts { margin-top: 36px; }
+.hdmi-acts .pill[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--white); }
+.hdmi-note { text-align: center; color: var(--grey); font-size: 14px; margin-top: 16px; }
+
+/* ---- the views, sized to the screen (100cqw is the screen's width) ---- */
+.v { position: absolute; inset: 0; color: #fff; font-family: var(--font); letter-spacing: -0.01em; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.v small { display: block; font-size: 2.6cqw; letter-spacing: .08em; text-transform: uppercase; color: #8e8e93; }
+.blackout { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; transition: opacity .35s; z-index: 5; }
+.hdmi.black .blackout { opacity: 1; }
+
+/* stage timer */
+.v-stage { display: grid; place-content: center; text-align: center; }
+.v-stage .ttl { position: absolute; top: 5cqw; left: 0; right: 0; font-size: 3.6cqw; color: #a1a1a6; }
+.v-stage .big { font-size: 25cqw; font-weight: 600; letter-spacing: -.03em; line-height: 1; transition: color .3s; }
+.v-stage .msg { position: absolute; left: 0; right: 0; bottom: 10cqw; font-size: 4.4cqw; font-weight: 600; letter-spacing: .14em; color: #ff453a; }
+.v-stage .bar { position: absolute; left: 6cqw; right: 6cqw; bottom: 5cqw; height: 1.1cqw; border-radius: 1cqw; background: #2a2a2d; overflow: hidden; }
+.v-stage .bar i { display: block; height: 100%; background: var(--green); transition: width 1s linear, background .3s; }
+.v-stage.warn .big { color: #ffa528; } .v-stage.warn .bar i { background: #ffa528; }
+.v-stage.danger .big, .v-stage.over .big { color: #ff453a; } .v-stage.danger .bar i, .v-stage.over .bar i { background: #ff453a; }
+
+/* studio clock */
+.v-studio .ring { position: absolute; left: 50%; top: 50%; width: 48cqw; height: 48cqw; transform: translate(-50%, -50%); }
+.v-studio .ring span { position: absolute; left: 50%; top: 50%; width: 1.1cqw; height: 1.1cqw; margin: -.55cqw; border-radius: 50%; background: #3a1210; }
+.v-studio .ring span.h { width: 1.6cqw; height: 1.6cqw; margin: -.8cqw; }
+.v-studio .ring span.on { background: #ff453a; box-shadow: 0 0 1.2cqw rgba(255,69,58,.8); }
+.v-studio .hm { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-62%); text-align: center; font-size: 10.5cqw; font-weight: 600; color: #ff453a; letter-spacing: -.02em; }
+.v-studio .ss { position: absolute; left: 0; right: 0; top: 55%; text-align: center; font-size: 4.6cqw; color: #ff8a80; }
+.v-studio .air { position: absolute; right: 4cqw; top: 4cqw; padding: .6cqw 1.6cqw; border-radius: .8cqw; font-size: 2.8cqw; font-weight: 600; letter-spacing: .12em; background: #ff453a; color: #000; }
+.v-studio .day { position: absolute; left: 4cqw; top: 4.4cqw; font-size: 2.8cqw; color: #8e8e93; }
+
+/* backstage */
+.v-back { padding: 4cqw 5cqw; display: grid; grid-template-columns: 1.15fr 1fr; grid-template-rows: auto 1fr; gap: 2cqw 5cqw; }
+.v-back header { grid-column: 1 / -1; display: flex; justify-content: space-between; font-size: 3cqw; color: #a1a1a6; border-bottom: 1px solid #2a2a2d; padding-bottom: 1.6cqw; }
+.v-back header b { color: #fff; font-weight: 600; }
+.v-back .now p { font-size: 4.6cqw; font-weight: 600; margin-top: .6cqw; }
+.v-back .now .tm { font-size: 13cqw; letter-spacing: -.03em; margin-top: 1cqw; transition: color .3s; }
+.v-back .now .tm.warn { color: #ffa528; } .v-back .now .tm.danger { color: #ff453a; }
+.v-back .next { margin-top: 2.6cqw; }
+.v-back .next p { font-size: 3.4cqw; margin-top: .4cqw; color: #d1d1d6; }
+.v-back ol { list-style: none; font-size: 3cqw; align-self: start; }
+.v-back li { display: flex; gap: 2.4cqw; padding: 1.25cqw 0; border-bottom: 1px solid #1f1f22; color: #8e8e93; }
+.v-back li span { width: 7.5cqw; flex: none; }
+.v-back li.past { opacity: .45; }
+.v-back li.cur { color: #fff; }
+.v-back li.cur span { color: var(--green); }
+
+/* lobby */
+.v-lobby { background: #0d1f16; padding: 5cqw 6cqw; }
+.v-lobby h4 { font-size: 6.4cqw; font-weight: 600; letter-spacing: -.02em; }
+.v-lobby .sub { font-size: 3cqw; color: #8fd4ad; margin-top: .6cqw; }
+.v-lobby ol { list-style: none; margin-top: 3.4cqw; font-size: 3.6cqw; }
+.v-lobby li { display: flex; align-items: center; gap: 3cqw; padding: 1.5cqw 0; border-top: 1px solid rgba(255,255,255,.1); }
+.v-lobby li span { width: 9cqw; color: #8fd4ad; }
+.v-lobby li em { margin-left: auto; font-style: normal; font-size: 2.4cqw; font-weight: 600; letter-spacing: .1em; padding: .5cqw 1.4cqw; border-radius: 3cqw; background: var(--green); color: #000; }
+.v-lobby .clk { position: absolute; right: 6cqw; top: 5.6cqw; font-size: 4cqw; color: #8fd4ad; }
+
+/* test card: SMPTE bars */
+.v-bars { display: grid; grid-template-rows: 67% 8% 25%; }
+.v-bars > div { display: flex; }
+.v-bars > div > i { flex: 1; }
+.v-bars .lbl { position: absolute; left: 50%; top: 30%; transform: translate(-50%, -50%); background: #000; color: #fff; padding: 1.4cqw 2.6cqw; font-size: 3.2cqw; text-align: center; line-height: 1.3; }
+.v-bars .lbl b { display: block; font-size: 4cqw; }
+
+/* any web page */
+.v-web { background: #fff; color: #1d1d1f; }
+.v-web .chrome { height: 5cqw; background: #ececef; display: flex; align-items: center; gap: 1cqw; padding: 0 2cqw; }
+.v-web .chrome i { width: 1.4cqw; height: 1.4cqw; border-radius: 50%; background: #c7c7cc; }
+.v-web .chrome span { margin-left: 2cqw; flex: 1; height: 2.6cqw; border-radius: 1.4cqw; background: #fff; font-size: 1.8cqw; color: #8e8e93; display: flex; align-items: center; padding-left: 1.6cqw; }
+.v-web .pg { padding: 6cqw 7cqw; }
+.v-web h4 { font-size: 7.6cqw; font-weight: 600; letter-spacing: -.03em; line-height: 1.05; }
+.v-web p { font-size: 3.4cqw; color: #6e6e73; margin-top: 2cqw; }
+.v-web .wcards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2cqw; margin-top: 4cqw; }
+.v-web .wcards div { border-radius: 1.6cqw; background: #f5f5f7; padding: 2.4cqw; font-size: 2.6cqw; }
+.v-web .wcards b { display: block; font-size: 3.6cqw; color: var(--green-ink); }
+
+@media (max-width: 734px) {
+  .hdmi { aspect-ratio: 1024 / 660; }
+  .hdmi .hdmi-one { top: 55%; left: 24%; width: 52%; }
+  .hdmi .mon { width: 46%; }
+  .hdmi .tag { font-size: 11px; }
+  .hdmi-ctl { grid-template-columns: 1fr; }
+  .chip { min-height: 40px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cables .sig { animation: none; }
+}
