@@ -17,7 +17,7 @@
     <g class="s-program"><rect class="chip" x="41" y="72.5" width="38" height="10" rx="3"/><text class="cap chipcap dark" x="60" y="79.6" text-anchor="middle">PROGRAM</text></g>
     <text class="s-preview cap chipcap tint" x="60" y="79.6" text-anchor="middle">PREVIEW</text>`;
   const CUE = `
-    <circle cx="60" cy="60" r="52" fill="#1c2229" stroke="#313a44" stroke-width="1.4"/>
+    <path d="M39 107.6 A52 52 0 1 1 81 107.6 V112 Q81 115 78 115 H42 Q39 115 39 112 Z" fill="#1c2229" stroke="#313a44" stroke-width="1.4" stroke-linejoin="round"/>
     <circle cx="60" cy="60" r="45" fill="#050608"/>
     <circle cx="60" cy="60" r="39" fill="none" stroke="#1a2027" stroke-width="5"/>
     <circle class="arc" cx="60" cy="60" r="39" fill="none" stroke-width="5" stroke-linecap="round" pathLength="100" transform="rotate(-90 60 60)"/>
