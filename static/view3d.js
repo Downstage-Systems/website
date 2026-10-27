@@ -7,12 +7,12 @@
   const mv = dlg.querySelector('model-viewer');
   const MV = 'https://unpkg.com/@google/model-viewer@3.5.0/dist/model-viewer.min.js';
   const DEV = {
-    lite: { src: '/static/3d/cue-lite.glb?v=4', orbit: '-28deg 78deg auto', alt: 'A Cue Lite in 3D' },
-    '360': { src: '/static/3d/cue-360.glb?v=3', orbit: '40deg 68deg auto', alt: 'A Cue 360 in 3D' },
-    mini: { src: '/static/3d/cue-mini.glb?v=3', orbit: '-24deg 80deg auto', alt: 'A Cue Mini in 3D' }
+    lite: { src: '/static/3d/cue-lite.glb?v=5', orbit: '-28deg 78deg auto', alt: 'A Cue Lite in 3D' },
+    '360': { src: '/static/3d/cue-360.glb?v=4', orbit: '40deg 68deg auto', alt: 'A Cue 360 in 3D' },
+    mini: { src: '/static/3d/cue-mini.glb?v=4', orbit: '-24deg 80deg auto', alt: 'A Cue Mini in 3D' }
   };
   // the 360's tower glow and the Lite's screen picture, per tally state
-  const GLOW = { program: [1.0, 0.03, 0.025], preview: [0.03, 1.0, 0.3], off: [0, 0, 0] };
+  const GLOW = { program: [1.0, 0.02, 0.015], preview: [0.01, 1.0, 0.09], off: [0, 0, 0] };
   const SCREEN = s => '/static/3d/lite-screen-' + s + '.png';
   let dev = 'lite', state = 'program', loaded = null;
 
@@ -27,16 +27,13 @@
       const m = mats.find(x => x.name === 'screen');
       if (m && m.emissiveTexture) m.emissiveTexture.setTexture(await mv.createTexture(SCREEN(state)));
     } else {
-      // the LEDs and the tower glow in the button's colour. The tower's own colour carries the hue:
-      // a bright emissive alone tone-maps towards white, and red would read as pink.
-      mats.filter(x => x.name === 'leds' || x.name === 'tower').forEach(m => {
-        const tower = m.name === 'tower', lit = state !== 'off';
-        m.setEmissiveFactor(GLOW[state]);
-        m.setEmissiveStrength(tower ? 0.9 : 3);
-        if (tower) {
-          m.pbrMetallicRoughness.setBaseColorFactor(lit ? GLOW[state].map(c => 0.03 + 0.82 * c).concat(1) : [0.8, 0.8, 0.82, 1]);
-          m.pbrMetallicRoughness.setRoughnessFactor(lit ? 0.92 : 0.6);
-        }
+      // The glow is unlit, so it shows the button's colour at full strength: the 360's skin over its frosted tower
+      // (faded out when off, leaving the real frosted white), and the Mini's LEDs (pale chips when off).
+      const lit = state !== 'off';
+      mats.forEach(m => {
+        if (m.name === 'glow') m.pbrMetallicRoughness.setBaseColorFactor(GLOW[state].concat(lit ? 0.94 : 0));
+        else if (m.name === 'leds') m.pbrMetallicRoughness.setBaseColorFactor(lit ? GLOW[state].concat(1) : [0.55, 0.55, 0.57, 1]);
+        else if (m.name === 'tower') { m.setEmissiveFactor([0, 0, 0]); m.pbrMetallicRoughness.setBaseColorFactor([0.82, 0.82, 0.84, 1]); }
       });
     }
   }
