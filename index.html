@@ -12,7 +12,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="preload" href="/static/fonts/inter-600.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/static/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/static/site.css?v=24">
+  <link rel="stylesheet" href="/static/site.css?v=31">
 </head>
 <body>
 
@@ -283,13 +283,11 @@
       }));
     }
     new IntersectionObserver(([e]) => dock(!e.isIntersecting && e.boundingClientRect.top < 0)).observe(slot);
-    // It steps out of the way of the email form and the footer.
-    const inView = new Set();
-    const away = new IntersectionObserver(es => {
-      es.forEach(e => e.isIntersecting ? inView.add(e.target) : inView.delete(e.target));
-      seg.classList.toggle('away', inView.size > 0);
-    });
-    [document.getElementById('signup'), document.querySelector('footer')].forEach(el => away.observe(el));
+    // It only follows you over the lights: once "Tally is just the start" comes
+    // up, it fades away for the rest of the page, and comes back on the way up.
+    const more = document.getElementById('more');
+    function step() { seg.classList.toggle('away', more.getBoundingClientRect().top < innerHeight * 0.8); }
+    addEventListener('scroll', step, { passive: true }); addEventListener('resize', step); step();
 
     // A link to a question opens it.
     function openAsked() { const d = location.hash && document.querySelector('details' + location.hash); if (d) d.open = true; }

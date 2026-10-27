@@ -47,7 +47,7 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.015em; line-height: 1.07; }
 /* ---- the bar ---- */
 .nav { position: sticky; top: 0; z-index: 50; height: 48px; background: rgba(22,22,23,.8); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px); color: var(--paper); }
 .nav .in { max-width: 1024px; height: 100%; margin: 0 auto; padding: 0 22px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
-.nav .logo { height: 26px; width: auto; display: block; }
+.nav .logo { height: 34px; width: auto; display: block; }
 .nav nav { display: flex; gap: 32px; font-size: 13px; letter-spacing: -0.01em; }
 .nav nav a { opacity: .8; transition: opacity .2s; }
 .nav nav a:hover { opacity: 1; }
@@ -62,7 +62,7 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.015em; line-height: 1.07; }
 .when-line { font-size: 14px; color: var(--mist); margin-top: 18px; }
 .trio { display: flex; justify-content: center; align-items: flex-end; gap: 4vw; margin: 56px auto 32px; }
 .trio img { width: 200px; height: 200px; transition: opacity .2s var(--ease); }
-.trio img.mid { width: 230px; height: 230px; }
+.trio img.mid { width: 197px; height: 197px; }
 /* the live thing: a segmented tally control */
 .seg { display: inline-flex; padding: 4px; gap: 4px; border-radius: 980px; background: var(--night); }
 .key { min-height: 36px; padding: 0 20px; border: 0; border-radius: 980px; background: transparent; color: var(--paper); font: inherit; font-size: 14px; cursor: pointer; transition: background .2s, color .2s; }
@@ -178,7 +178,7 @@ footer .logo-foot { height: 40px; width: auto; color: var(--ink); margin-bottom:
   .t h2 { font-size: 32px; }
   .t .tag { font-size: 19px; }
   .trio img { width: 150px; height: 150px; }
-  .trio img.mid { width: 176px; height: 176px; }
+  .trio img.mid { width: 148px; height: 148px; }
   .steps { grid-template-columns: 1fr 1fr; row-gap: 48px; }
 }
 @media (max-width: 734px) {
@@ -187,7 +187,7 @@ footer .logo-foot { height: 40px; width: auto; color: var(--ink); margin-bottom:
   .hero .sub { font-size: 19px; }
   .trio { gap: 10px; margin: 40px auto 28px; }
   .trio img { width: 96px; height: 96px; }
-  .trio img.mid { width: 116px; height: 116px; }
+  .trio img.mid { width: 95px; height: 95px; }
   .key { padding: 0 16px; }
   .tiles { grid-template-columns: 1fr; padding: 12px 0; }
   .t, .t.wide { min-height: 0; padding-top: 44px; }
@@ -274,7 +274,12 @@ html[data-tally="off"] .face .arc { stroke: #3a434c; }
 .face .s-program, .face .s-preview, .face .s-off { display: none; }
 html[data-tally="program"] .face .s-program, html[data-tally="preview"] .face .s-preview, html[data-tally="off"] .face .s-off { display: inline; }
 .trio svg.face { width: 200px; }
-.trio svg.face.mid { width: 230px; }
+.trio svg.face.mid { width: 197px; }
+/* the trio at true scale: the Lite 47.6 mm wide, the Cue 51 mm across, the 360's box 36 mm
+   (each icon's body is 80%, 87% and 86.5% of its width) */
+.trio img[data-dev="360"] { width: 140px; height: 140px; }
+@media (max-width: 1068px) { .trio img[data-dev="360"] { width: 105px; height: 105px; } }
+@media (max-width: 734px) { .trio img[data-dev="360"] { width: 67px; height: 67px; } }
 .t .art svg.face { width: 260px; }
 .t.wide .art svg.face { width: 300px; }
 .col svg.face { width: 150px; }
@@ -290,10 +295,10 @@ html[data-tally="program"] .face .s-program, html[data-tally="preview"] .face .s
 @media (max-width: 734px) { .dev svg.phone { width: 38px; } .docked { margin-bottom: 7px; } }
 .dev img.unit, .dev .unit { width: 150px; height: auto; }
 @media (max-width: 1068px) {
-  .trio svg.face { width: 150px; } .trio svg.face.mid { width: 176px; }
+  .trio svg.face { width: 150px; } .trio svg.face.mid { width: 148px; }
 }
 @media (max-width: 734px) {
-  .trio svg.face { width: 96px; } .trio svg.face.mid { width: 116px; }
+  .trio svg.face { width: 96px; } .trio svg.face.mid { width: 95px; }
   .t .art svg.face, .t.wide .art svg.face { width: 200px; }
   .dev svg.face { width: 76px; }
   .stack .dev svg.face, .fleet .dev svg.face { width: 46px; }
@@ -320,6 +325,7 @@ footer .notes a { text-decoration: underline; }
 .col .pill { margin-top: 12px; }
 .kits { max-width: 1024px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .kits.one { grid-template-columns: minmax(0, 500px); justify-content: center; }
+.see3d { margin-top: 20px; }
 .kit { background: var(--tile); border-radius: 28px; padding: 40px 32px 36px; text-align: center; display: flex; flex-direction: column; align-items: center; }
 .kit .pair { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 24px; }
 .kit .pair svg.face, .kit .pair img { width: 130px; height: auto; }
@@ -507,3 +513,27 @@ html[data-tally="off"] .face .num { transform: translateY(6px); }
 .col img.photo.s360 { height: 132px; margin: 22px 0 16px; }
 @media (max-width: 734px) { .kit .pair img.photo.s360 { height: 86px; } }
 @media (max-width: 734px) { .kit .pair img.photo { height: 110px; } }
+
+/* ---- View in 3D ---- */
+.v3d-btn { margin-top: 10px; }
+.col .v3d-btn { min-height: 32px; padding: 0 14px; font-size: 14px; }
+.v3d { width: min(1100px, 100vw); height: min(760px, 100dvh); max-width: 100vw; max-height: 100dvh; padding: 0; border: 0; border-radius: 28px;
+  background: radial-gradient(120% 90% at 50% 40%, #ffffff 0%, #eef0f3 70%, #e4e7eb 100%); color: var(--ink); overflow: hidden; }
+.v3d[open] { display: flex; flex-direction: column; }
+.v3d { transition: background .4s; }
+.v3d[data-glow="program"] { background: radial-gradient(42% 38% at 50% 46%, rgba(255,60,50,.20) 0%, rgba(255,60,50,0) 100%), radial-gradient(120% 90% at 50% 40%, #ffffff 0%, #eef0f3 70%, #e4e7eb 100%); }
+.v3d[data-glow="preview"] { background: radial-gradient(42% 38% at 50% 46%, rgba(47,217,123,.20) 0%, rgba(47,217,123,0) 100%), radial-gradient(120% 90% at 50% 40%, #ffffff 0%, #eef0f3 70%, #e4e7eb 100%); }
+.v3d::backdrop { background: rgba(0,0,0,.55); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.v3d model-viewer { flex: 1; width: 100%; min-height: 0; --poster-color: transparent; background: transparent; }
+.v3d-top, .v3d-bottom { display: flex; align-items: center; justify-content: center; gap: 16px; padding: 18px 22px; position: relative; flex-wrap: wrap; }
+.v3d-bottom { flex-direction: column; gap: 10px; padding-bottom: 22px; }
+.v3d-bottom p { font-size: 13px; color: var(--grey); }
+.v3d-seg { display: inline-flex; padding: 4px; gap: 4px; border-radius: 980px; background: rgba(0,0,0,.06); }
+.v3d-seg button { min-height: 36px; padding: 0 16px; border: 0; border-radius: 980px; background: transparent; color: var(--ink); font: inherit; font-size: 14px; cursor: pointer; }
+.v3d-seg button[aria-pressed="true"] { background: var(--white); box-shadow: 0 1px 4px rgba(0,0,0,.14); font-weight: 600; }
+.v3d-x { position: absolute; right: 16px; top: 14px; width: 40px; height: 40px; border: 0; border-radius: 50%; background: rgba(0,0,0,.07); color: var(--ink); font-size: 24px; line-height: 1; cursor: pointer; }
+.v3d-ar { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); }
+.v3d-fail { display: none; }
+.v3d.failed .v3d-fail { display: block; color: var(--ink); }
+html.v3d-open { overflow: hidden; }
+@media (max-width: 734px) { .v3d { border-radius: 0; width: 100vw; height: 100dvh; } .v3d-x { top: 12px; right: 12px; } .v3d-top { justify-content: flex-start; } }
