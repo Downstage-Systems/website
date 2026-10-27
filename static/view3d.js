@@ -7,7 +7,7 @@
   const mv = dlg.querySelector('model-viewer');
   const MV = 'https://unpkg.com/@google/model-viewer@3.5.0/dist/model-viewer.min.js';
   const DEV = {
-    lite: { src: '/static/3d/cue-lite.glb?v=5', orbit: '-28deg 78deg auto', alt: 'A Cue Lite in 3D' },
+    lite: { src: '/static/3d/cue-lite.glb?v=7', orbit: '-28deg 78deg auto', alt: 'A Cue Lite in 3D' },
     '360': { src: '/static/3d/cue-360.glb?v=4', orbit: '40deg 68deg auto', alt: 'A Cue 360 in 3D' },
     mini: { src: '/static/3d/cue-mini.glb?v=4', orbit: '-24deg 80deg auto', alt: 'A Cue Mini in 3D' }
   };
@@ -25,7 +25,8 @@
     const mats = mv.model.materials;
     if (dev === 'lite') {
       const m = mats.find(x => x.name === 'screen');
-      if (m && m.emissiveTexture) m.emissiveTexture.setTexture(await mv.createTexture(SCREEN(state)));
+      const slot = m && (m.pbrMetallicRoughness.baseColorTexture || m.emissiveTexture);
+      if (slot) slot.setTexture(await mv.createTexture(SCREEN(state)));
     } else {
       // The glow is unlit, so it shows the button's colour at full strength: the 360's skin over its frosted tower
       // (faded out when off, leaving the real frosted white), and the Mini's LEDs (pale chips when off).
