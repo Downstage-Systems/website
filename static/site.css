@@ -493,10 +493,10 @@ html[data-tally="off"] .face .num { transform: translateY(6px); }
 .one-hero .one-art.photo { width: min(560px, 82%); margin: 40px auto 0; }
 
 /* real photos in the Shop's kits and compare columns */
-.kit .pair img.photo { width: auto; height: 150px; }
+.kit .pair img.photo { width: auto; height: 150px; object-fit: contain; }
 .col img.photo { width: auto; height: 170px; max-width: 100%; object-fit: contain; }
 /* the 360 at its true size beside the Lite: its box is 36 mm wide, the Lite 47.6 mm */
-.kit .pair img.s360 { width: 110px; }
+.kit .pair img.photo.s360 { width: auto; height: 117px; }
 .col img.photo.s360 { height: 132px; margin: 22px 0 16px; }
-@media (max-width: 734px) { .kit .pair img.s360 { width: 84px; } }
+@media (max-width: 734px) { .kit .pair img.photo.s360 { height: 86px; } }
 @media (max-width: 734px) { .kit .pair img.photo { height: 110px; } }
