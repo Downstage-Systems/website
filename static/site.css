@@ -281,6 +281,13 @@ html[data-tally="program"] .face .s-program, html[data-tally="preview"] .face .s
 .dev svg.face { width: 96px; }
 .stack .dev svg.face, .fleet .dev svg.face { width: 60px; }
 .rig.wide { grid-column: 1 / -1; }
+/* the podium: the Cue in its Dock, and the phone running its timer page */
+.docked { position: relative; display: block; line-height: 0; margin-bottom: 7px; }
+.docked .dock { position: absolute; left: 0; top: 0; width: 100%; height: auto; pointer-events: none; }
+.dev svg.phone { width: 46px; height: auto; }
+.rig .dev figcaption { white-space: nowrap; }
+.rig .flow .wire { flex-basis: 64px; }
+@media (max-width: 734px) { .dev svg.phone { width: 38px; } .docked { margin-bottom: 7px; } }
 .dev img.unit, .dev .unit { width: 150px; height: auto; }
 @media (max-width: 1068px) {
   .trio svg.face { width: 150px; } .trio svg.face.mid { width: 176px; }
