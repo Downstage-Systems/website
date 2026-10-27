@@ -476,3 +476,8 @@ html[data-tally="off"] .face .num { transform: translateY(6px); }
 .one-photos { grid-template-columns: 1fr; justify-items: center; }
 .one-photos img { width: min(100%, 820px); height: auto; }
 @media (max-width: 734px) { .later-card img.unit.photo { width: 220px; } }
+
+/* ---- the Shop page ---- */
+.shop-hero { padding-bottom: 24px; }
+.shop-hero h1 { font-size: 56px; }
+@media (max-width: 734px) { .shop-hero h1 { font-size: 40px; } }
