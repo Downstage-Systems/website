@@ -530,7 +530,6 @@ html[data-tally="off"] .face .num { transform: translateY(6px); }
 .v3d-bottom p { font-size: 13px; color: var(--grey); }
 .v3d-seg { display: inline-flex; padding: 4px; gap: 4px; border-radius: 980px; background: rgba(0,0,0,.06); }
 .v3d-seg button { min-height: 36px; padding: 0 16px; border: 0; border-radius: 980px; background: transparent; color: var(--ink); font: inherit; font-size: 14px; cursor: pointer; }
-.v3d-seg button:focus:not(:focus-visible), .v3d-x:focus:not(:focus-visible) { outline: none; box-shadow: none; }
 .v3d-seg button[aria-pressed="true"] { background: var(--white); box-shadow: 0 1px 4px rgba(0,0,0,.14); font-weight: 600; }
 .v3d-x { position: absolute; right: 16px; top: 14px; width: 40px; height: 40px; border: 0; border-radius: 50%; background: rgba(0,0,0,.07); color: var(--ink); font-size: 24px; line-height: 1; cursor: pointer; }
 .v3d-ar { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); }
