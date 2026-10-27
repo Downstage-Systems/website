@@ -481,3 +481,9 @@ html[data-tally="off"] .face .num { transform: translateY(6px); }
 .shop-hero { padding-bottom: 24px; }
 .shop-hero h1 { font-size: 56px; }
 @media (max-width: 734px) { .shop-hero h1 { font-size: 40px; } }
+
+/* the One's page opens light, so the black One shows */
+.hero.light { background: var(--tile); color: var(--ink); }
+.hero.light .sub { color: var(--grey); }
+.hero.light .sub strong { color: var(--ink); }
+.one-hero .one-art.photo { width: min(560px, 82%); margin: 40px auto 0; }

@@ -12,7 +12,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="preload" href="/static/fonts/inter-600.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/static/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/static/site.css?v=17">
+  <link rel="stylesheet" href="/static/site.css?v=18">
 </head>
 <body>
 
@@ -74,17 +74,17 @@
     <div class="links"><a class="more" href="/shop/#compare">Learn more</a><a class="more" href="/shop/">Pre-order</a></div>
     <div class="art photo"><img data-photo="lite" src="/static/photos/lite-program.webp" alt="A Cue Lite showing camera 2 with its tally" width="730" height="739"></div>
   </article>
-  <article class="t dark" data-rise style="--i:1">
+  <article class="t light" data-rise style="--i:1">
     <h2>Cue 360</h2>
     <p class="tag">The talent's light. Reads from anywhere.</p>
     <div class="links"><a class="more" href="/shop/#compare">Learn more</a><a class="more" href="/shop/">Pre-order</a></div>
-    <div class="art"><img data-dev="360" src="/static/devices/360-program.svg" alt="Cue 360" width="64" height="64"></div>
+    <div class="art photo"><img data-photo="360" src="/static/photos/360-program.webp" alt="A Cue 360 with its tower lit for the tally" width="776" height="723"></div>
   </article>
   <article class="t wide light mini-tile" data-rise>
     <h2>Cue Mini</h2>
     <p class="tag">Small, with a crisp pixel grid.</p>
     <div class="links"><a class="more" href="/shop/#compare">Learn more</a><a class="more" href="/shop/">Pre-order</a></div>
-    <div class="art"><img data-dev="mini" src="/static/devices/mini-program.svg" alt="Cue Mini" width="120" height="120"></div>
+    <div class="art photo"><img data-photo="mini" src="/static/photos/mini-program.webp" alt="A Cue Mini with its 64 pixels lit for the tally" width="590" height="742"></div>
   </article>
 </section>
 
@@ -236,7 +236,7 @@
   }
 
   (function () {
-    ['preview', 'off'].forEach(st => { const i = new Image(); i.src = '/static/photos/lite-' + st + '.webp'; });
+    ['lite', '360', 'mini'].forEach(p => ['preview', 'off'].forEach(st => { const i = new Image(); i.src = '/static/photos/' + p + '-' + st + '.webp'; }));
 
     // The live thing: one tally control, and every light drawn on the page follows it.
     const keys = document.querySelectorAll('.key');
