@@ -62,29 +62,29 @@
 </section>
 
 <section class="tiles" id="lights" aria-label="The Cue lights">
-  <article class="t wide light" data-rise>
+  <article class="t light" data-rise>
     <h2>Downstage Cue</h2>
     <p class="tag">A timer for the lectern. Tally for the rig.</p>
     <div class="links"><a class="more" href="/shop/#compare">Learn more</a><a class="more" href="/shop/">Pre-order</a></div>
-    <div class="art photo"><img src="/static/photos/cue-dock.webp" alt="A Downstage Cue on its Cue Dock, running its own countdown: 18:12 in a green ring" width="1000" height="1147"></div>
+    <div class="art"><img data-dev="cue" src="/static/devices/cue-program.svg" alt="A Downstage Cue running its countdown in the tally ring" width="260" height="260"></div>
   </article>
-  <article class="t light" data-rise>
+  <article class="t light" data-rise style="--i:1">
     <h2>Cue Lite</h2>
     <p class="tag">The camera's light.</p>
     <div class="links"><a class="more" href="/shop/#compare">Learn more</a><a class="more" href="/shop/">Pre-order</a></div>
-    <div class="art photo"><img data-photo="lite" src="/static/photos/lite-program.webp" alt="A Cue Lite showing camera 2 with its tally" width="730" height="739"></div>
+    <div class="art"><img data-dev="lite" src="/static/devices/lite-program.svg" alt="A Cue Lite showing camera 2 with its tally" width="260" height="260"></div>
   </article>
-  <article class="t light" data-rise style="--i:1">
+  <article class="t light" data-rise>
     <h2>Cue 360</h2>
     <p class="tag">The talent's light. Reads from anywhere.</p>
     <div class="links"><a class="more" href="/shop/#compare">Learn more</a><a class="more" href="/shop/">Pre-order</a></div>
-    <div class="art photo"><img data-photo="360" src="/static/photos/360-program.webp" alt="A Cue 360 with its tower lit for the tally" width="800" height="661"></div>
+    <div class="art"><img data-dev="360" src="/static/devices/360-program.svg" alt="A Cue 360 with its tower lit for the tally" width="260" height="260"></div>
   </article>
-  <article class="t wide light mini-tile" data-rise>
+  <article class="t light" data-rise style="--i:1">
     <h2>Cue Mini</h2>
     <p class="tag">Small, with a crisp pixel grid.</p>
     <div class="links"><a class="more" href="/shop/#compare">Learn more</a><a class="more" href="/shop/">Pre-order</a></div>
-    <div class="art photo"><img data-photo="mini" src="/static/photos/mini-program.webp" alt="A Cue Mini with its 64 pixels lit for the tally" width="590" height="742"></div>
+    <div class="art"><img data-dev="mini" src="/static/devices/mini-program.svg" alt="A Cue Mini with its pixel grid lit for the tally" width="260" height="260"></div>
   </article>
 </section>
 
@@ -236,8 +236,6 @@
   }
 
   (function () {
-    ['lite', '360', 'mini'].forEach(p => ['preview', 'off'].forEach(st => { const i = new Image(); i.src = '/static/photos/' + p + '-' + st + '.webp'; }));
-
     // The live thing: one tally control, and every light drawn on the page follows it.
     const keys = document.querySelectorAll('.key');
     const note = document.getElementById('seg-note');
@@ -246,10 +244,6 @@
     function paint() {
       document.querySelectorAll('img[data-dev]').forEach(img => {
         img.src = '/static/devices/' + img.dataset.dev + '-' + state + '.svg';
-      });
-      // photos with a screen for each tally state (the Cue on its Dock stays on its clock)
-      document.querySelectorAll('img[data-photo]').forEach(img => {
-        img.src = '/static/photos/' + img.dataset.photo + '-' + state + '.webp';
       });
       document.documentElement.dataset.tally = state;
     }
