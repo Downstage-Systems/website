@@ -141,7 +141,7 @@ html[data-tally="off"] .deck i.on { background: #2a2a2d; }
 .faq summary::after { content: '+'; font-weight: 400; font-size: 28px; line-height: 1; color: var(--grey); transition: transform .2s var(--ease); }
 .faq details[open] summary::after { transform: rotate(45deg); }
 .faq .ans { padding: 0 0 24px; color: var(--grey); max-width: 680px; }
-.faq .ans a { color: var(--green-ink); text-decoration: underline; }
+.faq .ans a, .spec a { color: var(--green-ink); text-decoration: underline; }
 
 /* sign up */
 .signup-card { max-width: 980px; margin: 0 auto; text-align: center; }

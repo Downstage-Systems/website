@@ -12,7 +12,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="preload" href="/static/fonts/inter-600.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/static/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/static/site.css?v=36">
+  <link rel="stylesheet" href="/static/site.css?v=37">
 </head>
 <body>
 
@@ -93,7 +93,7 @@
       <p class="spec"><b>64 LEDs, one glow</b>Under a tower you can see from every side.</p>
       <p class="spec"><b>On your WiFi<sup class="fn"><a href="#fn-4" aria-label="Note 4">4</a></sup></b>Or hold it to a Cue and it follows.</p>
       <p class="spec"><b>Sticks to steel</b>Four magnets, and a 1/4-20 for an arm.</p>
-      <p class="spec"><b>Number tags</b>Clip-in tags on the front, so everyone knows which camera it is. Tags 1 to 4 in the box; the full set of 12 (1 to 8, A to D) is $5 at checkout.</p>
+      <p class="spec"><b>Number tags</b>Clip-in tags on the front, so everyone knows which camera it is. Tags 1 to 4 in the box; the full set of 12 (1 to 8, A to D) is $5 at checkout, or <a data-buy="tags" href="#signup">$8 on its own</a>.</p>
       <p class="spec"><b>USB-C power<sup class="fn"><a href="#fn-5" aria-label="Note 5">5</a></sup></b>A USB-C charger or power bank.</p>
     </div>
     <div class="col" data-rise style="--i:2">
@@ -304,7 +304,8 @@
       lite: 'https://buy.stripe.com/aFa28s2EMh2P1QcboEc7u01',
       '360': 'https://buy.stripe.com/3cI5kEdjq27VdyUdwMc7u02',
       mini: 'https://buy.stripe.com/6oUbJ20wEeUH8eA0K0c7u03',
-      camera: 'https://buy.stripe.com/4gMaEYdjq8wjdyU9gwc7u00'
+      camera: 'https://buy.stripe.com/4gMaEYdjq8wjdyU9gwc7u00',
+      tags: 'https://buy.stripe.com/cNi9AU93a4g3gL6csIc7u05'
     };
     document.querySelectorAll('[data-buy]').forEach(a => { const u = BUY[a.dataset.buy]; if (u) a.href = u; });
 
