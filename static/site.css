@@ -343,7 +343,7 @@ html[data-tally="off"] .face .num { transform: translateY(6px); }
 /* ---- support ---- */
 .support-hero { padding-bottom: 72px; }
 .support-hero h1 { font-size: 56px; }
-.tuts { max-width: 1024px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px 20px; }
+.tuts { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px 20px; }
 .tut { display: block; }
 .tut .poster { position: relative; aspect-ratio: 16 / 10; background: var(--black); border-radius: 18px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
 .tut .poster .art { display: flex; gap: 10px; align-items: center; }

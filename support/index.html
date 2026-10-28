@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Downstage Support</title>
-  <meta name="description" content="Tutorials, setup and help for the Downstage Cue lights.">
+  <meta name="description" content="Tutorials, setup and help for the Cue Lite, Cue 360 and Cue Mini.">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
   <link rel="icon" href="/favicon.ico" sizes="48x48 32x32 16x16">
@@ -12,7 +12,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="preload" href="/static/fonts/inter-600.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/static/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/static/site.css?v=39">
+  <link rel="stylesheet" href="/static/site.css?v=40">
 </head>
 <body>
 
@@ -43,7 +43,7 @@
 <section class="sec support-hero" aria-labelledby="sup-h">
   <div class="head" data-rise>
     <h1 id="sup-h">Downstage Support</h1>
-    <p>Tutorials, setup and help for the Downstage Cue, Cue Lite and Cue 360.</p>
+    <p>Tutorials, setup and help for the Cue Lite, Cue 360 and Cue Mini.</p>
   </div>
   <div class="pills" data-rise style="--i:1">
     <a class="pill ghost" href="#tutorials">Tutorials</a>
@@ -62,24 +62,19 @@
   </div>
   <div class="tuts">
       <a class="tut" id="tut-setup" data-video="setup" href="#tutorials" aria-disabled="true">
-        <div class="poster"><div class="art"><img data-dev="cue" src="/static/devices/cue-program.svg?v=4" alt="" width="120" height="120"></div><span class="badge">Video coming soon</span><span class="play" aria-hidden="true"></span></div>
+        <div class="poster"><div class="art"><img data-dev="lite" src="/static/devices/lite-program.svg?v=4" alt="" width="120" height="120"></div><span class="badge">Video coming soon</span><span class="play" aria-hidden="true"></span></div>
         <h3>Set up a Cue light</h3>
         <p>From the box to Companion in about a minute.</p>
       </a>
       <a class="tut" id="tut-link" data-video="link" href="#tutorials" aria-disabled="true">
-        <div class="poster"><div class="art"><img data-dev="cue" src="/static/devices/cue-program.svg?v=4" alt="" width="120" height="120"><img data-dev="360" src="/static/devices/360-program.svg?v=4" alt="" width="64" height="64"></div><span class="badge">Video coming soon</span><span class="play" aria-hidden="true"></span></div>
-        <h3>Link a Cue 360 by touch</h3>
-        <p>Hold two lights together for two seconds.</p>
+        <div class="poster"><div class="art"><img data-dev="lite" src="/static/devices/lite-program.svg?v=4" alt="" width="120" height="120"><img data-dev="360" src="/static/devices/360-program.svg?v=4" alt="" width="64" height="64"></div><span class="badge">Video coming soon</span><span class="play" aria-hidden="true"></span></div>
+        <h3>Link a 360 or Mini by touch</h3>
+        <p>Hold it to a Cue Lite for two seconds.</p>
       </a>
       <a class="tut" id="tut-button" data-video="button" href="#tutorials" aria-disabled="true">
         <div class="poster"><div class="art"><img data-dev="lite" src="/static/devices/lite-program.svg?v=4" alt="" width="120" height="120"></div><span class="badge">Video coming soon</span><span class="play" aria-hidden="true"></span></div>
         <h3>Give a light its Companion button</h3>
         <p>Choose the page and key it follows.</p>
-      </a>
-      <a class="tut" id="tut-lectern" data-video="lectern" href="#tutorials" aria-disabled="true">
-        <div class="poster"><div class="art"><img data-dev="cue" src="/static/devices/cue-program.svg?v=4" alt="" width="120" height="120"></div><span class="badge">Video coming soon</span><span class="play" aria-hidden="true"></span></div>
-        <h3>Run a timer at the lectern</h3>
-        <p>The Downstage Cue's own countdown and podium mode.</p>
       </a>
       <a class="tut" id="tut-venue" data-video="venue" href="#tutorials" aria-disabled="true">
         <div class="poster"><div class="art"><img data-dev="lite" src="/static/devices/lite-program.svg?v=4" alt="" width="120" height="120"><img data-dev="360" src="/static/devices/360-program.svg?v=4" alt="" width="64" height="64"></div><span class="badge">Video coming soon</span><span class="play" aria-hidden="true"></span></div>
@@ -92,7 +87,7 @@
 <section class="sec" id="setup" aria-labelledby="setup-h">
   <div class="head" data-rise>
     <h2 id="setup-h">Set up a light.</h2>
-    <p>The same four steps for the Downstage Cue, the Cue Lite and the Cue 360. It is also on the card in the box.</p>
+    <p>The same four steps for the Cue Lite, the Cue 360 and the Cue Mini. It is also on the card in the box.</p>
   </div>
   <ol class="howto">
     <li data-rise><h3>Power it</h3><p>Plug in USB-C. A new light opens its own setup network, named for the light and its four-character id, like <b>Downstage Cue 360 66B8</b>. The password is <b>downstage</b>.</p></li>
@@ -100,16 +95,16 @@
     <li data-rise style="--i:2"><h3>Put it on your network</h3><p>Pick your WiFi and enter its password. Under Companion, enter the Companion computer's address and the Satellite port, <b>16622</b>. Save.</p></li>
     <li data-rise style="--i:3"><h3>Give it a button</h3><p>In Companion's Surfaces page, set the light's page and position so its key sits on the button it should follow. Red is on air, green is preview.</p></li>
   </ol>
-  <p class="acc" data-rise>A Cue 360 can skip WiFi: hold it to a Downstage Cue or a Cue Lite for two seconds and it links over <a href="/support/#cuelink">CueLink</a>.</p>
+  <p class="acc" data-rise>A Cue 360 or Cue Mini can skip WiFi: hold it to a Cue Lite for two seconds and it links over <a href="/support/#cuelink">CueLink</a>.</p>
 </section>
 
 <section class="sec light" id="downloads" aria-labelledby="dl-h">
   <div class="head" data-rise>
     <h2 id="dl-h">Guide and updates.</h2>
-    <p>The full user guide for the Cue Lite and Cue 360, and the latest firmware for every light.</p>
+    <p>The full user guide for the Cue Lite, Cue 360 and Cue Mini, and the latest firmware for each.</p>
   </div>
   <div class="pills" data-rise style="--i:1">
-    <a class="pill" href="/support/cue-lite-360-user-guide.pdf">User guide (PDF)</a>
+    <a class="pill" href="/support/cue-lights-user-guide.pdf">User guide (PDF)</a>
     <a class="pill ghost" href="https://github.com/Downstage-Systems/downstage-cue-os" target="_blank" rel="noopener">Download updates</a>
   </div>
   <p class="acc" data-rise>A light's own page checks for updates and installs them in one tap: Device, then Update. Download a file here only to update a light where there is no internet.</p>
@@ -126,15 +121,15 @@
     </details>
     <details name="faq" id="cuelink">
       <summary>What is CueLink?</summary>
-      <div class="ans">CueLink is the lights' own radio. Hold two lights together for two seconds and they link: from then on the other light reaches Companion through the Cue, so it needs no WiFi where it stands. A Cue 360 follows its Cue's tally until you give it its own Companion button. Up to four lights can link to a Downstage Cue, and one to a Cue Lite. Lights in your Cue system sign what they send, so the system in the next room cannot drive yours.</div>
+      <div class="ans">CueLink is the lights' own radio. Hold a Cue 360 or a Cue Mini to a Cue Lite for two seconds and they link: from then on it reaches Companion through the Lite, so it needs no WiFi where it stands. It follows the Lite's tally until you give it its own Companion button. One light can link to each Cue Lite. Lights in your Cue system sign what they send, so the system in the next room cannot drive yours.</div>
     </details>
     <details name="faq">
       <summary>How do they mount?</summary>
-      <div class="ans">The Downstage Cue and the Cue 360 have magnets in their backs for steel and a 1/4-20 for an arm or a shoe. The Cue Lite and the Cue Mini take a 1/4-20, and the Cue Lite comes with a hot shoe adapter for the camera.</div>
+      <div class="ans">The Cue 360 has magnets in its base for steel and a 1/4-20 for an arm. The Cue Lite and the Cue Mini take a 1/4-20, and the Cue Lite comes with a hot shoe adapter for the camera.</div>
     </details>
     <details name="faq">
       <summary>What powers them?</summary>
-      <div class="ans">USB-C, on all three: a USB-C charger or a power bank. Some camera USB ports cannot supply enough power, so check yours before the show. USB power is how the lights run a show. The Downstage Cue and the Cue Lite have a built-in backup battery, about 2 hours and about 1 h 20 min away from power; no light lasts a show day on battery. The Cue 360 runs on USB power only.</div>
+      <div class="ans">USB-C, on all three: a USB-C charger or a power bank. Some camera USB ports cannot supply enough power, so check yours before the show. USB power is how the lights run a show. The Cue Lite has a built-in backup battery, about 1 h 20 min away from power; it does not last a show day on battery. The Cue 360 and the Cue Mini run on USB power only.</div>
     </details>
     <details name="faq">
       <summary>Is the software open?</summary>
@@ -155,7 +150,7 @@
     </details>
     <details name="help">
       <summary>It says the WiFi has a sign-in page</summary>
-      <div class="ans">Hotel and venue networks that want a login in a browser cannot carry tally: a light cannot get past the sign-in page. Use a network without one, your own router, or a phone hotspot. A Cue 360 has no screen to say it: it opens its own setup network beside the venue's, and a magenta dot circles its edge. Join that network from your phone and pick another WiFi.</div>
+      <div class="ans">Hotel and venue networks that want a login in a browser cannot carry tally: a light cannot get past the sign-in page. Use a network without one, your own router, or a phone hotspot. A Cue 360 or Cue Mini has no screen to say it: it opens its own setup network beside the venue's, and a magenta dot circles its edge. Join that network from your phone and pick another WiFi.</div>
     </details>
     <details name="help">
       <summary>It is on WiFi, but cannot reach Companion</summary>
@@ -163,7 +158,7 @@
     </details>
     <details name="help" id="weak-wifi">
       <summary>It says WEAK WIFI</summary>
-      <div class="ans">The light is losing messages on your WiFi, so tally can lag or drop out. It says so when one in ten of its checks goes unanswered for ten seconds, and clears once the link settles. Downstage lights run on 2.4 GHz WiFi, so a strong 2.4 GHz signal where the lights sit matters most. Move the access point or the light closer, keep metal, walls and crowds out of the line between them, and avoid a busy guest network if you can. The Downstage Cue says it on its rim and the Cue Lite in its top bar, where the clock usually is. A light linked over CueLink says WEAK CUELINK when its link is dropping messages: bring it closer to its Relay or to the light it links through.</div>
+      <div class="ans">The light is losing messages on your WiFi, so tally can lag or drop out. It says so when one in ten of its checks goes unanswered for ten seconds, and clears once the link settles. Downstage lights run on 2.4 GHz WiFi, so a strong 2.4 GHz signal where the lights sit matters most. Move the access point or the light closer, keep metal, walls and crowds out of the line between them, and avoid a busy guest network if you can. The Cue Lite says it in its top bar, where the clock usually is. A light linked over CueLink says WEAK CUELINK when its link is dropping messages: bring it closer to the Cue Lite it is linked to.</div>
     </details>
     <details name="help">
       <summary>Does it work on 5 GHz WiFi?</summary>
@@ -179,11 +174,11 @@
     </details>
     <details name="help" id="shift">
       <summary>Why does my screen shift around?</summary>
-      <div class="ans">On purpose. The Downstage Cue and the Cue Lite have AMOLED screens, and a picture that never moves, like a camera number left up all day, can burn into an OLED screen. To prevent that, the light moves its picture a few pixels every few minutes. It is too small to notice from where you stand, and it protects the screen.</div>
+      <div class="ans">On purpose. The Cue Lite has an AMOLED screen, and a picture that never moves, like a camera number left up all day, can burn into an OLED screen. To prevent that, the light moves its picture a few pixels every few minutes. It is too small to notice from where you stand, and it protects the screen.</div>
     </details>
     <details name="help" id="time">
-      <summary>Why doesn't my Cue or Lite show the time?</summary>
-      <div class="ans">A light has no way to know the time of day by itself: it has to be told. The Downstage Cue and the Cue Lite set their clock from the internet, or from a Downstage One on the same network. So the time shows only when the light has an active internet connection or can see a One. On a closed show network with neither, the light leaves the clock off rather than show the wrong time.</div>
+      <summary>Why doesn't my Lite show the time?</summary>
+      <div class="ans">A light has no way to know the time of day by itself: it has to be told. The Cue Lite sets its clock from the internet, or from a Downstage One on the same network. So the time shows only when the light has an active internet connection or can see a One. On a closed show network with neither, the light leaves the clock off rather than show the wrong time.</div>
     </details>
     <details name="help">
       <summary>How do I reset a light?</summary>
@@ -234,7 +229,7 @@
 
   // Tutorial videos, one per card. Paste each video's link here; a card with
   // a link opens it, a card without one stays "Video coming soon".
-  const VIDEOS = { setup: '', link: '', button: '', lectern: '', venue: '' };
+  const VIDEOS = { setup: '', link: '', button: '', venue: '' };
   document.querySelectorAll('.tut').forEach(a => {
     const u = VIDEOS[a.dataset.video];
     if (u) { a.href = u; a.target = '_blank'; a.rel = 'noopener'; a.removeAttribute('aria-disabled'); a.classList.add('ready'); a.querySelector('.badge').textContent = 'Watch'; }
