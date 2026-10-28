@@ -539,3 +539,17 @@ html[data-tally="off"] .face .num { transform: translateY(6px); }
 html.v3d-open, html.v3d-open body { overflow: hidden; overscroll-behavior: none; }
 .v3d { overscroll-behavior: contain; touch-action: none; }
 @media (max-width: 734px) { .v3d { border-radius: 0; width: 100vw; height: 100dvh; } .v3d-x { top: 12px; right: 12px; } .v3d-top { justify-content: flex-start; } }
+
+/* Add-ons on /shop/: kept small, under the lineup */
+.addons { padding-top: 40px; }
+.addons h2 { font-size: 21px; font-weight: 600; text-align: center; margin-bottom: 22px; }
+.addon-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 760px; margin: 0 auto; }
+.addon { display: flex; gap: 16px; align-items: center; background: var(--tile); border-radius: 18px; padding: 16px 20px 16px 16px; }
+.addon img { width: 92px; height: 92px; object-fit: contain; flex-shrink: 0; mix-blend-mode: multiply; }
+.addon h3 { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+.addon p { font-size: 13px; color: var(--grey); line-height: 1.45; }
+.addon .addon-price { color: var(--ink); margin-top: 6px; }
+.addon a { color: var(--green-ink); text-decoration: underline; }
+@media (max-width: 734px) { .addon-row { grid-template-columns: 1fr; } }
+/* the Downstage Cue has no 3D model yet: an invisible button keeps its spec rows level with the others */
+.v3d-btn.hold { visibility: hidden; }
