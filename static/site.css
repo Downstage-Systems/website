@@ -94,7 +94,7 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.015em; line-height: 1.07; }
 
 /* compare: which Cue */
 .compare { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0 32px; }
-.col { display: grid; grid-template-rows: subgrid; grid-row: span 12; text-align: center; justify-items: center; }
+.col { display: grid; grid-template-rows: subgrid; grid-row: span 13; text-align: center; justify-items: center; }
 .col img { width: 150px; height: 150px; }
 .col h3 { font-size: 24px; margin-top: 16px; }
 .col .lead { color: var(--grey); margin-top: 4px; }
@@ -553,3 +553,4 @@ html.v3d-open, html.v3d-open body { overflow: hidden; overscroll-behavior: none;
 @media (max-width: 734px) { .addon-row { grid-template-columns: 1fr; } }
 /* the Downstage Cue has no 3D model yet: an invisible button keeps its spec rows level with the others */
 .v3d-btn.hold { visibility: hidden; }
+@media (max-width: 734px) { .v3d-btn.hold { display: none; } }
