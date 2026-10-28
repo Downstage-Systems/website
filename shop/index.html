@@ -300,7 +300,12 @@
   (function () {
     // Payment links, one per product. Paste each Stripe Payment Link here;
     // until a link is set, its buttons lead to the email form.
-    const BUY = { lite: '', '360': '', mini: '', camera: '' };
+    const BUY = {
+      lite: 'https://buy.stripe.com/aFa28s2EMh2P1QcboEc7u01',
+      '360': 'https://buy.stripe.com/3cI5kEdjq27VdyUdwMc7u02',
+      mini: 'https://buy.stripe.com/6oUbJ20wEeUH8eA0K0c7u03',
+      camera: 'https://buy.stripe.com/4gMaEYdjq8wjdyU9gwc7u00'
+    };
     document.querySelectorAll('[data-buy]').forEach(a => { const u = BUY[a.dataset.buy]; if (u) a.href = u; });
 
     // A link to a question opens it.
