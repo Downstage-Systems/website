@@ -600,3 +600,9 @@ html.v3d-open, html.v3d-open body { overflow: hidden; overscroll-behavior: none;
 }
 .sec .head p.later, .later-card p.later { font-size: 13px; color: var(--green-ink); margin: 0 0 6px; }
 @media (max-width: 734px) { .app-title { flex-direction: column; gap: 12px; } }
+.use { color: var(--paper); }
+/* the One's loops hold a whole rig, so they run edge to edge across the card */
+.use:has(video.edge) { overflow: hidden; }
+.use .lamp video.loop.edge { width: calc(100% + 56px); max-width: none; margin: -46px -28px -22px;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent), linear-gradient(transparent, #000 7%, #000 93%, transparent); -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent), linear-gradient(transparent, #000 7%, #000 93%, transparent); mask-composite: intersect; }
