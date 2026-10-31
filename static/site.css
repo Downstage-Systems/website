@@ -584,6 +584,9 @@ html.v3d-open, html.v3d-open body { overflow: hidden; overscroll-behavior: none;
 .app-feat p { color: var(--mist); margin-top: 10px; }
 .app-feat .pic { flex: 1; display: flex; align-items: flex-start; justify-content: center; margin-top: 28px; max-height: 340px; overflow: hidden; }
 .app-feat .pic img { border-radius: 12px 12px 0 0; width: min(320px, 100%); }
+.app-feat .pic video.loop { display: block; border-radius: 12px 12px 0 0; width: 100%; height: auto; }
+.app-feat-stack { display: grid; gap: 20px; }
+.app-feat-stack .app-feat { min-height: 0; }
 .app-feat.wide { grid-column: 1 / -1; min-height: 0; padding-bottom: 36px; }
 .app-feat.wide .pic { max-height: none; overflow: visible; }
 .app-feat.wide .pic img { width: 100%; max-width: 900px; border-radius: 12px; }
