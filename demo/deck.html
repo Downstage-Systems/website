@@ -118,6 +118,13 @@ function clk12(dt, secs) {
               : `${h}:${p2(dt.getMinutes())} ${ap}`;
 }
 function paint() {
+  if (host) {
+    const d = host.__demo();
+    active = !d.clock; running = d.run; remain = d.left / 1000; added = d.added;
+    $('k-bo').classList.toggle('bo-on', d.black);
+    for (const id of ['dh','dm','ds']) $(id).classList.toggle('dark', d.black);
+    setTimeout(() => { $('curt1').textContent = $('curt2').textContent = d.title; $('nextt').textContent = d.next; $('prevt').textContent = d.prev; }, 0);
+  }
   const [h, m, s] = active ? hms(remain) : ['00', '00', '00'];
   $('dh').textContent = h; $('dm').textContent = m; $('ds').textContent = s;
   const sign = added < 0 ? '-' : '';
@@ -133,7 +140,7 @@ function paint() {
 let last = Date.now();
 setInterval(() => {
   const now = Date.now();
-  if (active && running) {
+  if (!host && active && running) {
     remain -= (now - last) / 1000;
     if (remain <= 0) { remain = 0; running = false; }
   }
@@ -142,7 +149,25 @@ setInterval(() => {
   paint();
 }, 200);
 
-const acts = {
+// In the demo pages the keys run the same show as the rest of the page
+const host = (() => { try { if (parent !== window && parent.__demo) return parent; if (window.opener && opener.__demo) return opener; } catch (e) {} return null; })();
+const post = (path, body) => host.fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+const timer = (action, extra) => post('/api/v1/one/timer', Object.assign({ action }, extra));
+
+const acts = host ? {
+  start:  () => timer('start'),
+  pause:  () => timer(host.__demo().run ? 'pause' : 'start'),
+  stop:   () => timer('stop'),
+  reload: () => timer('reset'),
+  add:    el => timer('add', { seconds: +el.dataset.n * 60 }),
+  tod:    () => timer('load', { id: 'p0' }),
+  t10:    () => timer('load', { id: 'p2' }),
+  t30:    () => timer('load', { id: 'p1' }),
+  prev:   () => timer('previous'),
+  next:   () => timer('next'),
+  blink:  () => { blink = !blink; document.body.classList.toggle('blinking', blink); $('k-blink').classList.toggle('blink-on', blink); },
+  blackout: () => post(host.__demo().black ? '/blackout/clear' : '/blackout', {}),
+} : {
   start:  () => { if (!active) { active = true; remain = 600 + added; } running = true; },
   pause:  () => { if (active) running = !running; },
   stop:   () => { active = running = false; remain = 600; added = 0; },

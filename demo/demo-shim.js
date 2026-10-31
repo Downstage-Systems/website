@@ -27,6 +27,250 @@
     boot: Date.now(),
   };
 
+
+  // ── the simulated show (1.7.0): a timer that runs, an aux timer, OnTime's
+  // messages, an ATEM, and a Relay with five lights. The switcher's M/E 1 drives
+  // the lights' tally, so a CUT on the Router tab shows on the Cue tab. Kept for
+  // the tab's life, so Touch and Browser show the same show. ──
+  const PRESETS = [
+    { id: 'p0', label: 'Time Of Day', kind: 'clock', seconds: 0 },
+    { id: 'p1', label: 'Doors open', kind: 'countdown', seconds: 1800 },
+    { id: 'p2', label: 'Keynote: Welcome', kind: 'countdown', seconds: 600 },
+    { id: 'p3', label: 'Panel: The year ahead', kind: 'countdown', seconds: 2700 },
+    { id: 'p4', label: 'Break', kind: 'countdown', seconds: 900 },
+  ];
+  const light = (id, n, name, model, level, battery) => ({ id, n, name, model, carrier: RELAY.serial, online: true, level, battery,
+    charging: false, fw: '0.186.3', brightSetting: 80, tallyWord: false, lock: model === 'cue' ? 'off' : undefined,
+    follow: null, mirrors: 0, talent: false, state: { brightness: 100, talent: false } });
+  const RELAY = { serial: 'DSRLY-0000A1', name: 'Stage Relay', ip: '192.168.1.50' };
+  const D = {
+    T: { loaded: 'p2', playback: 'play', endsAt: Date.now() + 517000, left: 517000, total: 600000, added: 0 },
+    A: { current: 300000, duration: 300000, direction: 'count-down', running: false, playback: 'stop', endsAt: 0 },
+    auxShown: 0,
+    M: { text: '', visible: false, blink: false, secondary: '', secondary_source: null,
+         saved: ['5 minutes', 'Wrap up', "Time's up", 'Speak up', 'Mic check', 'Stand by'] },
+    words: [['STANDBY', 'amber'], ['5 MIN', 'amber'], ['1 MIN', 'amber'], ['WRAP UP', 'red'], ['STOP', 'red'],
+            ['THANK YOU', 'green'], ['SLOW DOWN', 'white'], ['LOUDER', 'white'], ['LOOK AT CAM 2', 'white'], ['Q AND A NEXT', 'white']],
+    touchSrc: ['cleantimer', '/studio', '/info', 'pattern-card', 'aux1', '/timer'],
+    R: { mes: [{ n: 1, program: 1, preview: 2, transition: false }, { n: 2, program: 5, preview: 6, transition: false }],
+         auxes: [{ n: 1, name: 'IMAG Left', source: 1 }, { n: 2, name: 'IMAG Right', source: 1 },
+                 { n: 3, name: 'Confidence', source: 3010 }, { n: 4, name: 'Record', source: 10010 }] },
+    cues: [light('DSCUE-0000C1', 1, 'Stage Left', 'cue', -52, 86), light('DSCUE-0000C2', 2, 'Stage Right', 'lite', -58, 72),
+           light('DSCUE-0000C3', 3, 'Jib', '360', -61, null), light('DSCUE-0000C4', 4, 'Handheld', 'lite', -66, 64),
+           light('DSCUE-0000C5', 5, 'Confidence', 'mini', -57, null)],
+    offers: [{ id: 'DSCUE-0000C6', name: 'Cue Mini 00C6', model: 'mini', kind: 'asks', rssi: -63 }],
+    alert: false, check: null, hdmiCt: null,
+  };
+  try {
+    const kept = JSON.parse(sessionStorage.getItem('ds_demo') || 'null');
+    if (kept) { Object.assign(D, kept.D); Object.assign(S, kept.S); }
+  } catch (e) {}
+  const keep = () => { if (S.__reset) return; try { sessionStorage.setItem('ds_demo', JSON.stringify({ D, S })); } catch (e) {} };
+  setInterval(keep, 1000);
+  window.addEventListener('pagehide', keep);
+
+  // ── timer ──
+  const preset = id => PRESETS.find(p => p.id === id);
+  const onClockNow = () => (preset(D.T.loaded) || {}).kind === 'clock';
+  function tLeft() { const t = D.T; return t.playback === 'play' ? t.endsAt - Date.now() : t.left; }
+  function timerState() {
+    const t = D.T, p = preset(t.loaded), left = tLeft(), run = t.playback === 'play', clock = onClockNow();
+    const phase = !p ? 'stopped' : t.playback === 'pause' ? 'paused' : !run ? 'stopped' : left < 0 ? 'over' : left <= 30000 ? 'danger' : left <= 120000 ? 'warning' : 'running';
+    const dn = new Date();
+    return { phase, playback: t.playback, title: p ? p.label : '', left_ms: clock ? 0 : left, total_ms: clock ? 0 : t.total,
+             added_ms: t.added, now: Date.now(), no_timer: false, loaded: t.loaded,
+             ontime: { clock: (dn.getHours() * 3600 + dn.getMinutes() * 60 + dn.getSeconds()) * 1000 } };
+  }
+  function loadPreset(id, go) {
+    const p = preset(id); if (!p) return;
+    Object.assign(D.T, { loaded: id, playback: go ? 'play' : 'armed', left: p.seconds * 1000, total: p.seconds * 1000, added: 0,
+                         endsAt: Date.now() + p.seconds * 1000 });
+  }
+  function step(dir) {
+    const i = PRESETS.findIndex(p => p.id === D.T.loaded), n = PRESETS[i + dir];
+    if (n) loadPreset(n.id, false);
+  }
+  function timerRoute(b) {
+    if (!b || !b.action) {
+      const i = PRESETS.findIndex(p => p.id === D.T.loaded);
+      return { ok: true, state: timerState(), output: output(),
+               presets: PRESETS.map((p, k) => Object.assign({ colour: '#A790F5', cue: String(k + 1), loaded: k === i, next: k === i + 1 }, p)) };
+    }
+    const t = D.T, secs = +b.seconds || 0;
+    if (b.action === 'start') { if (!onClockNow()) { t.endsAt = Date.now() + t.left; t.playback = 'play'; } }
+    else if (b.action === 'pause') { if (t.playback === 'play') { t.left = t.endsAt - Date.now(); t.playback = 'pause'; } }
+    else if (b.action === 'stop' || b.action === 'reset') { const p = preset(t.loaded); t.left = t.total = (p ? p.seconds : 0) * 1000; t.added = 0; t.playback = 'armed'; }
+    else if (b.action === 'add') { if (t.playback === 'play') t.endsAt += secs * 1000; else t.left += secs * 1000; t.total += secs * 1000; t.added += secs * 1000; }
+    else if (b.action === 'set') {   // from the clock: a countdown first, as the One does
+      if (onClockNow()) t.loaded = 'p2';
+      Object.assign(t, { left: secs * 1000, total: secs * 1000, added: 0, playback: 'armed', endsAt: Date.now() + secs * 1000 });
+    }
+    else if (b.action === 'load') loadPreset(b.id, false);
+    else if (b.action === 'next') step(1);
+    else if (b.action === 'previous') step(-1);
+    return { ok: true, state: timerState() };
+  }
+  // ── the aux timer ──
+  function auxNow() {
+    const a = D.A;
+    const cur = !a.running ? a.current : a.direction === 'count-up' ? a.current + (Date.now() - a.endsAt) : a.current - (Date.now() - a.endsAt);
+    return { n: 1, name: 'Aux timer 1', current: cur, duration: a.duration, direction: a.direction, running: a.running, playback: a.running ? 'play' : a.playback };
+  }
+  function auxFreeze() { const a = D.A; a.current = auxNow().current; a.endsAt = Date.now(); }
+  function auxRoute(b) {
+    if (!b || !b.action) return { ok: true, aux: [auxNow()], output: output(), control: false };
+    const a = D.A; auxFreeze();
+    if (b.action === 'start') { a.running = true; a.playback = 'play'; }
+    else if (b.action === 'pause') { a.running = false; a.playback = 'pause'; }
+    else if (b.action === 'stop') { a.running = false; a.playback = 'stop'; a.current = a.direction === 'count-up' ? 0 : a.duration; }
+    else if (b.action === 'add') a.current += (+b.seconds || 0) * 1000;
+    else if (b.action === 'set') { a.duration = a.current = (+b.seconds || 0) * 1000; a.running = false; a.playback = 'stop'; }
+    else if (b.action === 'direction') { a.direction = b.direction; a.current = b.direction === 'count-up' ? 0 : a.duration; }
+    return { ok: true, aux: auxNow() };
+  }
+  function output() {
+    return { aux_shown: D.auxShown, blackout: S.blackout, blackout_outputs: [1, 2].filter(n => S.blackout || S.blackoutOut[n]),
+             secondary_source: D.M.secondary_source || (D.auxShown ? 'aux1' : null) };
+  }
+  // the fake screens read this from their parent, so a preview follows the show
+  window.__demo = () => ({ left: tLeft(), total: D.T.total, title: (preset(D.T.loaded) || {}).label || '', clock: onClockNow(),
+                           run: D.T.playback === 'play', added: D.T.added / 1000, black: !!S.blackout,
+                           prev: (PRESETS[PRESETS.findIndex(p => p.id === D.T.loaded) - 1] || {}).label || '',
+                           next: (PRESETS[PRESETS.findIndex(p => p.id === D.T.loaded) + 1] || {}).label || '',
+                           aux: auxNow().current, msg: D.M.visible ? D.M.text : '', blink: D.M.blink,
+                           secondary: D.M.secondary_source === 'secondary' ? D.M.secondary : '' });
+
+  // ── the ATEM ──
+  const SOURCES_R = [];
+  for (let i = 1; i <= 8; i++) SOURCES_R.push({ id: i, long: 'Camera ' + i, short: 'CAM' + i, aux: true, me: null });
+  SOURCES_R.push({ id: 1000, long: 'Color Bars', short: 'BARS', aux: true, me: null },
+                 { id: 3010, long: 'Media Player 1', short: 'MP1', aux: true, me: null },
+                 { id: 10010, long: 'M/E 1 Program', short: 'PGM1', aux: true, me: [2] },
+                 { id: 10011, long: 'M/E 1 Preview', short: 'PVW1', aux: true, me: [] });
+  function routerState() {
+    return { ok: true, ip: '192.168.1.240', connected: true, product: 'ATEM Constellation', sources: SOURCES_R,
+             mes: D.R.mes, auxes: D.R.auxes, program: D.R.mes.map(m => m.program), preview: D.R.mes.map(m => m.preview) };
+  }
+  function routerRoute(b) {
+    if (b && b.action) {
+      const m = D.R.mes.find(x => x.n === +b.me);
+      if (m && b.action === 'cut') [m.program, m.preview] = [m.preview, m.program];
+      if (m && b.action === 'auto') { m.transition = true; setTimeout(() => { [m.program, m.preview] = [m.preview, m.program]; m.transition = false; }, 1000); }
+    } else if (b && b.aux) { const a = D.R.auxes.find(x => x.n === +b.aux); if (a) a.source = +b.source; }
+    else if (b && b.me) { const m = D.R.mes.find(x => x.n === +b.me); if (m && b.bus) m[b.bus] = +b.source; }
+    return routerState();
+  }
+
+  // ── the lights: tally from M/E 1 ──
+  function tallyFor(c) {
+    const me = D.R.mes[0], n = c.mirrors || c.n;
+    return n === me.program ? 'program' : n === me.preview ? 'preview' : '';
+  }
+  function cuesNow() {
+    return D.cues.map(c => Object.assign({}, c, { state: Object.assign({}, c.state, { tally: tallyFor(c) }) }));
+  }
+  const MODEL = { cue: 'Downstage Cue', lite: 'Cue Lite', 360: 'Cue 360', mini: 'Cue Mini' };
+  function fleet() {
+    const lights = D.cues.filter(c => c.carrier).map(c => {
+      const t = tallyFor(c);
+      return { product: 'Cue', serial: c.id, name: c.name, model: MODEL[c.model], ip: '', version: c.fw,
+               showing: t === 'program' ? '#ff0000' : t === 'preview' ? '#00ff00' : '#000000', health_ok: true, health_why: '',
+               cue: Object.assign({ camera: c.n, battery: c.battery, rssi: c.level, link: { relayed: true, no_ip: true, via: RELAY.serial, via_name: RELAY.name, show: 'own' } },
+                                  c.model === 'mini' || c.model === '360' ? { grid: { cols: 8, rows: 8 } } : {}) };
+    });
+    const linked = lights.length;
+    return { ok: true, ts: Date.now() / 1000 - 40, units: [
+      { product: 'Relay', name: RELAY.name, ip: RELAY.ip, kind: 'Ethernet', serial: RELAY.serial, version: '0.186.3',
+        showing: linked + ' of 12 linked', health_ok: true, health_why: '', upd: false,
+        relay: { one: false, host: '192.168.1.20', port: 16622, live: true, mine: true, ch: 6, tune: 'locked', eth: 'Up', mbps: 100, static: false, heard: linked },
+        cue: { link: { guests: lights.map(l => ({ id: l.serial, mirror: false })), max: 12, relay: true } } },
+    ].concat(lights).concat([
+      { product: 'One', name: 'Monitor World', ip: '192.168.1.22', kind: 'WiFi', serial: 'DS1-A-2607-0003', version: '1.6.4',
+        showing: '1: Countdown · 2: —', health_ok: false, health_why: 'HDMI 2 no display', upd: true },
+    ]) };
+  }
+  function relayApi(b) {
+    const p = b.path, body = b.body || {};
+    if (p === 'cues') return { ok: true, cues: cuesNow() };
+    if (p === 'status') return { ok: true, live: true, one: true, compHost: '192.168.1.20', alert: D.alert };
+    if (p === 'offers') return { ok: true, live: true, adopt: D.offers, switch: [], room: 12 - D.cues.length };
+    if (p === 'job') return { ok: true, job: null };
+    if (p === 'check' && b.method !== 'POST') return { ok: true, check: D.check };
+    if (p === 'check') {
+      D.check = { running: false, summary: 'All ' + D.cues.length + ' lights answered.', agoS: 2,
+                  lights: D.cues.map(c => ({ id: c.id, name: c.name, state: c.level > -65 ? 'good' : 'weak', cue: c.n })) };
+      return { ok: true, message: D.check.summary };
+    }
+    if (p === 'alert') { D.alert = !!body.on; return { ok: true }; }
+    if (p === 'identify') return { ok: true, message: 'It is blinking.' };
+    if (p === 'adopt') {
+      for (const id of body.ids || []) {
+        const o = D.offers.find(x => x.id === id); if (!o) continue;
+        D.offers = D.offers.filter(x => x.id !== id);
+        const c = light(id, D.cues.length + 1, 'Cue Mini ' + id.slice(-4), 'mini', o.rssi, null);
+        D.cues.push(c);
+      }
+      return { ok: true, message: 'Adopted.' };
+    }
+    return { ok: true };
+  }
+  function relayLight(b) {
+    const c = D.cues.find(x => x.id === b.id), set = b.set || {};
+    if (!c) return { ok: false, error: 'That Relay does not link it' };
+    for (const k in set) {
+      if (k === 'release') { D.cues = D.cues.filter(x => x !== c); D.offers.push({ id: c.id, name: c.name, model: c.model, kind: 'asks', rssi: c.level }); }
+      else if (k === 'mirror') c.mirrors = set.mirror || 0;
+      else if (k === 'follow') c.follow = set.follow || null;
+      else if (k === 'brightness') c.state.brightness = set.brightness;
+      else if (k === 'talent') { c.talent = !!set.talent; c.state.talent = !!set.talent; }
+      else if (!/^message/.test(k)) c[k] = set[k];
+    }
+    return { ok: true };
+  }
+
+  // ── Companion's buttons, drawn: the follow pickers and the + XL on the Deck ──
+  const KEYS = ['CAM 1', 'CAM 2', 'CAM 3', 'CAM 4', 'CAM 5', 'CAM 6', 'CAM 7', 'CAM 8', 'CUT', 'AUTO', 'BLACK', 'BARS',
+                'IMAG L', 'IMAG R', 'CONF', 'REC', 'START', 'PAUSE', '+1', '-1', 'NEXT', 'PREV', 'WALK IN', 'SHOW'];
+  function keyPng(label, bg, ink) {
+    const c = document.createElement('canvas'); c.width = c.height = 120;
+    const g = c.getContext('2d');
+    g.fillStyle = bg || '#181D23'; g.fillRect(0, 0, 120, 120);
+    g.fillStyle = ink || '#EEF1F3'; g.font = '700 26px Rajdhani, system-ui, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText(label || '', 60, 60);
+    return c.toDataURL('image/png');
+  }
+  const keyFor = i => { const me = D.R.mes[0], l = KEYS[i];
+    return keyPng(l, i + 1 === me.program ? '#E5484D' : i + 1 === me.preview ? '#2FD97B' : '#181D23', i + 1 === me.preview ? '#0B0D10' : '#EEF1F3'); };
+  function gridRoute(q) {
+    const rows = +q.get('rows') || 4, cols = +q.get('cols') || 8, since = +q.get('since') || 0, page = +q.get('page') || 1;
+    if (since) return { ok: true, full: false, rev: since, buttons: [] };
+    const buttons = [];
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+      const i = (r * cols + c + (page - 1) * 8);
+      if (i < KEYS.length) buttons.push({ row: r, col: c, fmt: 'png', img: keyFor(i).split(',')[1] });
+    }
+    return { ok: true, full: true, rev: 1, buttons };
+  }
+  // the + XL joins Companion over its Satellite socket: stand in for that socket
+  const RealWS = window.WebSocket;
+  window.WebSocket = function (url, p) {
+    if (!/:16623/.test(url)) return new RealWS(url, p);
+    const ws = { readyState: 1, close() { ws.readyState = 3; clearInterval(tick); if (ws.onclose) ws.onclose({}); },
+      send(line) {
+        const m = /KEY-PRESS .*KEY=(\d+) PRESSED=1/.exec(line); if (!m) return;
+        const k = +m[1], me = D.R.mes[0];
+        if (k < 8) me.preview = k + 1;
+        if (k === 8) [me.program, me.preview] = [me.preview, me.program];
+        paint();
+      } };
+    const say = l => ws.onmessage && ws.onmessage({ data: l });
+    const paint = () => { for (let k = 0; k < 36; k++) say('KEY-STATE KEY=' + k + ' BITMAP="' + keyFor(k) + '"');
+      for (let k = 36; k < 45; k++) say('KEY-STATE KEY=' + k + ' BITMAP="' + keyPng(k % 2 ? 'GAIN' : 'WIPE', '#12161B', '#9AA4AD') + '"'); };
+    const tick = setInterval(paint, 2500);
+    setTimeout(() => { if (ws.onopen) ws.onopen({}); say('ADD-DEVICE OK DEVICEID="demo"'); paint(); }, 200);
+    return ws;
+  };
+
   function uptime() {
     const s = Math.floor((Date.now() - S.boot) / 1000) + 9000;
     return `${Math.floor(s / 3600)}h ${String(Math.floor(s % 3600 / 60)).padStart(2, '0')}m ${String(s % 60).padStart(2, '0')}s`;
@@ -43,7 +287,7 @@
       hdmi1_rotate: S.hdmi1_rotate, hdmi2_rotate: S.hdmi2_rotate,
       hdmi1_external_url: S.hdmi1_external_url, hdmi2_external_url: S.hdmi2_external_url,
       connected: S.ontime_running && (S.mode === 'local' || !!S.ip),
-      os_version: '1.6.4', serial: 'Serial #',
+      os_version: '1.7.0', serial: 'DS1-A-2607-0000',
       local_ip: '192.168.1.20', net_iface: 'eth0', displays: 2,
       ontime_installed: true, ontime_running: S.ontime_running,
       companion_installed: true, companion_running: true,
@@ -60,7 +304,7 @@
       hdmi_names: { 1: 'SAMSUNG Q60B', 2: '' },
       wifi: { up: false, drops_10m: 0, concern: null },
       primary_kind: 'Ethernet', primary_ip: '192.168.1.20',
-      name: S.unitName || '', now_showing: '1: Stage Timer \u00b7 2: —',
+      name: S.unitName || 'Main Stage', now_showing: '1: Stage Timer \u00b7 2: —',
       virtual_previews: S.virtPrev !== false,
       audio_cues: S.audioCues || 'off',
       line_tone: !!S.lineTone,
@@ -75,19 +319,65 @@
     };
   }
 
-  function fleet() {
-    return { ok: true, ts: Date.now() / 1000 - 240, units: [
-      { product: 'View', name: 'Stage Left', ip: '192.168.1.31', kind: 'Ethernet',
-        serial: 'DSV-A-2607-0000', version: '1.6.4', showing: 'Stage Timer',
-        health_ok: true, health_why: '', upd: false },
-      { product: 'One', name: 'Monitor World', ip: '192.168.1.22', kind: 'WiFi',
-        serial: 'DS1-A-2607-0003', version: '1.5.1', showing: '1: Countdown \u00b7 2: —',
-        health_ok: false, health_why: 'HDMI 2 no display', upd: true },
-    ]};
-  }
+  const SRC_LABELS = { cleantimer: 'Custom Timer', '/timer': 'Stage Timer', '/countdown': 'Countdown', '/backstage': 'Backstage / Crew',
+    '/studio': 'Studio Clock', '/timeline': 'Timeline', '/info': 'Public Info', aux1: 'Aux Timer 1', '/op': 'Operator', '/cuesheet': 'Cue Sheet',
+    '/rundown': 'Rundown', 'pattern-card': 'Test Card', 'pattern-bars': 'SMPTE Bars', 'pattern-grid': 'Grid', 'pattern-ramp': 'Gray Ramp',
+    welcome: 'Unit Info', off: 'Off' };
+  const SILLY = [
+    'Disabled in demo mode - this button is wired to hardware you have not bought yet.',
+    'On a real unit, that does the thing. In the demo, it does this message.',
+    'Demo unit says no. Politely, but no.',
+    'That control moves actual electrons. The demo has none to spare.',
+    'Nice try. The demo unit is imaginary and cannot be shut down.',
+    'This works great at 192.168.your.venue - less so in a browser tab.',
+    'Settings like this one ship with the real thing. Doors.',
+    'Disabled in demo mode. Unlike show bacon, which is always enabled.',
+    'This button is off duty. Kind of like the one guy who forgot to hit record.',
+  ];
+  const quip = () => SILLY[Math.floor(Math.random() * SILLY.length)];
+  const no = () => { const m = quip(); return { ok: false, message: m, error: m }; };
 
   const routes = {
     '/status': () => status(),
+    '/api/v1/one/timer': (b) => timerRoute(b),
+    '/api/v1/one/aux': (b) => auxRoute(b),
+    '/api/v1/one/output': (b) => {
+      if (b.aux !== undefined) D.auxShown = b.aux ? 1 : 0;
+      if (b.blackout !== undefined) { S.blackout = !!b.blackout; if (!b.blackout) S.blackoutOut[1] = S.blackoutOut[2] = false; syncScreens(); }
+      return { ok: true, output: output() };
+    },
+    '/api/v1/one/message': (b) => {
+      if (b.saved) D.M.saved = b.saved;
+      for (const k of ['text', 'visible', 'blink', 'secondary']) if (b[k] !== undefined) D.M[k] = b[k];
+      if (b.secondary_shown !== undefined) D.M.secondary_source = b.secondary_shown ? 'secondary' : null;
+      return Object.assign({ ok: true }, D.M);
+    },
+    '/api/v1/one/talk-words': (b) => { if (b.words) D.words = b.words; return { ok: true, words: D.words }; },
+    '/api/v1/one/touch-sources': (b) => {
+      if (b.reset) D.touchSrc = ['cleantimer', '/studio', '/info', 'pattern-card', 'aux1', '/timer'];
+      if (b.add && !D.touchSrc.includes(b.add)) D.touchSrc.push(b.add);
+      if (b.remove) D.touchSrc = D.touchSrc.filter(k => k !== b.remove);
+      return { ok: true, sources: D.touchSrc.map(k => ({ key: k, label: SRC_LABELS[k] || k })),
+               all: Object.entries(SRC_LABELS).map(([key, label]) => ({ key, label })) };
+    },
+    '/api/v1/one/router': (b) => routerRoute(b),
+    '/api/v1/one/router/atem': (b) => (b.ip !== undefined ? routerState()
+      : { ok: true, found: [{ ip: '192.168.1.240', name: 'ATEM Constellation', from: 'Companion' }] }),
+    '/displays/source': (b) => { S['hdmi' + b.output + '_source'] = b.source; S.testcard[b.output] = false; syncScreens(); return { ok: true }; },
+    '/displays/custom-timer': (b) => {
+      if (b.output) for (const k in b) if (k !== 'output') S.ct[b.output][k] = b[k];
+      syncScreens();
+      return { ok: true, outputs: S.ct };
+    },
+    '/fleet/relay/api': (b) => relayApi(b),
+    '/fleet/relay/light': (b) => relayLight(b),
+    '/fleet/cue/timer-source': (b) => { if (b.mode) D.tsrc = b.mode; return { ok: true, source: D.tsrc || 'auto' }; },
+    '/fleet/cue/camop': (b) => { if (b.on !== undefined) D.camop = !!b.on; return { ok: true, on: !!D.camop }; },
+    '/companion/pages': () => ({ ok: true, pages: [{ page: 1, name: 'Show' }, { page: 2, name: 'Rig' }, { page: 3, name: 'Timer' }] }),
+    '/rig/state': () => ({ ok: true, secured: false }),
+    '/rig/unlock': () => ({ ok: true }),
+    '/discover/refresh': () => fleet(),
+    '/system/patches/status': () => ({ ok: true, available: false }),
     '/discover/last': () => fleet(),
     '/discover': () => fleet(),
     '/fleet/identify': () => ({ ok: true }),
@@ -178,48 +468,48 @@
     },
     '/refresh': () => { syncScreens(true); return { ok: true }; },
     '/displays/identify': () => { identify(); return { ok: true, displays: 2 }; },
-    '/displays/power': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
+    '/displays/power': () => no(),
     '/displays/power-status': () => ({ outputs: [{ index: 1, on: S.outputPower[1] }, { index: 2, on: S.outputPower[2] }] }),
-    '/ontime/start': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
-    '/ontime/stop': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
-    '/ontime/install': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
-    '/ontime/update': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
+    '/ontime/start': () => no(),
+    '/ontime/stop': () => no(),
+    '/ontime/install': () => no(),
+    '/ontime/update': () => no(),
     '/update-status': () => ({
-      ontime:    { installed: '4.10.0', latest: '4.10.0', update_available: false, checked: true },
-      companion: { installed: '5.0.1', latest: '5.0.1', update_available: false, checked: true, channel: 'stable' },
-      os:        { installed: '2.0.0', latest: '2.0.0', update_available: false, checked: true, last_result: null },
+      ontime:    { installed: '4.15.1', latest: '4.15.1', update_available: false, checked: true },
+      companion: { installed: '5.1.1', latest: '5.1.1', update_available: false, checked: true, channel: 'stable' },
+      os:        { installed: '1.7.0', latest: '1.7.0', update_available: false, checked: true, last_result: null },
       patches:   { tested_through: '2026-07-13', last_applied: '2026-07-13', available: false, checked: true },
     }),
     '/jobs': () => ({ name: '', label: '', state: 'idle', started: 0, detail: '' }),
     '/updates/recheck': () => ({ ok: true }),
     '/companion/status': () => ({ installed: true, running: true, install_state: 'done' }),
-    '/companion/restart': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
-    '/companion/update': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
-    '/companion/rescan-usb': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
-    '/companion/set-channel': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
-    '/companion/install': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
+    '/companion/restart': () => no(),
+    '/companion/update': () => no(),
+    '/companion/rescan-usb': () => no(),
+    '/companion/set-channel': () => no(),
+    '/companion/install': () => no(),
     '/network/info': () => ({ ok: true, iface: 'eth0', method: 'auto', current_ip: '192.168.1.20', address: '' }),
-    '/network/apply': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
+    '/network/apply': () => no(),
     '/wifi/status': () => wifi(),
     '/wifi/scan': () => wifi(),
-    '/wifi/connect': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
+    '/wifi/connect': () => no(),
     '/hotspot/status': () => ({ active: S.hotspot, ssid: 'Downstage-0000', pass: 'demo-pass-01', auto: true }),
-    '/hotspot/start': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
-    '/hotspot/stop': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
+    '/hotspot/start': () => no(),
+    '/hotspot/stop': () => no(),
     '/system/timezone': () => ({ timezone: S.tz || 'America/Denver' }),
     '/system/timezones': () => ({ timezones: ['UTC', 'America/Los_Angeles', 'America/Denver', 'America/Chicago', 'America/New_York', 'Europe/London', 'Europe/Paris', 'Asia/Tokyo', 'Australia/Sydney'] }),
-    '/system/timezone/detect': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
-    '/system/set-time': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
+    '/system/timezone/detect': () => no(),
+    '/system/set-time': () => no(),
     '/logs': () => ({ log: '[demo] Downstage One demo unit\n[demo] All systems nominal\n[epaper] this is a simulated log view' }),
-    '/system/restart': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
-    '/system/shutdown': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
-    '/system/factory-reset': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
-    '/os/update': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
-    '/os/update-file': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
-    '/config/upload': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
-    '/reset': () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' }),
+    '/system/restart': () => no(),
+    '/system/shutdown': () => no(),
+    '/system/factory-reset': () => no(),
+    '/os/update': () => no(),
+    '/os/update-file': () => no(),
+    '/config/upload': () => no(),
+    '/reset': () => no(),
   };
-  routes['/system/timezone_post'] = () => ({ ok: false, message: 'Demo - this control is disabled', error: 'Demo - this control is disabled' });
+  routes['/system/timezone_post'] = () => no();
 
   function wifi() {
     return {
@@ -235,17 +525,19 @@
 
   const realFetch = window.fetch.bind(window);
   window.fetch = function (url, opts) {
-    const u = (typeof url === 'string' ? url : url.url).split('?')[0];
+    const full = typeof url === 'string' ? url : url.url;
+    const u = full.split('?')[0];
     let handler = routes[u];
     if (u === '/system/timezone' && opts && opts.method === 'POST') handler = routes['/system/timezone_post'];
-    if (u === '/logs') handler = routes['/logs'];
-    if (!handler && u.startsWith('/')) handler = () => ({ ok: true });
+    if (u === '/companion/grid') handler = () => gridRoute(new URLSearchParams(full.split('?')[1] || ''));
+    if (/^\/source\/url\//.test(u)) handler = () => ({ ok: true, url: screenUrl(+u.split('/').pop()) });
+    if (!handler && (u.startsWith('/') || /^https?:/.test(u))) handler = () => ({ ok: true });
     if (!handler) return realFetch(url, opts);
     let body = {};
     try { if (opts && opts.body && typeof opts.body === 'string') body = JSON.parse(opts.body); } catch (e) {}
     const data = handler(body);
     return new Promise(res => setTimeout(() =>
-      res(new Response(JSON.stringify(data), { status: 200, headers: { 'Content-Type': 'application/json' } })), 120));
+      res(new Response(JSON.stringify(data), { status: 200, headers: { 'Content-Type': 'application/json' } })), 60));
   };
 
   // ── preview windows: swap MJPEG <img> for live simulated screens ──
@@ -258,6 +550,8 @@
     const ontimeSrc = !['config', 'off', 'external', 'welcome'].includes(src) && !src.startsWith('pattern-');
     if (ontimeSrc && unconfigured) return 'screen.html?src=welcome';
     if (ontimeSrc && !S.ontime_running && S.mode === 'local') return 'screen.html?src=holding';
+    if (/^aux/.test(src)) return 'screen.html?src=aux1';
+    if (src === 'companion') return 'deck.html';
     if (src === 'external') return 'screen.html?src=external&url=' + encodeURIComponent(S[`hdmi${n}_external_url`] || '');
     if (src === 'cleantimer') {
       const c = S.ct[n];
@@ -265,6 +559,7 @@
     }
     return 'screen.html?src=' + encodeURIComponent(src);
   }
+  window.__demoCustom = () => { const c = S.ct[1]; return `screen.html?src=cleantimer&key=${c.keycolour}&tc=${c.timercolour}&freeze=${c.freeze}&hp=${c.hideprogress}&hc=${c.hideclock}`; };
   let frames = {};
   function makeFrames() {
     for (const n of [1, 2]) {
@@ -300,121 +595,59 @@
   }
 
 
-  // ── demo click guard: everything outside Display Sources gets a quip ──
-  const SILLY = [
-    'Disabled in demo mode - this button is wired to hardware you have not bought yet.',
-    'On a real unit, that does the thing. In the demo, it does this message.',
-    'Demo unit says no. Politely, but no.',
-    'That control moves actual electrons. The demo has none to spare.',
-    'Nice try. The demo unit is imaginary and cannot be shut down.',
-    'This works great at 192.168.your.venue - less so in a browser tab.',
-    'Settings like this one ship with the real thing. Doors.',
-    'Disabled in demo mode. Unlike show bacon, which is always enabled.',
-    'This button is off duty. Kind of like the one guy who forgot to hit record.',
-  ];
-  let lastToast = 0, sillyTimers = [];
-  function silly() {
-    const now = Date.now();
-    if (now - lastToast < 700) return;
-    lastToast = now;
-    // cancel any pending re-assert from the previous quip - otherwise old
-    // jokes resurface on top of the new one, a few at a time
-    sillyTimers.forEach(clearTimeout);
-    sillyTimers = [];
-    const msg = SILLY[Math.floor(Math.random() * SILLY.length)];
-    if (typeof window.showToast === 'function') {
-      // the page hides info toasts after 3.5s; its timer is private, so
-      // re-assert once - jokes get ~6.5 seconds to land
-      window.showToast(msg, 'info');
-      sillyTimers.push(setTimeout(() => window.showToast(msg, 'info'), 3000));
-    } else console.log(msg);
+  // ── no click guard now: every control runs, and what would need real
+  // hardware answers with a quip from its route. Only a link or window that
+  // would leave the demo for a unit is caught here. ──
+  function toast(msg) {
+    let t = document.getElementById('demo-toast');
+    if (!t) {
+      t = document.createElement('div'); t.id = 'demo-toast';
+      t.style.cssText = 'position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:10000;max-width:min(90vw,520px);padding:12px 18px;' +
+        'background:#181D23;color:#EEF1F3;border:1px solid #232A32;border-radius:6px;font:500 14px system-ui;text-align:center';
+      document.body.appendChild(t);
+    }
+    t.textContent = msg; t.hidden = false;
+    clearTimeout(t._h); t._h = setTimeout(() => { t.hidden = true; }, 5000);
   }
-  function markAllowed() {
-    document.querySelectorAll('.field').forEach(f => {
-      const l = f.querySelector('.section-label');
-      if (l && /display sources/i.test(l.textContent)) f.dataset.demoOk = '1';
-    });
-    document.querySelectorAll('.save-bar').forEach(b => { b.dataset.demoOk = '1'; });
-    // Show/Full tabs and the preview right-click menu are demo-safe
-    document.querySelectorAll('.view-toggle').forEach(b => { b.dataset.demoOk = '1'; });
-    // the setup tabs are pure navigation - the whole point is seeing each pane
-    const stabs = document.getElementById('setup-tabs');
-    if (stabs) stabs.dataset.demoOk = '1';
-    // Quick Status Bar cells just jump to tabs - navigation, demo-safe
-    document.querySelectorAll('.status-strip').forEach(b => { b.dataset.demoOk = '1'; });
-    // Show Mode's blackout tile is fully simulated, let it play
-    const bq = document.getElementById('blackout-btn-quick');
-    if (bq) bq.dataset.demoOk = '1';
-    // the blackout banner's Resume button must work in the demo too
-    document.querySelectorAll('.alert-bar').forEach(b => { b.dataset.demoOk = '1'; });
-    // Virtual Deck is fully mocked in the demo - quick action, inline
-    // embed, pop-out window, and Copy Link all work
-    document.querySelectorAll('.qb-emulator').forEach(b => { b.dataset.demoOk = '1'; });
-    const se = document.getElementById('show-embed');
-    if (se) se.dataset.demoOk = '1';
-    document.querySelectorAll('button[onclick^="popOutButtons"], button[onclick^="copyWallLink"]')
-      .forEach(b => { b.dataset.demoOk = '1'; });
-    const ctx = document.getElementById('ctx-menu');
-    if (ctx) ctx.dataset.demoOk = '1';
-    // Virtual Previews toggle is fully simulated - let visitors flip it
-    const vp = document.getElementById('virtprev-toggle');
-    if (vp) vp.dataset.demoOk = '1';
-    // Audio Cues panel is fully simulated - selector, marks, and Test
-    const cm = document.getElementById('cue-marks');
-    if (cm) { const f = cm.closest('.field'); if (f) f.dataset.demoOk = '1'; }
-    document.querySelectorAll('button').forEach(b => {
-      if (b.textContent.trim() === 'Save & Apply') {
-        b.dataset.demoOk = '1';
-        if (b.parentElement) b.parentElement.dataset.demoOk = '1';
-      }
-    });
-  }
-  function guard(e) {
-    const t = e.target;
-    if (!(t.closest)) return;
-    const interactive = t.closest('button, select, input, textarea, a, .toggle, .channel-btn');
-    if (!interactive) return;
-    if (t.closest('[data-demo-ok]') || t.closest('#demo-ribbon')) return;
-    e.preventDefault();
-    e.stopImmediatePropagation ? e.stopImmediatePropagation() : e.stopPropagation();
-    if (e.type === 'click') silly();
+  const leaves = h => /^\/(?!\/|static|demo)/.test(h) || /:(4001|8000|8080)\b/.test(h) || /\.local\b/.test(h) || /^https?:\/\/(192\.168|10\.|127\.)/.test(h);
+  function linkGuard(e) {
+    const a = e.target.closest && e.target.closest('a[href]');
+    if (!a || a.closest('#demo-ribbon')) return;
+    if (leaves(a.getAttribute('href'))) { e.preventDefault(); e.stopImmediatePropagation(); toast(quip()); }
   }
 
-  // demo ribbon: product toggle + reset/exit, mobile-safe (full-width strip
-  // on phones so it never overlaps the logo)
+  // ribbon: reset, exit (Touch and Browser have their own toggle). In the page's flow on Touch, whose
+  // body is a full-height grid; fixed across the top on Browser.
+  const isTouch = /touch\.html/.test(location.pathname);
   function ribbon() {
     const st = document.createElement('style');
     st.textContent =
-      '#demo-ribbon{position:fixed;top:0;left:0;right:0;z-index:9999;background:#2FD97B;color:#0B0D10;' +
-      'font:600 12px system-ui;padding:5px 14px;letter-spacing:0.05em;' +
-      'display:flex;align-items:center;justify-content:center;gap:12px}' +
-      'body{padding-top:var(--demo-ribbon-h,56px)}' +
-      '.logo-row{top:var(--demo-ribbon-h,56px) !important}' +
+      '#demo-ribbon{background:#2FD97B;color:#0B0D10;font:600 12px system-ui;padding:5px 14px;letter-spacing:0.05em;' +
+      'display:flex;align-items:center;justify-content:center;gap:12px;-webkit-user-select:none;user-select:none}' +
+      (isTouch ? 'body{grid-template-rows:auto auto auto auto minmax(0,1fr) !important}'
+               : '#demo-ribbon{position:fixed;top:0;left:0;right:0;z-index:9999}' +
+                 'body{padding-top:var(--demo-ribbon-h,34px)}.top{top:var(--demo-ribbon-h,34px) !important}') +
       '#demo-ribbon a{color:#0B0D10}' +
-      '#demo-ribbon .seg{display:inline-flex;background:#0B0D10;border-radius:7px;padding:2px}' +
-      '#demo-ribbon .seg a,#demo-ribbon .seg b{padding:2px 11px;border-radius:5px;text-decoration:none;font-weight:700}' +
-      '#demo-ribbon .seg b{background:#fff;color:#0B0D10}' +
-      '#demo-ribbon .seg a{color:#e8ecef}' +
-      '#demo-ribbon .note{font-weight:600;opacity:0.85}' +
-      '@media(max-width:600px){#demo-ribbon{padding:4px 8px 6px;' +
-      'flex-wrap:wrap;row-gap:3px;column-gap:10px}' +
-      '#demo-ribbon .note{flex-basis:100%;text-align:center;font-size:11px;order:-1;opacity:0.95}' +
-      'body{padding-top:84px}}';
+      '#demo-ribbon .dnote{font-weight:600}' +
+      '@media(max-width:700px){#demo-ribbon .dnote{display:none}}';
     document.head.appendChild(st);
     const d = document.createElement('div');
     d.id = 'demo-ribbon';
     d.innerHTML = 'DEMO'
-      + '<span class="note">This is a simulated unit - click around, nothing real can break.</span>'
-      // View demo hidden while the View is teaser-only - restore the toggle at
-      // its launch: <span class="seg"><b>One</b><a href="view/">View</a></span>
-      + '<a href="#" onclick="location.reload();return false" style="text-decoration:underline">reset</a>'
+      + '<span class="dnote">A simulated show: run the timer, cut the switcher, nothing real can break.</span>'
+      + '<a href="#" id="demo-reset" style="text-decoration:underline">reset</a>'
       + '<a href="/" style="text-decoration:underline">exit demo</a>';
-    document.body.appendChild(d);
-    // the ribbon wraps differently per width - measure it so the sticky
-    // header tucks exactly beneath, no gap, no overlap
-    const setH = () => document.documentElement.style.setProperty('--demo-ribbon-h', (d.offsetHeight + 14) + 'px');
-    setH();
-    window.addEventListener('resize', setH);
+    document.body.insertBefore(d, document.body.firstChild);
+    document.getElementById('demo-reset').onclick = e => {
+      e.preventDefault();
+      window.removeEventListener('pagehide', keep);
+      try { sessionStorage.removeItem('ds_demo'); } catch (x) {}
+      S.__reset = true; location.reload();
+    };
+    if (!isTouch) {
+      const setH = () => document.documentElement.style.setProperty('--demo-ribbon-h', d.offsetHeight + 'px');
+      setH(); window.addEventListener('resize', setH);
+    }
   }
 
   // Every Companion surface in the real UI points at the unit's :8000 or its
@@ -423,11 +656,17 @@
   function deckRoutes() {
     const isEmu = u => typeof u === 'string' &&
       (u.includes(':8000/emulator') || u.includes(':8000/tablet') || u.includes('/virtual-deck'));
+    const ontimeView = u => { const m = /:4001(\/[a-z]*)/.exec(String(u)); return m ? 'screen.html?src=' + encodeURIComponent(m[1]) : null; };
     const _open = window.open ? window.open.bind(window) : null;
-    if (_open) window.open = (u, ...rest) => _open(isEmu(u) ? 'virtual-deck.html' : u, ...rest);
+    if (_open) window.open = (u, ...rest) => {
+      if (isEmu(u) || /:8000\/?$/.test(String(u))) return _open('virtual-deck.html', ...rest);
+      if (ontimeView(u)) return _open(ontimeView(u), ...rest);
+      if (leaves(String(u))) { toast(quip()); return null; }
+      return _open(u, ...rest);
+    };
     if (typeof window.openPanel === 'function') {
       const _op = window.openPanel;
-      window.openPanel = (u, ...rest) => _op(isEmu(u) ? 'deck.html' : u, ...rest);
+      window.openPanel = (u, ...rest) => _op(isEmu(u) ? 'deck.html' : (ontimeView(u) || u), ...rest);
     }
     if (typeof window.paintShowEmbed === 'function') {
       const _pse = window.paintShowEmbed;
@@ -442,9 +681,8 @@
   }
 
   function arm() {
-    makeFrames(); ribbon(); markAllowed(); deckRoutes();
-    document.addEventListener('pointerdown', guard, true);
-    document.addEventListener('click', guard, true);
+    makeFrames(); ribbon(); deckRoutes();
+    document.addEventListener('click', linkGuard, true);
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', arm);

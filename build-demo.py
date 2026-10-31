@@ -45,9 +45,64 @@ html = _re.sub(r'<link rel="icon"[^>]*>',
     '<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">'
     '<link rel="icon" href="/favicon.ico" sizes="48x48 32x32 16x16">', html, count=1)
 
+def scrub(text):
+    """These pages are public: our working notes stay out of the source. HTML
+    comments, comments in <style> blocks, and // comments in scripts."""
+    text = _re.sub(r'<!--.*?-->', '', text, flags=_re.S)
+    text = _re.sub(r'<style\b.*?</style>', lambda m: _re.sub(r'/\*.*?\*/', '', m.group(0), flags=_re.S), text, flags=_re.S)
+    def js(m):
+        out = []
+        for line in m.group(0).split('\n'):
+            if _re.match(r'\s*//', line): continue
+            out.append(_re.sub(r'\s{2,}// .*$', '', line))
+        return '\n'.join(out)
+    return _re.sub(r'<script\b[^>]*>.*?</script>', js, text, flags=_re.S)
+
+def must(text, old, new):
+    """A template change that breaks a demo rewrite fails the build, loudly."""
+    assert text.count(old) == 1, ("demo rewrite no longer matches", old, text.count(old))
+    return text.replace(old, new)
+
+# the Touch / Browser toggle: pages next to each other here, not the unit's routes
+html = must(html, "location.replace('/touch')", "location.replace('touch.html')")
+html = must(html, "location.href='/touch'", "location.href='touch.html'")
+
+html = scrub(html)
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 open(OUT, "w").write(html)
 print("wrote", OUT, len(html), "bytes")
+
+# ── the touch page ────────────────────────────────────────────────────────────
+SRC_TOUCH = os.path.expanduser("~/Documents/Downstage Systems/downstage-os/one/templates/touch.html")
+OUT_TOUCH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "demo", "touch.html")
+t = env.from_string(open(SRC_TOUCH).read()).render(hostname="downstage-0000")
+t = must(t, "<body>", '<body>\n<script src="demo-shim.js?v=' + BUILD_TS + '"></script>')
+t = must(t, "<title>", "<title>Demo — ")
+t = must(t, '<link rel="manifest" href="/touch.webmanifest">', '')
+t = must(t, '<link rel="apple-touch-icon" href="/static/apple-touch-icon.png">',
+         '<link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" type="image/svg+xml" href="/favicon.svg">')
+t = must(t, "location.href = '/?browser=1'", "location.href = 'index.html?browser=1'")
+# the Deck: the canned mockup (the + XL gets a stand-in socket in the shim)
+t = must(t, "return S.status ? 'http://' + host + ':8000/emulator/' + (s.companion_emulator_id || '') : '';",
+         "return S.status ? 'deck.html' : '';")
+# the full timer: the fake screens, which follow the simulated show
+t = must(t, "return v === 'custom' ? '/view/custom-timer' : v === 'aux1' ? '/view/aux?n=1' : 'http://' + HOST + ':4001' + v;",
+         "return v === 'custom' ? window.__demoCustom() : v === 'aux1' ? 'screen.html?src=aux1' : 'screen.html?src=' + encodeURIComponent(v);")
+# output previews: never an MJPEG grab, the fake screen for what the output shows
+t = must(t, "const key = mode + '|' + (mode === 'virtual' ? src : '');",
+         "const key = mode + '|' + src + '|' + bo.join() + '|' + (s.testcard_outputs || []).join();")
+t = must(t, "if (mode === 'live') {\n        box.innerHTML = '<img alt=\"\">';", "if (false) {\n        box.innerHTML = '<img alt=\"\">';")
+t = scrub(t)
+open(OUT_TOUCH, "w").write(t)
+print("wrote", OUT_TOUCH, len(t), "bytes")
+
+# the unit's files these pages name, where the site serves them
+import shutil
+ST = os.path.expanduser("~/Documents/Downstage Systems/downstage-os/one/static")
+SITE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
+for f in ("keepawake.mp4", "downstage-one-mark.svg", "fonts/inter-400.woff2", "fonts/inter-600.woff2",
+          "fonts/rajdhani-600.woff2", "fonts/rajdhani-700.woff2", "fonts/share-tech-mono-400.woff2"):
+    shutil.copy2(os.path.join(ST, f), os.path.join(SITE, f))
 
 # ── Downstage View demo ───────────────────────────────────────────────────────
 SRC_VIEW = os.path.expanduser("~/Documents/Downstage Systems/downstage-os/view/templates/index.html")
@@ -76,5 +131,6 @@ html_v = _re.sub(r'<link rel="icon"[^>]*>',
     '<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">'
     '<link rel="icon" href="/favicon.ico" sizes="48x48 32x32 16x16">', html_v, count=1)
 os.makedirs(os.path.dirname(OUT_VIEW), exist_ok=True)
+html_v = scrub(html_v)
 open(OUT_VIEW, "w").write(html_v)
 print("wrote", OUT_VIEW, len(html_v), "bytes")

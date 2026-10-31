@@ -23,23 +23,47 @@ function markSvg(op) {
 
 // ── timer views ──────────────────────────────────────────────────────────────
 let t0 = Date.now();
-const DUR = 10 * 60 * 1000;
+let DUR = 10 * 60 * 1000;
+// the demo's show, from the page holding this frame; on its own, a loop
+const show = () => { try { return (parent !== window && parent.__demo) ? parent.__demo() : null; } catch (e) { return null; } };
+let onClock = false;
 function timerLoop(render) {
   function tick() {
-    const elapsed = (Date.now() - t0) % (DUR + 60000);
-    const rem = DUR - elapsed;
-    render(rem);
+    const d = show();
+    onClock = !!(d && d.clock);
+    if (d && d.total > 0) DUR = d.total;
+    const title = document.getElementById('title');
+    if (title && d) title.textContent = d.title;
+    render(d ? d.left : DUR - (Date.now() - t0) % (DUR + 60000));
     requestAnimationFrame(tick);
   }
   tick();
 }
+// OnTime's message over a timer view, as the real one puts it up
+function messageLoop() {
+  const m = document.createElement('div');
+  m.style.cssText = 'position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;background:#000;color:#fff;font-weight:700;font-size:16vh;line-height:1.1;padding:4vw;z-index:2';
+  document.body.appendChild(m);
+  setInterval(() => {
+    const d = show(), on = !!(d && d.msg);
+    m.style.display = on ? 'flex' : 'none';
+    if (on) { m.textContent = d.msg; m.style.opacity = d.blink && Date.now() % 1000 < 400 ? 0.2 : 1; }
+  }, 200);
+}
 function fmt(ms) {
+  if (onClock) return new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
   const neg = ms < 0; ms = Math.abs(ms);
   const m = Math.floor(ms / 60000), s = Math.floor(ms % 60000 / 1000);
   return (neg ? '-' : '') + m + ':' + String(s).padStart(2, '0');
 }
 
-if (src === 'cleantimer') {
+if (src === 'aux1') {
+  el(`<div class="full"><div class="big" id="t" style="color:#fff"></div>
+      <div style="color:#5a6470;font-size:3vh;letter-spacing:0.2em">AUX TIMER 1</div></div>`);
+  const tick = () => { const d = show(); document.getElementById('t').textContent = fmt(d ? d.aux : 300000); };
+  tick(); setInterval(tick, 200);
+}
+else if (src === 'cleantimer') {
   const key = '#' + (q.get('key') || '000000'), tc = '#' + (q.get('tc') || 'ffffff');
   const freeze = q.get('freeze') !== 'false';
   const hp = q.get('hp') !== 'false', hc = q.get('hc') !== 'false';
@@ -69,7 +93,7 @@ else if (['/timer','/countdown','/backstage','/studio','/timeline','/info','/op'
     setInterval(() => { document.getElementById('t').textContent = new Date().toLocaleTimeString(); }, 250);
   } else if (isView) {
     el(`<div class="full">
-        <div style="color:#9aa3ad;font-size:3.4vh">Sound check</div>
+        <div id="title" style="color:#9aa3ad;font-size:3.4vh">Sound check</div>
         <div class="big" id="t" style="color:#fff;font-size:20vh"></div>
         <div style="width:70vw;height:1.6vh;background:#1c2127;border-radius:1vh"><div id="p" style="height:100%;background:#2FD97B;border-radius:1vh"></div></div>
         <div style="color:#5a6470;font-size:2.6vh;letter-spacing:0.15em">${names[src].toUpperCase()} · ONTIME</div></div>`);
@@ -123,10 +147,10 @@ else if (src.startsWith('pattern-')) {
       x.strokeStyle = '#E8ECEF'; x.lineWidth = 2;
       const r = H * 0.12;
       [[r, r], [W-r, r], [r, H-r], [W-r, H-r]].forEach(([cx, cy]) => {
-        x.beginPath(); x.arc(cx, cy, r-1, 0, 7); x.stroke();
+        x.beginPath(); x.arc(cx, cy, Math.max(r-1, 0), 0, 7); x.stroke();
         x.fillStyle = '#fff'; x.beginPath(); x.arc(cx, cy, r*0.3, 0, 7); x.fill();
       });
-      x.beginPath(); x.arc(W/2, H/2, H/2 - 1, 0, 7); x.stroke();
+      x.beginPath(); x.arc(W/2, H/2, Math.max(H/2 - 1, 0), 0, 7); x.stroke();
     }
     function label(txt, y) {
       x.font = 'bold ' + mono(H*0.022);
@@ -201,6 +225,8 @@ else if (src.startsWith('pattern-')) {
 else {
   el(`<div class="full"><div style="color:#565e66;font-size:3vh">${src}</div></div>`);
 }
+
+if (src === 'cleantimer' || src === '/timer' || src === '/countdown' || src === '/backstage') messageLoop();
 
 // identify overlay
 if (q.get('identify')) {
