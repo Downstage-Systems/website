@@ -157,7 +157,7 @@ html[data-tally="off"] .deck i.on { background: #2a2a2d; }
 footer { background: var(--tile); color: var(--grey); font-size: 13px; line-height: 1.33; letter-spacing: -0.01em; }
 footer .in { max-width: 980px; margin: 0 auto; padding: 40px 22px 24px; }
 footer .logo-foot { height: 40px; width: auto; color: var(--ink); margin-bottom: 28px; }
-.foot-links { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-bottom: 28px; border-bottom: 1px solid var(--line); }
+.foot-links { display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px; padding-bottom: 28px; border-bottom: 1px solid var(--line); }
 .foot-links strong { display: block; color: var(--ink); font-weight: 600; margin-bottom: 10px; }
 .foot-links a { display: block; margin-bottom: 8px; }
 .foot-links a:hover { text-decoration: underline; color: var(--ink); }
@@ -554,3 +554,49 @@ html.v3d-open, html.v3d-open body { overflow: hidden; overscroll-behavior: none;
 /* the Downstage Cue has no 3D model yet: an invisible button keeps its spec rows level with the others */
 .v3d-btn.hold { visibility: hidden; }
 @media (max-width: 734px) { .v3d-btn.hold { display: none; } }
+
+/* ---- the One leads the home page; the Cue lights open with their own hero ---- */
+.hero .h1 { font-size: 56px; }
+.hero .h1 .go { color: var(--green); }
+@media (max-width: 1068px) { .hero .h1 { font-size: 48px; } }
+@media (max-width: 734px) { .hero .h1 { font-size: 40px; } }
+.cards.on-white .card { background: var(--tile); }
+.links-row { display: flex; gap: 28px; justify-content: center; flex-wrap: wrap; margin-top: 40px; }
+.later-card img.shot { width: 320px; flex: none; border-radius: 12px; }
+@media (max-width: 734px) { .later-card img.shot { width: 100%; } }
+.shop-hero .later-card { text-align: left; margin-top: 8px; }
+@media (max-width: 734px) { .shop-hero .later-card { text-align: center; } }
+
+/* ---- apps ---- */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.apps-hero { padding-bottom: 24px; }
+.app-title { display: flex; align-items: center; justify-content: center; gap: 16px; }
+.app-title img { width: 56px; height: 56px; border-radius: 13px; }
+.app-note { font-size: 14px; color: var(--mist); text-align: center; margin-top: 16px; }
+.light .app-note, .sec:not(.dark) .app-note { color: var(--grey); }
+.app-shot { display: block; width: 100%; max-width: 1100px; margin: 48px auto 0; border-radius: 16px; border: 1px solid #2a2f35; }
+.app-why { max-width: 760px; margin: 0 auto; text-align: center; }
+.app-why blockquote { font-size: 28px; line-height: 1.25; font-weight: 600; letter-spacing: -0.015em; }
+.app-why cite { display: block; margin-top: 16px; font-style: normal; color: var(--grey); }
+.app-feats { max-width: 1024px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.app-feat { background: var(--night); color: var(--paper); border-radius: 28px; padding: 36px 36px 0; overflow: hidden; display: flex; flex-direction: column; min-height: 420px; }
+.app-feat h3 { font-size: 24px; }
+.app-feat p { color: var(--mist); margin-top: 10px; }
+.app-feat .pic { flex: 1; display: flex; align-items: flex-start; justify-content: center; margin-top: 28px; max-height: 340px; overflow: hidden; }
+.app-feat .pic img { border-radius: 12px 12px 0 0; width: min(320px, 100%); }
+.app-feat.wide { grid-column: 1 / -1; min-height: 0; padding-bottom: 36px; }
+.app-feat.wide .pic { max-height: none; overflow: visible; }
+.app-feat.wide .pic img { width: 100%; max-width: 900px; border-radius: 12px; }
+.app-also { max-width: 820px; margin: 40px auto 0; text-align: center; color: var(--grey); }
+.soon-shot { display: block; width: 100%; max-width: 980px; margin: 0 auto; border-radius: 16px; border: 1px solid var(--line); }
+@media (max-width: 734px) {
+  .app-feats { grid-template-columns: 1fr; }
+  .app-feat { padding: 28px 22px 0; border-radius: 22px; min-height: 0; }
+  .app-feat.wide { padding-bottom: 28px; }
+  .app-why blockquote { font-size: 22px; }
+  .app-title img { width: 44px; height: 44px; border-radius: 10px; }
+  .app-shot, .soon-shot { border-radius: 10px; margin-top: 28px; }
+  .soon-shot { margin-top: 0; }
+}
+.sec .head p.later, .later-card p.later { font-size: 13px; color: var(--green-ink); margin: 0 0 6px; }
+@media (max-width: 734px) { .app-title { flex-direction: column; gap: 12px; } }
