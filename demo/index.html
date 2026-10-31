@@ -1843,7 +1843,7 @@
 </head>
 <body>
 <style>.addr-box{display:none!important}</style>
-<script src="demo-shim.js?v=1793420377"></script>
+<script src="demo-shim.js?v=1793422315"></script>
 
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
   <symbol id="icon-cue-mini" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -2614,7 +2614,7 @@
       </div>
 
       
-      <div class="field full-only">
+      <div class="field full-only" id="atem-field" style="display:none">
         <div class="section-label">ATEM switcher</div>
         <div class="local-panel">
           <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
@@ -5785,6 +5785,21 @@
   function openCompanion() {
     openPanel(`http://${compHost()}:8000`, 'Companion');
   }
+  let _myRig = false, _myRigTaps = [];
+  try { _myRig = localStorage.getItem('ds_myrig') === '1'; } catch (e) {}
+  function myRigPaint() { const f = document.getElementById('atem-field'); if (f) f.style.display = _myRig ? '' : 'none'; }
+  document.addEventListener('DOMContentLoaded', myRigPaint);
+  document.addEventListener('pointerdown', e => {
+    const t = e.target;
+    if (!t.closest || !t.closest('.top .brand') || t.closest('#tool-dock, .ui-pick')) return;
+    const now = Date.now(); _myRigTaps = _myRigTaps.filter(x => now - x < 2000); _myRigTaps.push(now);
+    if (_myRigTaps.length < 5) return;
+    _myRigTaps = []; _myRig = !_myRig;
+    try { localStorage.setItem('ds_myrig', _myRig ? '1' : '0'); } catch (err) {}
+    myRigPaint();
+    showToast(_myRig ? 'My rig on: ATEM switcher in the Companion tab, ATEM Router on Touch.' : 'My rig off.', 'info');
+  });
+
   async function atemPaint() {
     try {
       const d = await (await fetch('/api/v1/one/router', { cache: 'no-store' })).json();

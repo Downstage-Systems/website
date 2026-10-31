@@ -520,7 +520,7 @@
 
 </head>
 <body>
-<script src="demo-shim.js?v=1793420377"></script>
+<script src="demo-shim.js?v=1793422315"></script>
 
 <div id="lost">The One is not answering. Still trying…</div>
 <header class="bar">
@@ -541,7 +541,7 @@
   <button data-tab="timer">Timer</button>
   <button data-tab="msg">Messages</button>
   <button data-tab="outputs">Outputs</button>
-  <button data-tab="router">ATEM Router</button>
+  <button data-tab="router" id="tab-router" hidden>ATEM Router</button>
   <button data-tab="rig">Cue</button>
   <button data-tab="tools">Tools</button>
 </nav>
@@ -828,6 +828,7 @@
               tab: 'timer', tview: 'main', typed: '', misses: 0, pinWait: null };
   const store = { get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } },
                   set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+  let myRig = store.get('ds_myrig', '') === '1';
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
   async function getJSON(path) {
@@ -2214,6 +2215,7 @@
 
   function setTab(t) {
     if (S.lock && t !== lockTab()) return;
+    if (t === 'router' && !myRig) t = 'timer';
     S.tab = t; store.set('ds_tab', t);
     for (const b of document.querySelectorAll('#tabs button')) b.classList.toggle('on', b.dataset.tab === t);
     for (const p of document.querySelectorAll('.page')) p.classList.toggle('on', p.id === 'pg-' + t);
@@ -2271,6 +2273,21 @@
   async function pollFleet() {
     try { S.fleet = await getJSON('/discover/last'); paintBarLights(); paintRail(); if (S.tab === 'rig') paintRig(); } catch (e) {}
   }
+
+  function paintMyRig() { $('tab-router').hidden = !myRig; }
+  (function () {
+    let taps = [];
+    document.querySelector('.bar .unit').addEventListener('pointerdown', () => {
+      if (S.lock) return;
+      const now = Date.now(); taps = taps.filter(t => now - t < 2000); taps.push(now);
+      if (taps.length < 5) return;
+      taps = []; myRig = !myRig; store.set('ds_myrig', myRig ? '1' : '0');
+      paintMyRig();
+      if (myRig) setTab('router'); else if (S.tab === 'router') setTab('timer');
+      toast(myRig ? 'My rig on: ATEM Router.' : 'My rig off.');
+    });
+  })();
+  paintMyRig();
 
   const TABS = ['deck', 'timer', 'msg', 'outputs', 'router', 'rig', 'tools'];
   let hash = location.hash.slice(1);

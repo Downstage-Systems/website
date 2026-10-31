@@ -634,7 +634,7 @@
     const d = document.createElement('div');
     d.id = 'demo-ribbon';
     d.innerHTML = 'DEMO'
-      + '<span class="dnote">A simulated show: run the timer, cut the switcher, nothing real can break.</span>'
+      + '<span class="dnote">A simulated show: run the timer, try the lights, nothing real can break.</span>'
       + '<a href="#" id="demo-reset" style="text-decoration:underline">reset</a>'
       + '<a href="/" style="text-decoration:underline">exit demo</a>';
     document.body.insertBefore(d, document.body.firstChild);
