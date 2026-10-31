@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Apps - Downstage</title>
-  <meta name="description" content="Apps from Downstage Systems. Downstage Show Builder, a free Mac app for building Bitfocus Companion pages, and SuperSource Builder, coming soon: ATEM SuperSource backgrounds with Companion smart buttons to run them.">
+  <meta name="description" content="Apps from Downstage Systems. Downstage Show Builder, a free Mac app for building Bitfocus Companion pages, with SuperSource Builder and Virtual Deck coming soon.">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
   <link rel="icon" href="/favicon.ico" sizes="48x48 32x32 16x16">
@@ -12,7 +12,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="preload" href="/static/fonts/inter-600.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/static/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/static/site.css?v=46">
+  <link rel="stylesheet" href="/static/site.css?v=49">
 </head>
 <body>
 
@@ -45,6 +45,39 @@
   <p class="sub" data-rise style="--i:1"><strong>Built for our own shows.</strong> Ready for yours.</p>
 </section>
 
+<section class="sec" id="apps-pick" aria-label="Choose an app">
+  <div class="app-picks">
+    <a class="app-pick" href="#show-builder" aria-expanded="false" aria-controls="panel-show-builder" data-app="show-builder" data-rise>
+      <img src="/static/apps/show-builder.webp" alt="Show Builder, with a page of ATEM keys laid out on a Stream Deck" width="2000" height="1147">
+      <div>
+        <p class="later">Free Mac app</p>
+        <h2>Downstage Show Builder</h2>
+        <p>Lay out your Bitfocus Companion pages on a picture of your Stream Deck, then send them straight to Companion.</p>
+        <span class="more"><span class="pick-open">See details</span><span class="pick-close">Close</span></span>
+      </div>
+    </a>
+    <a class="app-pick" href="#supersource-builder" aria-expanded="false" aria-controls="panel-supersource-builder" data-app="supersource-builder" data-rise>
+      <img src="/static/video/loops/supersource-designer-poster.jpg?v=2" alt="SuperSource Builder's designer, with a two-box look and its overlays" width="960" height="720">
+      <div>
+        <p class="later">Coming soon</p>
+        <h2>SuperSource Builder</h2>
+        <p>Design the background behind your ATEM SuperSource boxes, and get Companion smart buttons that run the whole look.</p>
+        <span class="more"><span class="pick-open">See details</span><span class="pick-close">Close</span></span>
+      </div>
+    </a>
+    <a class="app-pick" href="#virtual-deck" aria-expanded="false" aria-controls="panel-virtual-deck" data-app="virtual-deck" data-rise>
+      <img src="/static/apps/virtual-deck.webp" alt="Virtual Deck, a 15 key Stream Deck drawn on screen" width="1000" height="573">
+      <div>
+        <p class="later">Coming soon</p>
+        <h2>Downstage Virtual Deck</h2>
+        <p>A Stream Deck on your screen. Any model, or a custom grid, as a surface in Companion.</p>
+        <span class="more"><span class="pick-open">See details</span><span class="pick-close">Close</span></span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<div class="app-panel" id="panel-show-builder">
 <section class="sec dark" id="show-builder" aria-labelledby="sb-h">
   <div class="head" data-rise>
     <div class="app-title"><img src="/static/apps/show-builder-icon.png" alt="" width="1024" height="1024"><h2 id="sb-h">Downstage Show Builder</h2></div>
@@ -110,8 +143,11 @@
     <div data-rise style="--i:2"><h3>Build</h3><p>Pick a recipe, click a source, click a key. Then choose Send to Companion and Build page.</p></div>
   </div>
   <p class="app-also" data-rise>Built around the ATEM so far, with more on the way. <a class="more" href="https://github.com/Downstage-Systems/show-builder/discussions" rel="noopener">Questions and ideas</a></p>
+  <p class="app-back"><a class="more" href="#apps-pick">Back to all apps</a></p>
 </section>
+</div>
 
+<div class="app-panel" id="panel-supersource-builder">
 <section class="sec" id="supersource-builder" aria-labelledby="ss-h">
   <div class="head" data-rise>
     <p class="later">Coming soon</p>
@@ -146,12 +182,27 @@
     </div>
   </div>
   <p class="app-note" data-rise>For the ATEM Mini Extreme ISO, 2 M/E and 4 M/E. Smart buttons need Bitfocus Companion.</p>
+  <p class="app-back"><a class="more" href="#apps-pick">Back to all apps</a></p>
 </section>
+</div>
+
+<div class="app-panel" id="panel-virtual-deck">
+<section class="sec dark" id="virtual-deck" aria-labelledby="vd-h">
+  <div class="head" data-rise>
+    <p class="later">Coming soon</p>
+    <h2 id="vd-h">Downstage Virtual Deck</h2>
+    <p>A Stream Deck on your screen. Pick any model, from the Mini to the + XL, or a custom grid, and it joins Bitfocus Companion as a surface.</p>
+  </div>
+  <img class="app-shot" data-rise style="--i:1" src="/static/apps/virtual-deck.webp" alt="Virtual Deck's window, with a 15 key Stream Deck drawn on screen" width="1000" height="573" loading="lazy">
+  <p class="app-note" data-rise>A Mac app for Apple Silicon. Needs Bitfocus Companion 4.0 or later.</p>
+  <p class="app-back"><a class="more" href="#apps-pick">Back to all apps</a></p>
+</section>
+</div>
 
 <section class="sec light" id="updates" aria-labelledby="close-h">
   <div class="signup-card" data-rise>
     <h2 id="close-h">Hear when it's ready.</h2>
-    <p>Leave your email and we will tell you when SuperSource Builder and new apps arrive.</p>
+    <p>Leave your email and we will tell you when SuperSource Builder, Virtual Deck and new apps arrive.</p>
     <form class="signup" id="signup-form" onsubmit="return joinList(event)">
       <input type="email" id="signup-email" placeholder="you@yourcompany.com" required autocomplete="email" aria-label="Email address">
       <button type="submit" class="pill">Notify me</button>
@@ -177,7 +228,7 @@
     <div class="foot-links">
       <div><strong>Downstage One</strong><a href="/one/">Downstage One</a><a href="/demo/">Try the One's interface</a></div>
       <div><strong>Cue lights</strong><a href="/shop/#compare">Cue Lite</a><a href="/shop/#compare">Cue 360</a><a href="/shop/#compare">Cue Mini</a><a href="/shop/#compare">Downstage Cue</a><a href="/shop/">Shop</a></div>
-      <div><strong>Apps</strong><a href="/apps/#show-builder">Show Builder</a><a href="/apps/#supersource-builder">SuperSource Builder</a></div>
+      <div><strong>Apps</strong><a href="/apps/#show-builder">Show Builder</a><a href="/apps/#supersource-builder">SuperSource Builder</a><a href="/apps/#virtual-deck">Virtual Deck</a></div>
       <div><strong>Open source</strong><a href="https://github.com/Downstage-Systems/downstage-os" rel="noopener">Downstage OS</a><a href="https://www.getontime.no" rel="noopener">Ontime</a><a href="https://bitfocus.io/companion" rel="noopener">Companion</a></div>
       <div><strong>Talk to us</strong><a href="/support/">Support</a><a href="/warranty/">Warranty</a><a href="mailto:hello@downstage.systems">hello@downstage.systems</a><a href="/support/#questions">Questions</a></div>
     </div>
@@ -224,11 +275,41 @@
     function rise() {
       const line = innerHeight * 0.92;
       waiting = waiting.filter(el => {
-        if (el.getBoundingClientRect().top < line) { el.classList.add('in'); return false; }
+        if (el.offsetParent && el.getBoundingClientRect().top < line) { el.classList.add('in'); return false; }
         return true;
       });
     }
     addEventListener('scroll', rise, { passive: true }); addEventListener('resize', rise); rise();
+  })();
+
+  // The app picker: one app's details open below it, and #name links open that app.
+  (function () {
+    const picks = Array.from(document.querySelectorAll('.app-pick'));
+    const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function show(id, scroll) {
+      picks.forEach(a => {
+        const on = a.dataset.app === id;
+        a.setAttribute('aria-expanded', on);
+        const panel = document.getElementById('panel-' + a.dataset.app);
+        panel.classList.toggle('open', on);
+        panel.querySelectorAll('video').forEach(v => { if (on) { const p = v.play(); if (p) p.catch(() => {}); } else v.pause(); });
+      });
+      dispatchEvent(new Event('scroll'));
+      if (id && scroll) document.getElementById('panel-' + id).scrollIntoView({ behavior: smooth && scroll !== 'jump' ? 'smooth' : 'instant' });
+    }
+    picks.forEach(a => a.addEventListener('click', e => {
+      e.preventDefault();
+      const id = a.getAttribute('aria-expanded') === 'true' ? '' : a.dataset.app;
+      history.replaceState(null, '', id ? '#' + id : location.pathname);
+      show(id, true);
+    }));
+    function fromHash(scroll) {
+      const id = location.hash.slice(1);
+      if (picks.some(a => a.dataset.app === id)) show(id, scroll);
+    }
+    addEventListener('hashchange', () => fromHash(true));
+    show('');   // closed panels keep their videos stopped
+    fromHash('jump');
   })();
 </script>
 </body>
