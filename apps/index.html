@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Apps - Downstage</title>
-  <meta name="description" content="Apps from Downstage Systems. Downstage Show Builder, a free Mac app for building Bitfocus Companion pages, with SuperSource Builder and Virtual Deck coming soon.">
+  <meta name="description" content="Mac apps from Downstage Systems: Show Builder, SuperSource Builder, Virtual Deck and Downstage Find.">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
   <link rel="icon" href="/favicon.ico" sizes="48x48 32x32 16x16">
@@ -12,7 +12,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="preload" href="/static/fonts/inter-600.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/static/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/static/site.css?v=49">
+  <link rel="stylesheet" href="/static/site.css?v=50">
 </head>
 <body>
 
@@ -59,18 +59,27 @@
     <a class="app-pick" href="#supersource-builder" aria-expanded="false" aria-controls="panel-supersource-builder" data-app="supersource-builder" data-rise>
       <img src="/static/video/loops/supersource-designer-poster.jpg?v=2" alt="SuperSource Builder's designer, with a two-box look and its overlays" width="960" height="720">
       <div>
-        <p class="later">Coming soon</p>
+        <p class="later">Free Mac app, download coming soon</p>
         <h2>SuperSource Builder</h2>
         <p>Design the background behind your ATEM SuperSource boxes, and get Companion smart buttons that run the whole look.</p>
         <span class="more"><span class="pick-open">See details</span><span class="pick-close">Close</span></span>
       </div>
     </a>
     <a class="app-pick" href="#virtual-deck" aria-expanded="false" aria-controls="panel-virtual-deck" data-app="virtual-deck" data-rise>
-      <img src="/static/apps/virtual-deck.webp" alt="Virtual Deck, a 15 key Stream Deck drawn on screen" width="1000" height="573">
+      <img src="/static/apps/virtual-deck.webp" alt="Virtual Deck, a Stream Deck XL drawn on screen with its keys lit" width="2000" height="1146">
       <div>
-        <p class="later">Coming soon</p>
+        <p class="later">Free Mac app</p>
         <h2>Downstage Virtual Deck</h2>
         <p>A Stream Deck on your screen. Any model, or a custom grid, as a surface in Companion.</p>
+        <span class="more"><span class="pick-open">See details</span><span class="pick-close">Close</span></span>
+      </div>
+    </a>
+    <a class="app-pick" href="#downstage-find" aria-expanded="false" aria-controls="panel-downstage-find" data-app="downstage-find" data-rise>
+      <img src="/static/apps/downstage-find.webp" alt="Downstage Find, listing the Downstage devices on a network" width="2000" height="1146">
+      <div>
+        <p class="later">Free Mac app</p>
+        <h2>Downstage Find</h2>
+        <p>Finds the Downstage devices on your network and opens their apps.</p>
         <span class="more"><span class="pick-open">See details</span><span class="pick-close">Close</span></span>
       </div>
     </a>
@@ -87,8 +96,8 @@
     <a class="pill" href="https://github.com/Downstage-Systems/show-builder/raw/main/Downstage-Show-Builder.zip" rel="noopener">Download for Mac</a>
     <a class="pill ghost" href="https://github.com/Downstage-Systems/show-builder" rel="noopener">See it on GitHub</a>
   </div>
-  <p class="app-note" data-rise style="--i:1">Free. Apple Silicon Macs. Needs Bitfocus Companion.</p>
-  <img class="app-shot" data-rise style="--i:2" src="/static/apps/show-builder.webp" alt="Show Builder's window: source and recipe lists on the left, a page of keys on a Stream Deck XL in the middle, and the show and output panels on the right" width="2000" height="1147">
+  <p class="app-note" data-rise style="--i:1">Free. Apple Silicon Macs. Needs Bitfocus Companion. The first time, macOS blocks it: go to System Settings, Privacy &amp; Security, and choose Open Anyway.</p>
+  <video class="app-shot" data-rise style="--i:2" autoplay muted loop playsinline preload="metadata" aria-label="Show Builder in use: keys placed on a Stream Deck XL page, one source at a time, then sent to Companion" poster="/static/video/loops/show-builder-poster.jpg?v=1" width="2000" height="1146"><source src="/static/video/loops/show-builder-hevc.mp4?v=1" type='video/mp4; codecs="hvc1.2.4.L123.B0"'><source src="/static/video/loops/show-builder.webm?v=1" type="video/webm"><source src="/static/video/loops/show-builder.mp4?v=1" type="video/mp4"></video>
 </section>
 
 <section class="sec light" aria-labelledby="why-h">
@@ -150,10 +159,13 @@
 <div class="app-panel" id="panel-supersource-builder">
 <section class="sec" id="supersource-builder" aria-labelledby="ss-h">
   <div class="head" data-rise>
-    <p class="later">Coming soon</p>
     <h2 id="ss-h">SuperSource Builder</h2>
     <p>Design the background behind your ATEM SuperSource boxes in your client's colors, and get Companion smart buttons that run the whole look.</p>
   </div>
+  <div class="pills" data-rise style="--i:1">
+    <a class="pill ghost" href="https://github.com/Downstage-Systems/supersource-builder" rel="noopener">See it on GitHub</a>
+  </div>
+  <p class="app-note" data-rise style="--i:1">Free. Download coming soon. For Apple Silicon Macs.</p>
   <div class="app-feats">
     <article class="app-feat" data-rise>
       <h3>Smart Companion buttons</h3>
@@ -189,20 +201,69 @@
 <div class="app-panel" id="panel-virtual-deck">
 <section class="sec dark" id="virtual-deck" aria-labelledby="vd-h">
   <div class="head" data-rise>
-    <p class="later">Coming soon</p>
     <h2 id="vd-h">Downstage Virtual Deck</h2>
     <p>A Stream Deck on your screen. Pick any model, from the Mini to the + XL, or a custom grid, and it joins Bitfocus Companion as a surface.</p>
   </div>
-  <img class="app-shot" data-rise style="--i:1" src="/static/apps/virtual-deck.webp" alt="Virtual Deck's window, with a 15 key Stream Deck drawn on screen" width="1000" height="573" loading="lazy">
-  <p class="app-note" data-rise>A Mac app for Apple Silicon. Needs Bitfocus Companion 4.0 or later.</p>
+  <div class="pills" data-rise style="--i:1">
+    <a class="pill" href="https://github.com/Downstage-Systems/virtual-deck/releases/latest/download/Downstage-Virtual-Deck.zip" rel="noopener">Download for Mac</a>
+  </div>
+  <p class="app-note" data-rise style="--i:1">Free. Apple Silicon Macs. Needs Bitfocus Companion 4.0 or later. The first time, macOS blocks it: go to System Settings, Privacy &amp; Security, and choose Open Anyway.</p>
+  <img class="app-shot" data-rise style="--i:1" src="/static/apps/virtual-deck.webp" alt="Virtual Deck's window, with a Stream Deck XL drawn on screen and its keys lit" width="2000" height="1146" loading="lazy">
+  <div class="app-feats vd-feats">
+    <article class="app-feat" data-rise style="--i:0">
+      <h3>Any Stream Deck</h3>
+      <p>Mini, Neo, 15 key, XL, + or + XL, picked from one menu.</p>
+      <div class="pic"><video class="loop" autoplay muted loop playsinline preload="metadata" aria-hidden="true" poster="/static/video/loops/virtual-deck-models-poster.jpg?v=1" width="960" height="720"><source src="/static/video/loops/virtual-deck-models-hevc.mp4?v=1" type='video/mp4; codecs="hvc1.2.4.L123.B0"'><source src="/static/video/loops/virtual-deck-models.webm?v=1" type="video/webm"><source src="/static/video/loops/virtual-deck-models.mp4?v=1" type="video/mp4"></video></div>
+    </article>
+    <article class="app-feat" data-rise style="--i:1">
+      <h3>A custom grid</h3>
+      <p>Set the columns and rows you need, and Companion fills them.</p>
+      <div class="pic"><video class="loop" autoplay muted loop playsinline preload="metadata" aria-hidden="true" poster="/static/video/loops/virtual-deck-custom-grid-poster.jpg?v=1" width="960" height="720"><source src="/static/video/loops/virtual-deck-custom-grid-hevc.mp4?v=1" type='video/mp4; codecs="hvc1.2.4.L123.B0"'><source src="/static/video/loops/virtual-deck-custom-grid.webm?v=1" type="video/webm"><source src="/static/video/loops/virtual-deck-custom-grid.mp4?v=1" type="video/mp4"></video></div>
+    </article>
+    <article class="app-feat" data-rise style="--i:0">
+      <h3>Real keys</h3>
+      <p>Click a key on screen and Companion runs it like a hardware press.</p>
+      <div class="pic"><video class="loop" autoplay muted loop playsinline preload="metadata" aria-hidden="true" poster="/static/video/loops/virtual-deck-keys-poster.jpg?v=1" width="960" height="720"><source src="/static/video/loops/virtual-deck-keys-hevc.mp4?v=1" type='video/mp4; codecs="hvc1.2.4.L123.B0"'><source src="/static/video/loops/virtual-deck-keys.webm?v=1" type="video/webm"><source src="/static/video/loops/virtual-deck-keys.mp4?v=1" type="video/mp4"></video></div>
+    </article>
+    <article class="app-feat" data-rise style="--i:1">
+      <h3>Touch strip and dials</h3>
+      <p>The + models have working dials, and the strip shows what each one is set to.</p>
+      <div class="pic"><video class="loop" autoplay muted loop playsinline preload="metadata" aria-hidden="true" poster="/static/video/loops/virtual-deck-plus-poster.jpg?v=1" width="960" height="720"><source src="/static/video/loops/virtual-deck-plus-hevc.mp4?v=1" type='video/mp4; codecs="hvc1.2.4.L123.B0"'><source src="/static/video/loops/virtual-deck-plus.webm?v=1" type="video/webm"><source src="/static/video/loops/virtual-deck-plus.mp4?v=1" type="video/mp4"></video></div>
+    </article>
+    <article class="app-feat" data-rise style="--i:0">
+      <h3>A surface in Companion</h3>
+      <p>It joins Companion like hardware, and you choose its page under Surfaces.</p>
+      <div class="pic"><video class="loop" autoplay muted loop playsinline preload="metadata" aria-hidden="true" poster="/static/video/loops/virtual-deck-surfaces-poster.jpg?v=1" width="960" height="720"><source src="/static/video/loops/virtual-deck-surfaces-hevc.mp4?v=1" type='video/mp4; codecs="hvc1.2.4.L123.B0"'><source src="/static/video/loops/virtual-deck-surfaces.webm?v=1" type="video/webm"><source src="/static/video/loops/virtual-deck-surfaces.mp4?v=1" type="video/mp4"></video></div>
+    </article>
+    <article class="app-feat" data-rise style="--i:1">
+      <h3>Keys only</h3>
+      <p>Hide everything but the keys, and bring the controls back with one click.</p>
+      <div class="pic"><video class="loop" autoplay muted loop playsinline preload="metadata" aria-hidden="true" poster="/static/video/loops/virtual-deck-keys-only-poster.jpg?v=1" width="960" height="720"><source src="/static/video/loops/virtual-deck-keys-only-hevc.mp4?v=1" type='video/mp4; codecs="hvc1.2.4.L123.B0"'><source src="/static/video/loops/virtual-deck-keys-only.webm?v=1" type="video/webm"><source src="/static/video/loops/virtual-deck-keys-only.mp4?v=1" type="video/mp4"></video></div>
+    </article>
+  </div>
+  <p class="app-back"><a class="more" href="#apps-pick">Back to all apps</a></p>
+</section>
+</div>
+
+<div class="app-panel" id="panel-downstage-find">
+<section class="sec dark" id="downstage-find" aria-labelledby="df-h">
+  <div class="head" data-rise>
+    <div class="app-title"><img src="/static/apps/find-icon.png" alt="" width="1024" height="1024"><h2 id="df-h">Downstage Find</h2></div>
+    <p>Finds the Downstage devices on your network and opens their apps. Add one by its address if a network hides them.</p>
+  </div>
+  <div class="pills" data-rise style="--i:1">
+    <a class="pill" href="https://github.com/Downstage-Systems/downstage-find/releases/latest/download/Downstage-Find.zip" rel="noopener">Download for Mac</a>
+  </div>
+  <p class="app-note" data-rise style="--i:1">Free. Apple Silicon Macs. The first time, macOS blocks it: go to System Settings, Privacy &amp; Security, and choose Open Anyway.</p>
+  <img class="app-shot" data-rise style="--i:2" src="/static/apps/downstage-find.webp" alt="Downstage Find's window, listing the Downstage devices on a network" width="2000" height="1146" loading="lazy">
   <p class="app-back"><a class="more" href="#apps-pick">Back to all apps</a></p>
 </section>
 </div>
 
 <section class="sec light" id="updates" aria-labelledby="close-h">
   <div class="signup-card" data-rise>
-    <h2 id="close-h">Hear when it's ready.</h2>
-    <p>Leave your email and we will tell you when SuperSource Builder, Virtual Deck and new apps arrive.</p>
+    <h2 id="close-h">Hear what's next.</h2>
+    <p>Leave your email and we will tell you about new apps and updates.</p>
     <form class="signup" id="signup-form" onsubmit="return joinList(event)">
       <input type="email" id="signup-email" placeholder="you@yourcompany.com" required autocomplete="email" aria-label="Email address">
       <button type="submit" class="pill">Notify me</button>
@@ -228,7 +289,7 @@
     <div class="foot-links">
       <div><strong>Downstage One</strong><a href="/one/">Downstage One</a><a href="/demo/">Try the One's interface</a></div>
       <div><strong>Cue lights</strong><a href="/shop/#compare">Cue Lite</a><a href="/shop/#compare">Cue 360</a><a href="/shop/#compare">Cue Mini</a><a href="/shop/#compare">Downstage Cue</a><a href="/shop/">Shop</a></div>
-      <div><strong>Apps</strong><a href="/apps/#show-builder">Show Builder</a><a href="/apps/#supersource-builder">SuperSource Builder</a><a href="/apps/#virtual-deck">Virtual Deck</a></div>
+      <div><strong>Apps</strong><a href="/apps/#show-builder">Show Builder</a><a href="/apps/#supersource-builder">SuperSource Builder</a><a href="/apps/#virtual-deck">Virtual Deck</a><a href="/apps/#downstage-find">Downstage Find</a></div>
       <div><strong>Open source</strong><a href="https://github.com/Downstage-Systems/downstage-os" rel="noopener">Downstage OS</a><a href="https://www.getontime.no" rel="noopener">Ontime</a><a href="https://bitfocus.io/companion" rel="noopener">Companion</a></div>
       <div><strong>Talk to us</strong><a href="/support/">Support</a><a href="/warranty/">Warranty</a><a href="mailto:hello@downstage.systems">hello@downstage.systems</a><a href="/support/#questions">Questions</a></div>
     </div>
