@@ -67,6 +67,15 @@ def must(text, old, new):
 html = must(html, "location.replace('/touch')", "location.replace('touch.html')")
 html = must(html, "location.href='/touch'", "location.href='touch.html'")
 
+# Plausible, on the demo's main page only: the frames inside it would count as extra visits
+html = must(html, "</head>", """  <!-- Privacy-friendly analytics by Plausible -->
+  <script async src="https://plausible.io/js/pa-8Agy4m7WfwwPipnyAifq0.js"></script>
+  <script>
+    window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+    plausible.init()
+  </script>
+</head>""")
+
 html = scrub(html)
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 open(OUT, "w").write(html)

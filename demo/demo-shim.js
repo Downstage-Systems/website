@@ -527,6 +527,7 @@
   window.fetch = function (url, opts) {
     const full = typeof url === 'string' ? url : url.url;
     const u = full.split('?')[0];
+    if (u.startsWith('https://plausible.io/')) return realFetch(url, opts);
     let handler = routes[u];
     if (u === '/system/timezone' && opts && opts.method === 'POST') handler = routes['/system/timezone_post'];
     if (u === '/companion/grid') handler = () => gridRoute(new URLSearchParams(full.split('?')[1] || ''));
