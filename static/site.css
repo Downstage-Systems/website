@@ -618,6 +618,7 @@ html.v3d-open, html.v3d-open body { overflow: hidden; overscroll-behavior: none;
 .app-why { max-width: 760px; margin: 0 auto; text-align: center; }
 .app-why blockquote { font-size: 28px; line-height: 1.25; font-weight: 600; letter-spacing: -0.015em; }
 .app-why cite { display: block; margin-top: 16px; font-style: normal; color: var(--grey); }
+.app-note + .app-feats { margin-top: 48px; }
 .app-feats { max-width: 1024px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .app-feat { background: var(--night); color: var(--paper); border-radius: 28px; padding: 36px 36px 0; overflow: hidden; display: flex; flex-direction: column; min-height: 420px; }
 .app-feat h3 { font-size: 24px; }
