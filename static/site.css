@@ -341,6 +341,7 @@ footer .notes a { text-decoration: underline; }
 html[data-tally="off"] .face .num { transform: translateY(6px); }
 
 /* ---- support ---- */
+.sec[hidden] { display: none; }
 .support-hero { padding-bottom: 72px; }
 .support-hero h1 { font-size: 56px; }
 .tuts { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px 20px; }

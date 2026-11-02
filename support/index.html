@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Downstage Support</title>
-  <meta name="description" content="Tutorials, setup and help for the Cue Lite, Cue 360, Cue Mini and our Mac apps.">
+  <meta name="description" content="Setup, how to use it and answers for each of our Mac apps.">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
   <link rel="icon" href="/favicon.ico" sizes="48x48 32x32 16x16">
@@ -12,7 +12,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="preload" href="/static/fonts/inter-600.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/static/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/static/site.css?v=52">
+  <link rel="stylesheet" href="/static/site.css?v=53">
   <!-- Privacy-friendly analytics by Plausible -->
   <script async src="https://plausible.io/js/pa-8Agy4m7WfwwPipnyAifq0.js"></script>
   <script>
@@ -50,11 +50,10 @@
 <section class="sec support-hero" aria-labelledby="sup-h">
   <div class="head" data-rise>
     <h1 id="sup-h">Downstage Support</h1>
-    <p>Help for our Mac apps and Cue lights.</p>
+    <p>Help for our Mac apps.</p>
   </div>
   <div class="pills" data-rise style="--i:1">
     <a class="pill" href="#apps">Mac apps</a>
-    <a class="pill" href="#cue-lights">Cue lights</a>
     <a class="pill ghost" href="#contact">Contact us</a>
   </div>
 </section>
@@ -90,7 +89,8 @@
   </div>
 </section>
 
-<section class="sec dark" id="cue-lights" aria-labelledby="cue-h">
+<!-- Cue light support is hidden until the lights are released (Rob, 2026-11-01). To bring it back: remove hidden from these six sections, put the Cue lights pill and hero text back, and restore the /support/#questions and #cuelink links on the other pages. -->
+<section class="sec dark" id="cue-lights" hidden aria-labelledby="cue-h">
   <div class="head" data-rise>
     <h2 id="cue-h">Cue lights.</h2>
     <p>Tutorials, setup and help for the Cue Lite, Cue 360 and Cue Mini.</p>
@@ -104,7 +104,7 @@
   </div>
 </section>
 
-<section class="sec light" id="tutorials" aria-labelledby="tut-h">
+<section class="sec light" id="tutorials" hidden aria-labelledby="tut-h">
   <div class="head" data-rise>
     <h2 id="tut-h">Cue light tutorials.</h2>
   </div>
@@ -132,7 +132,7 @@
   </div>
 </section>
 
-<section class="sec" id="setup" aria-labelledby="setup-h">
+<section class="sec" id="setup" hidden aria-labelledby="setup-h">
   <div class="head" data-rise>
     <h2 id="setup-h">Set up a light.</h2>
     <p>The same four steps for the Cue Lite, the Cue 360 and the Cue Mini. It is also on the card in the box.</p>
@@ -146,7 +146,7 @@
   <p class="acc" data-rise>A Cue 360 or Cue Mini can skip WiFi: hold it to a Cue Lite for two seconds and it links over <a href="/support/#cuelink">CueLink</a>.</p>
 </section>
 
-<section class="sec light" id="downloads" aria-labelledby="dl-h">
+<section class="sec light" id="downloads" hidden aria-labelledby="dl-h">
   <div class="head" data-rise>
     <h2 id="dl-h">Guide and updates.</h2>
     <p>The full user guide for the Cue Lite, Cue 360 and Cue Mini, and the latest firmware for each.</p>
@@ -158,7 +158,7 @@
   <p class="acc" data-rise>A light's own page checks for updates and installs them in one tap: Device, then Update. Download a file here only to update a light where there is no internet.</p>
 </section>
 
-<section class="sec" id="questions" aria-labelledby="sq-h">
+<section class="sec" id="questions" hidden aria-labelledby="sq-h">
   <div class="head" data-rise>
     <h2 id="sq-h">Cue light questions.</h2>
   </div>
@@ -186,7 +186,7 @@
   </div>
 </section>
 
-<section class="sec light" id="help" aria-labelledby="help-h">
+<section class="sec light" id="help" hidden aria-labelledby="help-h">
   <div class="head" data-rise>
     <h2 id="help-h">Cue light troubleshooting.</h2>
     <p>A Downstage light says what is wrong in a sentence. Here is what to do about it.</p>
@@ -242,7 +242,7 @@
 <section class="sec dark" id="contact" aria-labelledby="contact-h">
   <div class="signup-card" data-rise>
     <h2 id="contact-h">Still stuck?</h2>
-    <p>Email us with what the light or app says and what you were doing. A photo or screenshot helps.</p>
+    <p>Email us with what the app says and what you were doing. A screenshot helps.</p>
     <div class="pills"><a class="pill" href="mailto:hello@downstage.systems">hello@downstage.systems</a></div>
   </div>
 </section>
@@ -262,7 +262,7 @@
       <div><strong>Cue lights</strong><a href="/shop/#compare">Cue Lite</a><a href="/shop/#compare">Cue 360</a><a href="/shop/#compare">Cue Mini</a><a href="/shop/#compare">Downstage Cue</a><a href="/shop/">Shop</a></div>
       <div><strong>Apps</strong><a href="/apps/#show-builder">Show Builder</a><a href="/apps/#supersource-builder">SuperSource Builder</a><a href="/apps/#virtual-deck">Virtual Deck</a><a href="/apps/#downstage-find">Downstage Find</a></div>
       <div><strong>Open source</strong><a href="https://github.com/Downstage-Systems/downstage-os" rel="noopener">Downstage OS</a><a href="https://www.getontime.no" rel="noopener">Ontime</a><a href="https://bitfocus.io/companion" rel="noopener">Companion</a></div>
-      <div><strong>Talk to us</strong><a href="/support/">Support</a><a href="/warranty/">Warranty</a><a href="/privacy/">Privacy</a><a href="mailto:hello@downstage.systems">hello@downstage.systems</a><a href="/support/#questions">Questions</a></div>
+      <div><strong>Talk to us</strong><a href="/support/">Support</a><a href="/warranty/">Warranty</a><a href="/privacy/">Privacy</a><a href="mailto:hello@downstage.systems">hello@downstage.systems</a></div>
     </div>
     <div class="last">
       <span>Copyright &copy; 2026 Downstage Systems LLC. All rights reserved. Built by hand in Littleton, Colorado.</span>
