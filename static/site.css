@@ -652,3 +652,29 @@ html.v3d-open, html.v3d-open body { overflow: hidden; overscroll-behavior: none;
 .use .lamp video.loop.edge { width: calc(100% + 56px); max-width: none; margin: -46px -28px -22px;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent), linear-gradient(transparent, #000 7%, #000 93%, transparent); -webkit-mask-composite: source-in;
   mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent), linear-gradient(transparent, #000 7%, #000 93%, transparent); mask-composite: intersect; }
+
+/* ---- home: apps first, the One previewed, the lights later ---- */
+.home-hero { padding-bottom: 0; }
+.home-hero .sub .line { display: block; }
+.home-shot { max-width: 1040px; margin: 48px auto 0; }
+.home-shot video { display: block; width: 100%; height: auto; border-radius: 16px 16px 0 0; background: #000; }
+.home-apps { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.home-app { display: flex; flex-direction: column; background: var(--tile); color: inherit; border-radius: 28px; padding: 24px 24px 30px; text-decoration: none; box-shadow: inset 0 0 0 2px transparent; transition: box-shadow .2s; }
+.home-app:hover { box-shadow: inset 0 0 0 2px var(--line); }
+.home-app img { width: 100%; height: auto; aspect-ratio: 2000 / 1146; object-fit: cover; object-position: top; border-radius: 12px; background: #000; margin-bottom: 22px; }
+.home-app .later { margin-bottom: 4px; }
+.home-app h3 { font-size: 26px; }
+.home-app > p:not(.later) { color: var(--grey); margin-top: 6px; flex: 1; }
+.home-app .more { margin-top: 14px; }
+.home-lights .head { margin-bottom: 0; }
+.home-lights .trio { margin: 48px auto 28px; }
+.home-seg { text-align: center; }
+.home-lights .links-row { margin-top: 36px; }
+@media (max-width: 1068px) { .home-apps { gap: 12px; } .home-app { padding: 18px 18px 24px; border-radius: 22px; } .home-app h3 { font-size: 22px; } }
+@media (max-width: 734px) {
+  .home-shot { margin-top: 36px; }
+  .home-shot video { border-radius: 12px 12px 0 0; }
+  .home-apps { grid-template-columns: 1fr; }
+  .home-app { border-radius: 22px; padding: 20px 20px 26px; }
+  .home-app h3 { font-size: 24px; }
+}
