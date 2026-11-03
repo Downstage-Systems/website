@@ -7,7 +7,7 @@
   const mv = dlg.querySelector('model-viewer');
   const MV = 'https://unpkg.com/@google/model-viewer@3.5.0/dist/model-viewer.min.js';
   const DEV = {
-    mini: { src: '/static/3d/cue-mini.glb?v=6', orbit: '-20deg 80deg auto', alt: 'A Cue Mini in 3D' },
+    mini: { src: '/static/3d/cue-mini.glb?v=7', orbit: '-20deg 80deg auto', alt: 'A Cue Mini in 3D' },
     '360': { src: '/static/3d/cue-360.glb?v=6', orbit: '35deg 66deg auto', alt: 'A Cue 360 in 3D' },
     hex: { src: '/static/3d/cue-hex.glb?v=1', orbit: '-26deg 80deg auto', alt: 'The Hex talent light in 3D' }
   };
@@ -30,6 +30,8 @@
       const lit = shown !== 'off';
       mats.forEach(m => {
         if (m.name === 'glow') { m.setEmissiveFactor(GLOW[shown]); m.pbrMetallicRoughness.setBaseColorFactor([0, 0, 0, lit ? 0.94 : 0]); }
+        // the Mini's diffuser over its LEDs: the colour, the pixels only faintly through; frosted dark when off
+        else if (m.name === 'haze') { m.setEmissiveFactor(GLOW[shown]); m.pbrMetallicRoughness.setBaseColorFactor(lit ? [0, 0, 0, 0.93] : [0.07, 0.07, 0.075, 0.9]); }
         else if (m.name === 'leds') { m.setEmissiveFactor(GLOW[shown]); m.pbrMetallicRoughness.setBaseColorFactor(lit ? [0, 0, 0, 1] : [0.2, 0.2, 0.21, 1]); }
         else if (m.name === 'tower') { m.setEmissiveFactor([0, 0, 0]); m.pbrMetallicRoughness.setBaseColorFactor([0.82, 0.82, 0.84, 1]); }
       });
