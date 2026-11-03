@@ -9,7 +9,7 @@
   const DEV = {
     mini: { src: '/static/3d/cue-mini.glb?v=8', orbit: '-20deg 80deg auto', alt: 'A Cue Mini in 3D' },
     '360': { src: '/static/3d/cue-360.glb?v=7', orbit: '-58deg 68deg auto', alt: 'A Cue 360 in 3D' },
-    hex: { src: '/static/3d/cue-hex.glb?v=2', orbit: '-26deg 80deg auto', alt: 'The Hex talent light in 3D' }
+    hex: { src: '/static/3d/cue-hex.glb?v=3', orbit: '-26deg 80deg auto', alt: 'The Hex talent light in 3D' }
   };
   // the 360's tower glow and the LEDs, per tally state
   const GLOW = { program: [1.0, 0.02, 0.015], preview: [0.01, 1.0, 0.09], off: [0, 0, 0] };
