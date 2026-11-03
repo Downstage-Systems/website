@@ -61,8 +61,8 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.015em; line-height: 1.07; }
 .hero .sub strong { color: var(--paper); font-weight: 600; }
 .when-line { font-size: 14px; color: var(--mist); margin-top: 18px; }
 .trio { display: flex; justify-content: center; align-items: flex-end; gap: 4vw; margin: 56px auto 32px; }
-.trio img { width: 200px; height: 200px; transition: opacity .2s var(--ease); }
-.trio img.mid { width: 197px; height: 197px; }
+.trio img { width: 230px; height: 230px; transition: opacity .2s var(--ease); }
+.trio img.mid { width: 230px; height: 230px; }
 /* the live thing: a segmented tally control */
 .seg { display: inline-flex; padding: 4px; gap: 4px; border-radius: 980px; background: var(--night); }
 .key { min-height: 36px; padding: 0 20px; border: 0; border-radius: 980px; background: transparent; color: var(--paper); font: inherit; font-size: 14px; cursor: pointer; transition: background .2s, color .2s; }
@@ -111,9 +111,9 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.015em; line-height: 1.07; }
 .rig p { color: var(--mist); margin-top: 6px; max-width: 34ch; }
 .flow { flex: 1; display: flex; align-items: center; justify-content: center; gap: 16px; padding-top: 28px; }
 .dev { display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 13px; color: var(--mist); }
-.dev img { width: 96px; height: 96px; }
+.dev img { width: 112px; height: 112px; }
 .stack { display: grid; grid-template-columns: repeat(2, auto); gap: 2px; }
-.stack .dev img, .fleet .dev img { width: 60px; height: 60px; }
+.stack .dev img, .fleet .dev img { width: 74px; height: 74px; }
 .fleet { display: flex; gap: 8px; }
 .wire { flex: 0 1 110px; min-width: 48px; border-top: 2px dashed var(--green); position: relative; margin-bottom: 22px; }
 .wire b { position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); font-weight: 600; font-size: 13px; color: var(--green); white-space: nowrap; letter-spacing: 0; }
@@ -178,8 +178,8 @@ footer .logo-foot { height: 40px; width: auto; color: var(--ink); margin-bottom:
   .sec h2 { font-size: 40px; }
   .t h2 { font-size: 32px; }
   .t .tag { font-size: 19px; }
-  .trio img { width: 150px; height: 150px; }
-  .trio img.mid { width: 148px; height: 148px; }
+  .trio img { width: 170px; height: 170px; }
+  .trio img.mid { width: 170px; height: 170px; }
   .steps { grid-template-columns: 1fr 1fr; row-gap: 48px; }
 }
 @media (max-width: 734px) {
@@ -187,8 +187,8 @@ footer .logo-foot { height: 40px; width: auto; color: var(--ink); margin-bottom:
   .hero h1 { font-size: 40px; }
   .hero .sub { font-size: 19px; }
   .trio { gap: 10px; margin: 40px auto 28px; }
-  .trio img { width: 96px; height: 96px; }
-  .trio img.mid { width: 95px; height: 95px; }
+  .trio img { width: 104px; height: 104px; }
+  .trio img.mid { width: 104px; height: 104px; }
   .key { padding: 0 16px; }
   .tiles { grid-template-columns: 1fr; padding: 12px 0; }
   .t, .t.wide { min-height: 0; padding-top: 44px; }
@@ -205,8 +205,8 @@ footer .logo-foot { height: 40px; width: auto; color: var(--ink); margin-bottom:
   .rigs { grid-template-columns: 1fr; }
   .rig { min-height: 340px; padding: 28px 22px 22px; border-radius: 22px; }
   .rig h3 { font-size: 24px; }
-  .dev img { width: 76px; height: 76px; }
-  .stack .dev img, .fleet .dev img { width: 46px; height: 46px; }
+  .dev img { width: 88px; height: 88px; }
+  .stack .dev img, .fleet .dev img { width: 54px; height: 54px; }
   .flow { gap: 10px; flex-wrap: wrap; }
   .steps { grid-template-columns: 1fr; row-gap: 36px; }
   .steps h3 { font-size: 28px; }
@@ -278,9 +278,6 @@ html[data-tally="program"] .face .s-program, html[data-tally="preview"] .face .s
 .trio svg.face.mid { width: 197px; }
 /* the trio at true scale: the Lite 47.6 mm wide, the Cue 51 mm across, the 360's box 36 mm
    (each icon's body is 80%, 87% and 86.5% of its width) */
-.trio img[data-dev="360"] { width: 170px; height: 170px; }
-@media (max-width: 1068px) { .trio img[data-dev="360"] { width: 128px; height: 128px; } }
-@media (max-width: 734px) { .trio img[data-dev="360"] { width: 82px; height: 82px; } }
 .t .art svg.face { width: 260px; }
 .t.wide .art svg.face { width: 300px; }
 .col svg.face { width: 150px; }
@@ -548,6 +545,7 @@ html[data-tally="off"] .face .num { transform: translateY(6px); }
 .v3d-top, .v3d-bottom { display: flex; align-items: center; justify-content: center; gap: 16px; padding: 18px 22px; position: relative; flex-wrap: wrap; }
 .v3d-bottom { flex-direction: column; gap: 10px; padding-bottom: 22px; }
 .v3d-bottom p { font-size: 13px; color: var(--grey); }
+.v3d-bottom .v3d-note { color: var(--ink); }
 .v3d-seg { display: inline-flex; padding: 4px; gap: 4px; border-radius: 980px; background: rgba(0,0,0,.06); }
 .v3d-seg button { min-height: 36px; padding: 0 16px; border: 0; border-radius: 980px; background: transparent; color: var(--ink); font: inherit; font-size: 14px; cursor: pointer; }
 .v3d-seg button[aria-pressed="true"] { background: var(--white); box-shadow: 0 1px 4px rgba(0,0,0,.14); font-weight: 600; }

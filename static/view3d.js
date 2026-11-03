@@ -7,9 +7,9 @@
   const mv = dlg.querySelector('model-viewer');
   const MV = 'https://unpkg.com/@google/model-viewer@3.5.0/dist/model-viewer.min.js';
   const DEV = {
-    mini: { src: '/static/3d/cue-mini.glb?v=7', orbit: '-20deg 80deg auto', alt: 'A Cue Mini in 3D' },
-    '360': { src: '/static/3d/cue-360.glb?v=6', orbit: '-58deg 68deg auto', alt: 'A Cue 360 in 3D' },
-    hex: { src: '/static/3d/cue-hex.glb?v=1', orbit: '-26deg 80deg auto', alt: 'The Hex talent light in 3D' }
+    mini: { src: '/static/3d/cue-mini.glb?v=8', orbit: '-20deg 80deg auto', alt: 'A Cue Mini in 3D' },
+    '360': { src: '/static/3d/cue-360.glb?v=7', orbit: '-58deg 68deg auto', alt: 'A Cue 360 in 3D' },
+    hex: { src: '/static/3d/cue-hex.glb?v=2', orbit: '-26deg 80deg auto', alt: 'The Hex talent light in 3D' }
   };
   // the 360's tower glow and the LEDs, per tally state
   const GLOW = { program: [1.0, 0.02, 0.015], preview: [0.01, 1.0, 0.09], off: [0, 0, 0] };
@@ -18,10 +18,13 @@
   function press(group, attr, val) {
     dlg.querySelectorAll('[data-' + attr + ']').forEach(b => b.setAttribute('aria-pressed', String(b.dataset[attr] === val)));
   }
+  // the Hex stays dark in preview: say so, rather than look broken
+  function setNote() { const n = dlg.querySelector('.v3d-note'); if (n) n.hidden = !(dev === 'hex' && state === 'preview'); }
   async function paint() {
     // the Hex is red on air and dark otherwise: in preview it stays off
     const shown = dev === 'hex' && state === 'preview' ? 'off' : state;
     dlg.dataset.glow = shown;
+    setNote();
     if (!mv.model) return;
     const mats = mv.model.materials;
     {
@@ -38,7 +41,7 @@
     }
   }
   function show(d) {
-    dev = d; press(null, 'dev', d);
+    dev = d; press(null, 'dev', d); setNote();
     if (loaded !== d) {
       mv.setAttribute('alt', DEV[d].alt);
       mv.cameraOrbit = DEV[d].orbit;
