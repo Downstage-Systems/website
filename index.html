@@ -112,9 +112,9 @@
     <p>Tally lights for the camera, the talent and the presenter. The Cue Mini and the Cue 360 join your WiFi and follow a Companion button, and the Hex plugs into either one.</p>
   </div>
   <div class="trio" data-rise style="--i:1">
-    <img data-dev="mini" src="/static/devices/mini-program.svg?v=6" alt="Cue Mini" width="120" height="120">
-    <img class="mid" data-dev="360" src="/static/devices/360-program.svg?v=6" alt="Cue 360" width="64" height="64">
-    <img data-dev="hex" src="/static/devices/hex-program.svg?v=6" alt="Hex talent light" width="120" height="120">
+    <img data-dev="mini" src="/static/devices/mini-program.svg?v=7" alt="Cue Mini" width="120" height="120">
+    <img class="mid" data-dev="360" src="/static/devices/360-program.svg?v=7" alt="Cue 360" width="64" height="64">
+    <img data-dev="hex" src="/static/devices/hex-program.svg?v=7" alt="Hex talent light" width="120" height="120">
   </div>
   <div class="home-seg" data-rise style="--i:2">
     <div class="seg" role="group" aria-label="Tally">
@@ -208,7 +208,7 @@
     let state = 'program';
     function paint() {
       document.querySelectorAll('img[data-dev]').forEach(img => {
-        img.src = '/static/devices/' + img.dataset.dev + '-' + state + '.svg?v=6';
+        img.src = '/static/devices/' + img.dataset.dev + '-' + state + '.svg?v=7';
       });
       document.documentElement.dataset.tally = state;
     }

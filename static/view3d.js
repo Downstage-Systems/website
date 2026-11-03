@@ -8,7 +8,7 @@
   const MV = 'https://unpkg.com/@google/model-viewer@3.5.0/dist/model-viewer.min.js';
   const DEV = {
     mini: { src: '/static/3d/cue-mini.glb?v=7', orbit: '-20deg 80deg auto', alt: 'A Cue Mini in 3D' },
-    '360': { src: '/static/3d/cue-360.glb?v=6', orbit: '35deg 66deg auto', alt: 'A Cue 360 in 3D' },
+    '360': { src: '/static/3d/cue-360.glb?v=6', orbit: '-58deg 68deg auto', alt: 'A Cue 360 in 3D' },
     hex: { src: '/static/3d/cue-hex.glb?v=1', orbit: '-26deg 80deg auto', alt: 'The Hex talent light in 3D' }
   };
   // the 360's tower glow and the LEDs, per tally state
