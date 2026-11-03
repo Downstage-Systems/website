@@ -94,6 +94,7 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.015em; line-height: 1.07; }
 
 /* compare: which Cue */
 .compare { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0 32px; }
+.compare.three { max-width: 960px; grid-template-columns: repeat(3, 1fr); }
 .col { display: grid; grid-template-rows: subgrid; grid-row: span 13; text-align: center; justify-items: center; }
 .col img { width: 150px; height: 150px; }
 .col h3 { font-size: 24px; margin-top: 16px; }
@@ -199,7 +200,7 @@ footer .logo-foot { height: 40px; width: auto; color: var(--ink); margin-bottom:
   .sec .head { margin-bottom: 40px; }
   .sec h2 { font-size: 32px; }
   .sec .head p, .signup-card p { font-size: 17px; }
-  .compare { grid-template-columns: 1fr; row-gap: 56px; }
+  .compare, .compare.three { grid-template-columns: 1fr; row-gap: 56px; }
   .col { grid-row: auto; display: flex; flex-direction: column; align-items: center; }
   .rigs { grid-template-columns: 1fr; }
   .rig { min-height: 340px; padding: 28px 22px 22px; border-radius: 22px; }
@@ -277,9 +278,9 @@ html[data-tally="program"] .face .s-program, html[data-tally="preview"] .face .s
 .trio svg.face.mid { width: 197px; }
 /* the trio at true scale: the Lite 47.6 mm wide, the Cue 51 mm across, the 360's box 36 mm
    (each icon's body is 80%, 87% and 86.5% of its width) */
-.trio img[data-dev="360"] { width: 140px; height: 140px; }
-@media (max-width: 1068px) { .trio img[data-dev="360"] { width: 105px; height: 105px; } }
-@media (max-width: 734px) { .trio img[data-dev="360"] { width: 67px; height: 67px; } }
+.trio img[data-dev="360"] { width: 170px; height: 170px; }
+@media (max-width: 1068px) { .trio img[data-dev="360"] { width: 128px; height: 128px; } }
+@media (max-width: 734px) { .trio img[data-dev="360"] { width: 82px; height: 82px; } }
 .t .art svg.face { width: 260px; }
 .t.wide .art svg.face { width: 300px; }
 .col svg.face { width: 150px; }

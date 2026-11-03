@@ -1,4 +1,4 @@
-// "View in 3D": the Cue Lite and Cue 360 as real 3D models, turned by hand.
+// "View in 3D": the Cue Mini, Cue 360 and Hex as real 3D models, turned by hand.
 // The models come from the case designs (static/3d/*.glb). Google's <model-viewer>
 // loads only when someone opens the viewer, so the page itself stays light.
 (function () {
@@ -7,32 +7,30 @@
   const mv = dlg.querySelector('model-viewer');
   const MV = 'https://unpkg.com/@google/model-viewer@3.5.0/dist/model-viewer.min.js';
   const DEV = {
-    lite: { src: '/static/3d/cue-lite.glb?v=10', orbit: '-28deg 78deg auto', alt: 'A Cue Lite in 3D' },
-    '360': { src: '/static/3d/cue-360.glb?v=5', orbit: '40deg 68deg auto', alt: 'A Cue 360 in 3D' },
-    mini: { src: '/static/3d/cue-mini.glb?v=5', orbit: '-24deg 80deg auto', alt: 'A Cue Mini in 3D' }
+    mini: { src: '/static/3d/cue-mini.glb?v=6', orbit: '-20deg 80deg auto', alt: 'A Cue Mini in 3D' },
+    '360': { src: '/static/3d/cue-360.glb?v=6', orbit: '35deg 66deg auto', alt: 'A Cue 360 in 3D' },
+    hex: { src: '/static/3d/cue-hex.glb?v=1', orbit: '-26deg 80deg auto', alt: 'The Hex talent light in 3D' }
   };
-  // the 360's tower glow and the Lite's screen picture, per tally state
+  // the 360's tower glow and the LEDs, per tally state
   const GLOW = { program: [1.0, 0.02, 0.015], preview: [0.01, 1.0, 0.09], off: [0, 0, 0] };
-  const SCREEN = s => '/static/3d/lite-screen-' + s + '.png';
-  let dev = 'lite', state = 'program', loaded = null;
+  let dev = 'mini', state = 'program', loaded = null;
 
   function press(group, attr, val) {
     dlg.querySelectorAll('[data-' + attr + ']').forEach(b => b.setAttribute('aria-pressed', String(b.dataset[attr] === val)));
   }
   async function paint() {
-    dlg.dataset.glow = dev === 'lite' ? 'none' : state;
+    // the Hex is red on air and dark otherwise: in preview it stays off
+    const shown = dev === 'hex' && state === 'preview' ? 'off' : state;
+    dlg.dataset.glow = shown;
     if (!mv.model) return;
     const mats = mv.model.materials;
-    if (dev === 'lite') {
-      const m = mats.find(x => x.name === 'screen');
-      if (m && m.emissiveTexture) m.emissiveTexture.setTexture(await mv.createTexture(SCREEN(state)));
-    } else {
+    {
       // The glow is emissive with no reflections, so it shows the button's colour at full strength: the 360's skin over its frosted tower
-      // (faded out when off, leaving the real frosted white), and the Mini's LEDs (pale chips when off).
-      const lit = state !== 'off';
+      // (faded out when off, leaving the real frosted white), and the LEDs (dark chips when off).
+      const lit = shown !== 'off';
       mats.forEach(m => {
-        if (m.name === 'glow') { m.setEmissiveFactor(GLOW[state]); m.pbrMetallicRoughness.setBaseColorFactor([0, 0, 0, lit ? 0.94 : 0]); }
-        else if (m.name === 'leds') { m.setEmissiveFactor(GLOW[state]); m.pbrMetallicRoughness.setBaseColorFactor(lit ? [0, 0, 0, 1] : [0.55, 0.55, 0.57, 1]); }
+        if (m.name === 'glow') { m.setEmissiveFactor(GLOW[shown]); m.pbrMetallicRoughness.setBaseColorFactor([0, 0, 0, lit ? 0.94 : 0]); }
+        else if (m.name === 'leds') { m.setEmissiveFactor(GLOW[shown]); m.pbrMetallicRoughness.setBaseColorFactor(lit ? [0, 0, 0, 1] : [0.2, 0.2, 0.21, 1]); }
         else if (m.name === 'tower') { m.setEmissiveFactor([0, 0, 0]); m.pbrMetallicRoughness.setBaseColorFactor([0.82, 0.82, 0.84, 1]); }
       });
     }
@@ -60,7 +58,7 @@
   dlg.querySelectorAll('[data-dev]').forEach(b => b.addEventListener('click', () => show(b.dataset.dev)));
   dlg.querySelectorAll('[data-state]').forEach(b => b.addEventListener('click', () => { state = b.dataset.state; press(null, 'state', state); paint(); }));
   document.querySelectorAll('[data-3d]').forEach(b => b.addEventListener('click', e => { e.preventDefault(); open(b.dataset['3d']); }));
-  // a link straight to it: /shop/#view3d (the Lite) or /shop/#view3d-360
-  const m = location.hash.match(/^#view3d(?:-(lite|360))?$/);
-  if (m) open(m[1] || 'lite');
+  // a link straight to it: /shop/#view3d (the Mini), /shop/#view3d-360 or /shop/#view3d-hex
+  const m = location.hash.match(/^#view3d(?:-(mini|360|hex))?$/);
+  if (m) open(m[1] || 'mini');
 })();
