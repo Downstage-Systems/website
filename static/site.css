@@ -545,7 +545,6 @@ html[data-tally="off"] .face .num { transform: translateY(6px); }
 .v3d-top, .v3d-bottom { display: flex; align-items: center; justify-content: center; gap: 16px; padding: 18px 22px; position: relative; flex-wrap: wrap; }
 .v3d-bottom { flex-direction: column; gap: 10px; padding-bottom: 22px; }
 .v3d-bottom p { font-size: 13px; color: var(--grey); }
-.v3d-bottom .v3d-note { color: var(--ink); }
 .v3d-seg { display: inline-flex; padding: 4px; gap: 4px; border-radius: 980px; background: rgba(0,0,0,.06); }
 .v3d-seg button { min-height: 36px; padding: 0 16px; border: 0; border-radius: 980px; background: transparent; color: var(--ink); font: inherit; font-size: 14px; cursor: pointer; }
 .v3d-seg button[aria-pressed="true"] { background: var(--white); box-shadow: 0 1px 4px rgba(0,0,0,.14); font-weight: 600; }

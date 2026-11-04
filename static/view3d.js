@@ -18,13 +18,9 @@
   function press(group, attr, val) {
     dlg.querySelectorAll('[data-' + attr + ']').forEach(b => b.setAttribute('aria-pressed', String(b.dataset[attr] === val)));
   }
-  // the Hex stays dark in preview: say so, rather than look broken
-  function setNote() { const n = dlg.querySelector('.v3d-note'); if (n) n.hidden = !(dev === 'hex' && state === 'preview'); }
   async function paint() {
-    // the Hex is red on air and dark otherwise: in preview it stays off
-    const shown = dev === 'hex' && state === 'preview' ? 'off' : state;
+    const shown = state;
     dlg.dataset.glow = shown;
-    setNote();
     if (!mv.model) return;
     const mats = mv.model.materials;
     {
@@ -41,7 +37,7 @@
     }
   }
   function show(d) {
-    dev = d; press(null, 'dev', d); setNote();
+    dev = d; press(null, 'dev', d);
     if (loaded !== d) {
       mv.setAttribute('alt', DEV[d].alt);
       mv.cameraOrbit = DEV[d].orbit;
